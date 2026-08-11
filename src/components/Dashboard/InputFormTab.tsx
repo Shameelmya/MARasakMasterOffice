@@ -347,15 +347,7 @@ export function InputFormTab({
       <div className="bg-white/90 backdrop-blur-xl px-10 py-4 flex justify-between items-center text-slate-800 border-b border-slate-200 shadow-sm">
         <h2 className="font-bold text-lg flex items-center gap-2"><Plus size={20}/> New Registration</h2>
         <div className="flex gap-3">
-          <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 bg-purple-600 hover:bg-purple-700 hover:-translate-y-0.5 transition-all duration-300 text-white shadow-sm px-4 py-2 rounded-2xl border border-slate-600 transition-colors">
-            <input 
-              type="checkbox" 
-              checked={form.isLocalWork || false} 
-              onChange={(e) => setForm(f => ({ ...f, isLocalWork: e.target.checked }))} 
-              className="w-4 h-4 text-green-500 rounded focus:ring-green-500 bg-slate-900" 
-            />
-            <span className="font-bold text-sm text-white">Local Work</span>
-          </label>
+
           <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 bg-purple-600 hover:bg-purple-700 hover:-translate-y-0.5 transition-all duration-300 text-white shadow-sm px-4 py-2 rounded-2xl border border-slate-600 transition-colors">
             <input 
               type="checkbox" 
