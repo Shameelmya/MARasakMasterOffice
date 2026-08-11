@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Download, Calendar, User as UserIcon, FileText, CheckCircle, FileEdit, Zap } from 'lucide-react';
+import { Search, Download, Calendar, User as UserIcon, FileText, CheckCircle, FileEdit, Zap, Database } from 'lucide-react';
 import { Task, User, TimelineItem } from '../../types';
 import { formatDate, formatTime } from '../../utils/formatters';
 import { WhatsAppButton } from '../Shared/WhatsAppButton';
@@ -35,7 +35,7 @@ export function RecentUpdationsTab({ tasks, users, triggerRecentUpdationsDownloa
     const arr: FlattenedUpdation[] = [];
     tasks.forEach(t => {
       // Only care about 'update', 'completed', 'draft' events
-      const updates = t.timeline.filter(e => ['update', 'completed', 'draft'].includes(e.type));
+      const updates = (t.timeline || []).filter(e => ['update', 'completed', 'draft'].includes(e.type));
       updates.forEach(u => {
         arr.push({
           taskId: t.id,

@@ -191,20 +191,6 @@ export default function App() {
       } else {
         const docUsers = snap.docs.map(docSnapshot => docSnapshot.data() as UserType);
         setUsers(docUsers);
-        
-        // Dynamic name-sync and permission-sync
-        const hasLegacyNames = docUsers.some(u => u.name.startsWith('Officer '));
-        const hasMissingAdminPerms = docUsers.some(u => u.role === 'admin' && u.canSeeGlobalOverview === undefined);
-        if (hasLegacyNames || hasMissingAdminPerms) {
-          const batch = writeBatch(db);
-          DEFAULT_USERS.forEach(du => {
-            const currentDoc = docUsers.find(lu => lu.id === du.id);
-            if (!currentDoc || currentDoc.name.startsWith('Officer ') || (du.role === 'admin' && hasMissingAdminPerms)) {
-              batch.set(getDocRef('users', du.id), { ...currentDoc, ...du });
-            }
-          });
-          batch.commit().catch(e => console.error("Database names auto-sync error:", e));
-        }
       }
     }, (err) => console.error(err));
     
