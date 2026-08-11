@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ios-bg: #f2f2f7;
+  --color-ios-surface: rgba(255, 255, 255, 0.7);
+  --color-ios-border: rgba(0, 0, 0, 0.1);
+  --color-ios-accent-1: #007aff;
+  --color-ios-accent-2: #ff2d55;
+  --color-ios-accent-3: #5856d6;
+  --color-ios-accent-4: #ff9500;
+  
+  --shadow-ios-soft: 0 4px 24px -6px rgba(0, 0, 0, 0.08), 0 2px 8px -2px rgba(0,0,0,0.04);
+  --shadow-ios-float: 0 20px 40px -10px rgba(0,0,0,0.1), 0 10px 20px -5px rgba(0,0,0,0.05);
+  
+  --radius-ios-sm: 8px;
+  --radius-ios-md: 14px;
+  --radius-ios-lg: 20px;
+  --radius-ios-xl: 28px;
+}
+
 @layer base {
   button, 
   [role="button"],
@@ -12,6 +30,34 @@
     font-family: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #f8fafc; /* slate-50 */
+    background-color: var(--color-ios-bg);
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(88, 86, 214, 0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(255, 45, 85, 0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(0, 122, 255, 0.12) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(255, 149, 0, 0.12) 0px, transparent 50%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .ios-glass {
+    @apply bg-white/75 backdrop-blur-xl border border-white/50 shadow-ios-soft;
+  }
+  .ios-glass-heavy {
+    @apply bg-white/90 backdrop-blur-2xl border border-white/60 shadow-ios-float;
+  }
+  .ios-card {
+    @apply rounded-ios-xl overflow-hidden transition-all duration-300;
+  }
+  .ios-btn {
+    @apply font-semibold tracking-wide rounded-ios-md transition-all duration-300 active:scale-95;
+  }
+  .ios-btn-primary {
+    @apply bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-[0_8px_16px_rgba(79,70,229,0.25)];
+  }
+  .ios-input {
+    @apply bg-white/60 border border-slate-200 focus:bg-white focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 rounded-ios-md transition-all duration-300;
   }
 }

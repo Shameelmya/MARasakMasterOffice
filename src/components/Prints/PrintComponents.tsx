@@ -45,12 +45,12 @@ export function PrintAcknowledgeSlip({ task }: PrintAcknowledgeSlipProps) {
         <div className="mb-12 text-[15px] leading-loose text-black font-medium text-justify" style={{ fontFamily: "'Noto Serif Malayalam', serif" }}>
            ബഹു. {task.personalDetails.name.toUpperCase()}, <br/><br/>
            {formatMalayalamDate(task.createdAt)} റഫറൻസ് നമ്പർ {task.id} ആയി മേൽപ്പറഞ്ഞ വിഷയത്തിൽ താങ്കൾ നൽകിയ അപേക്ഷ / പരാതി സ്വീകരിച്ച് ഔദ്യോഗികമായി രേഖപ്പെടുത്തിയിട്ടുണ്ട്. <br/><br/>
-           പി കെ നവാസ് എം എൽ എയുടെ ഓഫീസുമായി ബന്ധപ്പെട്ടതിന് നന്ദി.
+           എം.എ റസാഖ് മാസ്റ്റർ എം എൽ എയുടെ ഓഫീസുമായി ബന്ധപ്പെട്ടതിന് നന്ദി.
         </div>
         <div className="mt-12 text-right">
           <p className="font-medium text-black mb-2" style={{ fontFamily: "'Noto Serif Malayalam', serif" }}>സ്നേഹത്തോടെ,</p>
           <div className="mt-8 text-right">
-            <p className="font-bold text-black uppercase text-sm" style={{ fontFamily: "'Noto Serif Malayalam', serif" }}>എം.എൽ.എ ഓഫീസ്, താനൂർ</p>
+            <p className="font-bold text-black uppercase text-sm" style={{ fontFamily: "'Noto Serif Malayalam', serif" }}>എം.എൽ.എ ഓഫീസ്, കുന്നമംഗലം</p>
             <p className="text-sm font-normal text-black">Phone: 9037032002</p>
           </div>
         </div>
@@ -134,7 +134,7 @@ export function PrintCompletionLetter({ task }: PrintCompletionLetterProps) {
                 className="hidden font-[cursive] text-3xl text-blue-900 mb-2 italic" 
                 style={{ fontFamily: "'Brush Script MT', cursive" }}
               >
-                P.K Shaji
+                M. A. Razak Master
               </div>
             </div>
           ) : (
@@ -143,7 +143,7 @@ export function PrintCompletionLetter({ task }: PrintCompletionLetterProps) {
             </div>
           )}
           <div className="mt-0 border-t border-slate-100 pt-1 inline-block text-right">
-            <p className="font-bold text-black text-sm" style={{ fontFamily: "'Noto Serif Malayalam', serif" }}>പി.കെ നവാസ്</p>
+            <p className="font-bold text-black text-sm" style={{ fontFamily: "'Noto Serif Malayalam', serif" }}>എം.എ റസാഖ് മാസ്റ്റർ</p>
             <p className="text-sm font-normal text-black mb-1">Member of Legislative Assembly (MLA)</p>
             <p className="text-sm font-normal text-black">Phone: 9037032002</p>
           </div>
@@ -692,8 +692,8 @@ export function PrintRecentUpdationsReport({ config }: PrintRecentUpdationsRepor
           
           <div className="border-b-2 border-black pb-2 mb-4 shrink-0 flex items-end justify-between">
             <div>
-              <h1 className="text-2xl font-bold uppercase tracking-widest text-black">KM Shaji MLA</h1>
-              <p className="text-xs font-bold uppercase tracking-widest text-gray-500">MLA Office, Vengara Constituency</p>
+              <h1 className="text-2xl font-bold uppercase tracking-widest text-black">M. A. Razak Master MLA</h1>
+              <p className="text-xs font-bold uppercase tracking-widest text-gray-500">MLA Office, Kunnamangalam Constituency</p>
             </div>
             <div className="text-right">
               <h2 className="text-base font-bold text-gray-700 uppercase tracking-widest">Recent Updations</h2>

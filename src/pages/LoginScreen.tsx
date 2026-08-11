@@ -70,7 +70,7 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
                 </h2>
                 <div className="h-1 w-12 bg-purple-500 rounded-full"></div>
                 <p className="text-sm sm:text-base font-medium text-slate-300 tracking-wider">
-                  KM Shaji • Vengara Constituency
+                  M. A. Razak Master • Kunnamangalam Constituency
                 </p>
               </div>
             </div>

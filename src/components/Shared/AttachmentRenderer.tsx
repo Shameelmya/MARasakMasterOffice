@@ -22,7 +22,7 @@ export function AttachmentRenderer({ attachment, currentUser, onDeleteSuccess, i
   
   let canDelete = false;
   if (!isString && driveId) {
-    if (currentUser?.role === 'admin' && currentUser?.name === 'KM Shaji (MLA)') {
+    if (currentUser?.role === 'admin' && currentUser?.name === 'M. A. Razak Master (MLA)') {
       canDelete = true;
     } else if (attachment.uploaderId === currentUser?.id && attachment.uploadedAt) {
       // Check if within 24 hours

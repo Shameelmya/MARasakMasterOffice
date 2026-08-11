@@ -595,7 +595,7 @@ export default function App() {
          <option value="Citizen">Citizen Registrations Only</option>
          <option value="Self">Self Mode Only (No Citizen)</option>
        </select>
-       {activeUser?.name === 'KM Shaji (MLA)' && (
+       {activeUser?.name === 'M. A. Razak Master (MLA)' && (
          <select
            value={globalFilters.followUpFrequency || 'All'}
            onChange={e => setGlobalFilters(p => ({...p, followUpFrequency: e.target.value}))}

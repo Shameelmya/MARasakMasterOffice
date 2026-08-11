@@ -93,9 +93,9 @@ export function AdminGlobalView({
         });
         const evs = [];
         if (note && note.trim()) {
-          evs.push({ id: generateUid(), type: 'update', time: getNow(), by: 'KM Shaji (Admin)', text: `Completion Note: ${note}` });
+          evs.push({ id: generateUid(), type: 'update', time: getNow(), by: 'M. A. Razak Master (Admin)', text: `Completion Note: ${note}` });
         }
-        evs.push({ id: generateUid(), type: 'completed', time: getNow(), by: 'KM Shaji (Admin)', text: 'Task marked as fully completed directly by Admin.' });
+        evs.push({ id: generateUid(), type: 'completed', time: getNow(), by: 'M. A. Razak Master (Admin)', text: 'Task marked as fully completed directly by Admin.' });
         updateTask(task.id, { status: 'Completed', officerStatuses: newOffStat, timeline: [...(task.timeline || []), ...evs] });
       }, 
       false, 

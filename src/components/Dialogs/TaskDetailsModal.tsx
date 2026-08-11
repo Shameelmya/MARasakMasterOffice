@@ -330,7 +330,7 @@ export function TaskDetailsModal({
             </h2>
             <div className="flex items-center gap-3 mt-1">
               <p className="text-xs text-slate-400 font-medium tracking-widest uppercase">Ref: {task.id}</p>
-              {currentUser.name === 'KM Shaji (MLA)' && (
+              {currentUser.name === 'M. A. Razak Master (MLA)' && (
                 <div className="flex items-center gap-2 border-l border-slate-700 pl-3">
                   <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Follow-up:</span>
                   <select

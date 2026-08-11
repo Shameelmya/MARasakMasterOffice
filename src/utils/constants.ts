@@ -1,12 +1,12 @@
 import { User } from '../types';
 
 export const fallbackConfig = {
-  apiKey: "AIzaSyDVGf-1JOJqQIK5TGKjQ_O70KSBrN3uG58",
-  authDomain: "km-shaji-office-a83cc.firebaseapp.com",
-  projectId: "km-shaji-office-a83cc",
-  storageBucket: "km-shaji-office-a83cc.firebasestorage.app",
-  messagingSenderId: "481235909399",
-  appId: "1:481235909399:web:b37bc1693a8fbf61209552"
+  apiKey: "AIzaSyDlWgaEm8v3k0tmapwa9Q4Fbx-D0_YXD_A",
+  authDomain: "ma-razak-master-office.firebaseapp.com",
+  projectId: "ma-razak-master-office",
+  storageBucket: "ma-razak-master-office.firebasestorage.app",
+  messagingSenderId: "743153965338",
+  appId: "1:743153965338:web:5212b3ab18dc57376a74a3"
 };
 
 export const DEFAULT_CATEGORIES = [
@@ -40,12 +40,12 @@ export const INPUT_TYPES = [
 ];
 
 export const LOCAL_BODIES = [
-  'Vengara Panchayath',
-  'AR Nagar Panchayath',
-  'Kannamangalam Panchayath',
-  'Othukkungal Panchayath',
-  'Parappur Panchayath',
-  'Thennala Panchayath',
+  'Chathamangalam Panchayath',
+  'Kunnamangalam Panchayath',
+  'Mavoor Panchayath',
+  'Olavanna Panchayath',
+  'Perumanna Panchayath',
+  'Peruvayal Panchayath',
   'Other'
 ];
 
@@ -56,7 +56,7 @@ export const EXT_LINKS: Record<string, string> = {
 };
 
 export const DEFAULT_USERS: User[] = [
-  { id: 'admin', name: 'KM Shaji (MLA)', role: 'admin', pass: 'KMShaji@2026', enabled: true, canInput: true, canSeeReports: true, canSeeGlobal: true, canSeeGlobalOverview: true, canSeeDraftsView: true, canEditGlobalOverview: true, canEditOwnInputs: true, canReassign: true, canGenerateUpdationReport: true, canSeeRecentUpdations: true, phone: '', whatsapp: '' }
+  { id: 'admin', name: 'M. A. Razak Master (MLA)', role: 'admin', pass: 'Master@2026', enabled: true, canInput: true, canSeeReports: true, canSeeGlobal: true, canSeeGlobalOverview: true, canSeeDraftsView: true, canEditGlobalOverview: true, canEditOwnInputs: true, canReassign: true, canGenerateUpdationReport: true, canSeeRecentUpdations: true, phone: '', whatsapp: '' }
 ];
 
 export const ISLAMIC_QUOTES = [

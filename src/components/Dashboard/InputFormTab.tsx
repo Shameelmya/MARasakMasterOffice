@@ -789,7 +789,7 @@ export function InputFormTab({
                 </div>
               ) : isInvitation ? (
                 <div className="bg-indigo-50 border border-indigo-200 p-5 rounded-2xl flex items-center gap-3 text-indigo-800 font-bold mb-6">
-                  <Plus size={24} className="text-indigo-600"/> Auto-Assigned exclusively to KM Shaji (MLA)
+                  <Plus size={24} className="text-indigo-600"/> Auto-Assigned exclusively to M. A. Razak Master (MLA)
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3 mb-6">
