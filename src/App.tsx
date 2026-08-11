@@ -529,7 +529,7 @@ export default function App() {
   if (!activeUser) return <LoginScreen onLogin={handleLogin} users={users} />;
 
   const GlobalFilterBar = () => (
-    <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap gap-3 items-center w-fit mb-6 text-sm">
+    <div className="bg-white p-3 rounded-ios-md border border-slate-200 shadow-sm flex overflow-x-auto no-scrollbar gap-3 items-center w-full mb-6 text-sm whitespace-nowrap md:flex-wrap">
        <span className="font-bold text-slate-800 flex items-center gap-1.5">&#x1F50E; View Mode:</span>
        <select 
          value={globalFilters.status} 
@@ -731,9 +731,9 @@ export default function App() {
         </div>
       )}
 
-      <div className={`min-h-screen bg-slate-100 font-sans text-slate-800 flex-col print-hidden relative z-10 ${taskToPrint ? 'hidden' : 'flex'}`}>
-        <header className={`${isImpersonating ? 'bg-gradient-to-r from-red-900 to-orange-800' : 'bg-gradient-to-r from-[#3B0764] via-[#581C87] to-[#2E1065]'} text-white shadow-sm transition-colors`}>
-          <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className={`min-h-screen bg-transparent font-sans text-slate-800 flex-col print-hidden relative z-10 ${taskToPrint ? 'hidden' : 'flex'}`}>
+        <header className={`safe-pt ${isImpersonating ? 'bg-gradient-to-r from-red-900 to-orange-800' : 'bg-gradient-to-r from-[#3B0764] via-[#581C87] to-[#2E1065]'} text-white shadow-sm transition-colors`}>
+          <div className="max-w-7xl mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm shadow-inner">
                 {isImpersonating ? <Shield size={20} className="text-white animate-pulse" /> : <User size={20} className="text-white" />}
@@ -768,7 +768,7 @@ export default function App() {
           </div>
         </header>
 
-        <main className="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        <main className="flex-grow max-w-7xl mx-auto w-full px-2 sm:px-4 lg:px-8 py-4 sm:py-8 safe-pb">
           <GlobalFilterBar />
           {activeUser.role === 'admin' ? (
             <AdminDashboard 

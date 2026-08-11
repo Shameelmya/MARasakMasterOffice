@@ -118,7 +118,7 @@ export function AllTasksHistoryTab({
                   <button 
                     onClick={() => triggerViewDetails(t)} 
                     title="Detailed Report" 
-                    className="text-slate-600 hover:bg-slate-200 p-2 rounded-lg transition-colors bg-slate-100"
+                    className="touch-target flex items-center justify-center text-slate-600 hover:bg-slate-200 p-2 rounded-lg transition-colors bg-slate-100"
                   >
                     <Eye size={16}/>
                   </button>
@@ -126,7 +126,7 @@ export function AllTasksHistoryTab({
                     <button 
                       onClick={() => handleSendWA(t)} 
                       title="Send WhatsApp Acknowledgement" 
-                      className="text-green-600 hover:bg-green-100 p-2 rounded-lg transition-colors bg-green-50"
+                      className="touch-target flex items-center justify-center text-green-600 hover:bg-green-100 p-2 rounded-lg transition-colors bg-green-50"
                     >
                       <Send size={16}/>
                     </button>
@@ -134,14 +134,14 @@ export function AllTasksHistoryTab({
                   <button 
                     onClick={() => triggerPrint(t)} 
                     title="Print Slip" 
-                    className="text-purple-600 hover:bg-blue-100 p-2 rounded-lg transition-colors bg-blue-50"
+                    className="touch-target flex items-center justify-center text-purple-600 hover:bg-blue-100 p-2 rounded-lg transition-colors bg-blue-50"
                   >
                     <Printer size={16}/>
                   </button>
                   <button 
                     onClick={() => triggerDownloadPDF(t)} 
                     title="Download Slip PDF" 
-                    className="text-indigo-600 hover:bg-indigo-100 p-2 rounded-lg transition-colors bg-indigo-50"
+                    className="touch-target flex items-center justify-center text-indigo-600 hover:bg-indigo-100 p-2 rounded-lg transition-colors bg-indigo-50"
                   >
                     <Download size={16}/>
                   </button>
@@ -149,7 +149,7 @@ export function AllTasksHistoryTab({
                     <button 
                       onClick={() => deleteTask(t.id)} 
                       title="Delete Input" 
-                      className="text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors bg-red-50"
+                      className="touch-target flex items-center justify-center text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors bg-red-50"
                     >
                       <Trash2 size={16}/>
                     </button>

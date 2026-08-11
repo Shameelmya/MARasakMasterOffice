@@ -245,7 +245,7 @@ export function AdminGlobalView({
                         triggerViewDetails(t);
                       }} 
                       title="Detailed Report" 
-                      className="text-slate-600 hover:bg-slate-200 p-2 rounded-lg transition-colors bg-slate-100"
+                      className="touch-target flex items-center justify-center text-slate-600 hover:bg-slate-200 p-2 rounded-lg transition-colors bg-slate-100"
                     >
                       <Eye size={16}/>
                     </button>
@@ -270,7 +270,7 @@ export function AdminGlobalView({
                         }}
                         onTouchEnd={clearWAPress}
                         title={t.isWASent ? "Hold to mark Unsent" : "Send WhatsApp Acknowledgement"} 
-                        className={`p-2 rounded-lg transition-colors ${t.isWASent ? 'bg-slate-200 text-slate-400' : 'text-green-600 hover:bg-green-100 bg-green-50'}`}
+                        className={`touch-target flex items-center justify-center p-2 rounded-lg transition-colors ${t.isWASent ? 'bg-slate-200 text-slate-400' : 'text-green-600 hover:bg-green-100 bg-green-50'}`}
                       >
                         <Send size={16}/>
                       </button>
@@ -279,7 +279,7 @@ export function AdminGlobalView({
                       <button 
                         onClick={() => quickCompleteTask(t)} 
                         title="Quick Complete" 
-                        className="text-purple-600 hover:bg-blue-100 p-2 rounded-lg transition-colors bg-blue-50"
+                        className="touch-target flex items-center justify-center text-purple-600 hover:bg-blue-100 p-2 rounded-lg transition-colors bg-blue-50"
                       >
                         <CheckSquare size={16}/>
                       </button>
@@ -287,7 +287,7 @@ export function AdminGlobalView({
                     <button 
                       onClick={() => deleteTask(t.id)} 
                       title="Delete Input" 
-                      className="text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors bg-red-50"
+                      className="touch-target flex items-center justify-center text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors bg-red-50"
                     >
                       <Trash2 size={16}/>
                     </button>

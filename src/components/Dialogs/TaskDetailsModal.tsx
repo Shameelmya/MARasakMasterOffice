@@ -316,9 +316,9 @@ export function TaskDetailsModal({
   const cardBg = task.isSelfMode ? 'bg-yellow-50/70 border-yellow-200' : 'bg-[#F4F7FB] border-slate-200';
 
   return (
-    <div id="task-details-modal" className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex justify-end">
-      <div className="w-full max-w-2xl bg-white h-full overflow-y-auto animate-in slide-in-from-right flex flex-col shadow-md custom-scrollbar">
-        <div className="bg-slate-900 p-8 text-white flex justify-between items-center sticky top-0 z-10">
+    <div id="task-details-modal" className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-end md:items-stretch md:justify-end">
+      <div className="w-full md:max-w-2xl bg-white max-h-[95vh] md:max-h-none md:h-full overflow-y-auto animate-in slide-in-from-bottom md:slide-in-from-right flex flex-col shadow-md custom-scrollbar rounded-t-3xl md:rounded-none">
+        <div className="bg-slate-900 p-4 md:p-8 text-white flex justify-between items-center sticky top-0 z-10">
           <div>
             <h2 className="text-xl font-bold flex items-center gap-2">
               <FileText size={20}/> Task Details 
@@ -427,7 +427,7 @@ export function TaskDetailsModal({
           </div>
         </div>
 
-        <div className="p-8 space-y-8 flex-1">
+        <div className="p-4 md:p-8 space-y-8 flex-1 safe-pb">
           {(task.status === 'Completed' || task.status === 'Partially Completed') && (
              <div className={`${task.status === 'Completed' ? 'bg-green-50 border-green-200' : 'bg-emerald-50 border-emerald-200'} border p-5 rounded-2xl flex flex-wrap justify-between items-center gap-5`}>
                 <div>

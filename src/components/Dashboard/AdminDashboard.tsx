@@ -160,7 +160,7 @@ export function AdminDashboard({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-1 bg-white p-1 rounded-2xl shadow-sm border border-slate-200 w-full print-hidden">
+      <div className="flex items-center gap-1 bg-white p-1 rounded-2xl shadow-sm border border-slate-200 w-full print-hidden overflow-x-auto no-scrollbar md:flex-wrap">
         <button 
           onClick={() => { setActiveTab('alerts'); setGlobalSearch(''); }} 
           className={`flex-1 justify-center px-3 py-1.5 md:px-4 md:py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 whitespace-nowrap ${activeTab === 'alerts' ? 'bg-red-600 text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}

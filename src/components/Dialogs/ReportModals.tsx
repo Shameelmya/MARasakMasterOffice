@@ -25,8 +25,8 @@ export function ReportConfigModal({ onClose, onGenerate, triggerDownloadPDF, loa
   };
 
   return (
-    <div id="report-config-modal" className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-5">
-      <div className="bg-white rounded-[20px] shadow-md w-full max-w-md overflow-hidden">
+    <div id="report-config-modal" className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-end md:items-center justify-center sm:p-5">
+      <div className="bg-white rounded-t-3xl md:rounded-[20px] shadow-md w-full max-w-md overflow-hidden animate-in slide-in-from-bottom md:zoom-in-95">
         <div className="bg-slate-900 p-5 text-white flex justify-between items-center">
           <h3 className="font-bold text-lg flex items-center gap-2"><FileOutput size={20}/> Generate Master Report</h3>
           <button onClick={onClose} className="text-white hover:text-slate-350 transition-colors"><X size={20}/></button>
@@ -111,8 +111,8 @@ export function OfficerReportConfigModal({ officer, onClose, onGenerate, trigger
   };
 
   return (
-    <div id="officer-report-config-modal" className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-5">
-      <div className="bg-white rounded-[20px] shadow-md w-full max-w-md overflow-hidden">
+    <div id="officer-report-config-modal" className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-end md:items-center justify-center sm:p-5">
+      <div className="bg-white rounded-t-3xl md:rounded-[20px] shadow-md w-full max-w-md overflow-hidden animate-in slide-in-from-bottom md:zoom-in-95">
         <div className="bg-slate-900 p-5 text-white flex justify-between items-center">
           <h3 className="font-bold text-lg flex items-center gap-2"><FileOutput size={20}/> Officer Report: {officer.name}</h3>
           <button onClick={onClose} className="text-white hover:text-slate-350 transition-colors"><X size={20}/></button>
@@ -206,8 +206,8 @@ export function UpdationReportConfigModal({ onClose, onGenerate, users }: Updati
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-5">
-      <div className="bg-white rounded-[20px] shadow-md w-full max-w-md overflow-hidden">
+    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-end md:items-center justify-center sm:p-5">
+      <div className="bg-white rounded-t-3xl md:rounded-[20px] shadow-md w-full max-w-md overflow-hidden animate-in slide-in-from-bottom md:zoom-in-95 max-h-[95vh] overflow-y-auto">
         <div className="bg-emerald-900 p-5 text-white flex justify-between items-center">
           <h3 className="font-bold text-lg flex items-center gap-2"><FileOutput size={20}/> Updation Report Configuration</h3>
           <button onClick={onClose} className="text-white hover:text-slate-350 transition-colors"><X size={20}/></button>

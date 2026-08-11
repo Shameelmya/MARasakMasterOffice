@@ -310,7 +310,7 @@ export function InputFormTab({
       <div className="bg-white p-10 rounded-[20px] shadow-sm text-center max-w-2xl mx-auto border border-green-200 animate-in zoom-in-95">
         <CheckCircle size={60} className="text-green-500 mx-auto mb-4" />
         <h2 className="text-3xl font-bold text-green-800 mb-2">Input Registered Successfully</h2>
-        <div className="bg-[#F4F7FB] p-8 rounded-2xl my-6 inline-block border border-slate-200">
+        <div className="bg-[#F4F7FB] p-4 md:p-8 rounded-2xl my-6 inline-block border border-slate-200">
           <p className="text-sm font-bold text-slate-500 uppercase">Reference ID</p>
           <p className="text-4xl font-bold text-slate-800 tracking-widest">{lastTask.id}</p>
         </div>
@@ -360,7 +360,7 @@ export function InputFormTab({
         </div>
       </div>
 
-      <div className={`p-8 border-b border-slate-100 bg-[#F4F7FB]/50 grid ${form.isSelfMode ? 'grid-cols-1 max-w-3xl' : 'md:grid-cols-2'} gap-10`}>
+      <div className={`p-4 md:p-8 border-b border-slate-100 bg-[#F4F7FB]/50 grid ${form.isSelfMode ? 'grid-cols-1 max-w-3xl' : 'md:grid-cols-2'} gap-6 md:gap-10`}>
         {!form.isSelfMode && (
           <div id="field-types" className="p-2 -m-2">
             <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2 text-lg">
@@ -437,7 +437,7 @@ export function InputFormTab({
         </div>
       </div>
 
-      <div className={`p-8 border-b border-slate-100 relative ${form.isSelfMode ? 'bg-yellow-50/50' : 'bg-white'}`}>
+      <div className={`p-4 md:p-8 border-b border-slate-100 relative ${form.isSelfMode ? 'bg-yellow-50/50' : 'bg-white'}`}>
         <div className="flex justify-between items-center mb-6">
           <h3 className="font-bold text-slate-800 flex items-center gap-2 text-lg">
             <User className="text-purple-600"/> {form.isSelfMode ? 'Application Details' : 'Citizen Details'}
@@ -662,7 +662,7 @@ export function InputFormTab({
         </div>
       </div>
 
-      <div className="p-8 bg-[#F4F7FB]/50">
+      <div className="p-4 md:p-8 bg-[#F4F7FB]/50">
         <div className="grid lg:grid-cols-2 gap-10">
           <div>
             <div id="field-subject" className="mb-6 p-2 -m-2">
@@ -823,7 +823,7 @@ export function InputFormTab({
             </div>
 
             {EXT_LINKS[form.category] && (
-              <div className="mt-8 bg-blue-50 border border-blue-200 rounded-[20px] p-8 text-center shadow-sm">
+              <div className="mt-8 bg-blue-50 border border-blue-200 rounded-[20px] p-4 md:p-8 text-center shadow-sm">
                 <h4 className="text-blue-900 font-bold mb-2 flex items-center justify-center gap-2">Official Portal Registration</h4>
                 <p className="text-blue-700 text-sm font-medium mb-4">Ensure this request is also registered on the official {form.category} website if required.</p>
                 <a 
@@ -840,7 +840,7 @@ export function InputFormTab({
         </div>
       </div>
 
-      <div className="p-8 border-t border-slate-200 bg-white flex flex-col md:flex-row items-center justify-between gap-8">
+      <div className="p-4 md:p-8 border-t border-slate-200 bg-white flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8">
         {!form.isSelfMode ? (
           <label className="flex items-center gap-3 cursor-pointer transition-all duration-300 hover:bg-slate-50 bg-green-50 px-5 py-3 rounded-2xl border border-green-200">
             <input 

@@ -133,29 +133,29 @@ export function OfficerDashboard({
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Dynamic Compact Nav/Tabs List to fit on one line */}
-      <div className="flex flex-wrap items-center gap-2 bg-white p-1.5 rounded-[20px] shadow-sm border border-slate-200 w-full print-hidden">
+      <div className="flex items-center gap-2 bg-white p-1.5 rounded-[20px] shadow-sm border border-slate-200 w-full print-hidden overflow-x-auto no-scrollbar md:flex-wrap">
         <button 
           onClick={() => { setActiveTab('recent'); setGlobalSearch(''); }} 
-          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${activeTab === 'recent' ? 'bg-[#EF4444] text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
+          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'recent' ? 'bg-[#EF4444] text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
         >
           <Bell size={15} /> Recent Assignments
         </button>
         <button 
           onClick={() => { setActiveTab('worker'); setGlobalSearch(''); }} 
-          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${activeTab === 'worker' ? 'bg-[#4F46E5] text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
+          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'worker' ? 'bg-[#4F46E5] text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
         >
           My Assigned Works
         </button>
         <button 
           onClick={() => { setActiveTab('direct_worker'); setGlobalSearch(''); }} 
-          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${activeTab === 'direct_worker' ? 'bg-[#6366F1] text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
+          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'direct_worker' ? 'bg-[#6366F1] text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
         >
           <Zap size={15} /> Assignments from MLA
         </button>
         {hasGlobalOverviewPermission && (
           <button 
             onClick={() => { setActiveTab('overview'); setGlobalSearch(''); }} 
-          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${activeTab === 'overview' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
+          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'overview' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
           >
             <Eye size={15} /> Global Overview
           </button>
@@ -163,27 +163,27 @@ export function OfficerDashboard({
         {user.canSeeRecentUpdations && (
           <button 
             onClick={() => { setActiveTab('recent_updations'); setGlobalSearch(''); loadArchive(); }} 
-            className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${activeTab === 'recent_updations' ? 'bg-amber-500 text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
+            className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'recent_updations' ? 'bg-amber-500 text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
           >
             <Zap size={15} /> Updations
           </button>
         )}
         <button 
           onClick={() => { setActiveTab('input'); setGlobalSearch(''); }} 
-          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${activeTab === 'input' ? 'bg-[#2563EB] text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
+          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'input' ? 'bg-[#2563EB] text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
         >
           Register New Input
         </button>
         <button 
           onClick={() => { setActiveTab('history'); setGlobalSearch(''); loadArchive(); }} 
-          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${activeTab === 'history' ? 'bg-slate-600 text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
+          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'history' ? 'bg-slate-600 text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
         >
           History & Reports
         </button>
         {rejectedTasks.length > 0 && (
           <button 
             onClick={() => { setActiveTab('rejected'); setGlobalSearch(''); }} 
-            className={`px-3 py-1.5 md:px-4 md:py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1 ${activeTab === 'rejected' ? 'bg-orange-600 text-white shadow' : 'text-orange-550 hover:bg-orange-50 text-orange-600 bg-orange-50/60'}`}
+            className={`px-3 py-1.5 md:px-4 md:py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1 whitespace-nowrap ${activeTab === 'rejected' ? 'bg-orange-600 text-white shadow' : 'text-orange-550 hover:bg-orange-50 text-orange-600 bg-orange-50/60'}`}
           >
             <Ban size={13} className="animate-pulse" /> Rejected ({rejectedTasks.length})
           </button>

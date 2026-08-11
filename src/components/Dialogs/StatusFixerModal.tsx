@@ -57,8 +57,8 @@ export function StatusFixerModal({ tasks, updateTask, onClose }: StatusFixerModa
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-5">
-      <div className="bg-white rounded-[20px] w-full max-w-5xl max-h-[90vh] flex flex-col shadow-md animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-end md:items-center justify-center sm:p-5">
+      <div className="bg-white rounded-t-3xl md:rounded-[20px] w-full max-w-5xl max-h-[95vh] md:max-h-[90vh] flex flex-col shadow-md animate-in slide-in-from-bottom md:zoom-in-95 duration-200">
         <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-[#F4F7FB] rounded-t-2xl">
           <h2 className="text-xl font-bold text-slate-800">Quick Status</h2>
           <div className="flex items-center gap-5">
@@ -90,7 +90,7 @@ export function StatusFixerModal({ tasks, updateTask, onClose }: StatusFixerModa
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto p-5 custom-scrollbar">
+        <div className="flex-1 overflow-auto p-5 custom-scrollbar safe-pb">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-200">
