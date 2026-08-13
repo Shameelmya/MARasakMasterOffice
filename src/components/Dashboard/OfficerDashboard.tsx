@@ -1,3 +1,4 @@
+import React, { useState, useMemo } from 'react';
 import { 
   Activity, Database, Plus, Bell, Eye, AlertCircle, Ban, 
   Trash2, EyeOff, FileText, ArrowRight, Zap, FileOutput, CheckCircle, Settings, Users, Menu as MenuIcon
