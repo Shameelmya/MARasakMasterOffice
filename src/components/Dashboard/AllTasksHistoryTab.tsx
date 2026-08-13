@@ -78,7 +78,7 @@ export function AllTasksHistoryTab({
           <option value="Direct Assignment">Direct Assignments</option>
         </select>
       </div>
-      <div className="overflow-x-auto">
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left text-sm text-slate-700 whitespace-nowrap">
           <thead className="bg-[#F4F7FB] border-y border-slate-200 text-slate-500 uppercase text-xs tracking-widest font-bold">
             <tr>
@@ -166,17 +166,88 @@ export function AllTasksHistoryTab({
             )}
           </tbody>
         </table>
-        {visibleCount < filtered.length && (
-          <div className="py-4 text-center">
-            <button 
-              onClick={() => setVisibleCount(v => v + 50)} 
-              className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full font-bold text-sm transition-colors shadow-sm"
-            >
-              Load More Records ({filtered.length - visibleCount} remaining)
-            </button>
+      </div>
+
+      <div className="md:hidden grid grid-cols-1 gap-4">
+        {displayed.map((t, idx) => (
+          <div key={`${t.id}-${idx}-mobile`} className={`bg-white border rounded-[20px] p-4 shadow-sm ${t.isSelfMode ? 'border-yellow-200 bg-yellow-50/50' : 'border-slate-200'}`}>
+            <div className="flex justify-between items-start mb-2">
+              <span className="font-bold text-slate-800 text-sm">
+                {t.id} 
+                {t.isSelfMode && <span className="bg-yellow-300 text-yellow-900 px-1 py-0.5 rounded text-[10px] font-bold uppercase ml-2">Self</span>}
+              </span>
+              <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${t.status==='Completed'?'bg-green-100 text-green-700':t.status==='In Progress'?'bg-amber-100 text-amber-700':t.status==='Draft'?'bg-purple-100 text-purple-700':t.status==='Unsolved'?'bg-slate-200 text-slate-500':'bg-red-100 text-red-700'}`}>
+                {t.status}
+              </span>
+            </div>
+            <p className="font-bold text-slate-800 text-sm mb-1">{t.subject || '-'}</p>
+            <p className="text-xs text-slate-500 mb-3">{t.personalDetails.name} • {t.personalDetails.mobileNumber}</p>
+            
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-xs text-slate-400 font-bold">{formatDate(t.createdAt)}</span>
+              <span className="bg-slate-100 px-2 py-0.5 rounded text-xs text-slate-700 font-medium">{t.category}</span>
+            </div>
+
+            <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100">
+              <button 
+                onClick={() => triggerViewDetails(t)} 
+                title="Detailed Report" 
+                className="flex-1 touch-target flex items-center justify-center text-slate-600 hover:bg-slate-200 p-2 rounded-lg transition-colors bg-slate-100"
+              >
+                <Eye size={16}/>
+              </button>
+              {!t.isSelfMode && (
+                <button 
+                  onClick={() => handleSendWA(t)} 
+                  title="Send WhatsApp Acknowledgement" 
+                  className="flex-1 touch-target flex items-center justify-center text-green-600 hover:bg-green-100 p-2 rounded-lg transition-colors bg-green-50"
+                >
+                  <Send size={16}/>
+                </button>
+              )}
+              <button 
+                onClick={() => triggerPrint(t)} 
+                title="Print Slip" 
+                className="flex-1 touch-target flex items-center justify-center text-purple-600 hover:bg-blue-100 p-2 rounded-lg transition-colors bg-blue-50"
+              >
+                <Printer size={16}/>
+              </button>
+              <button 
+                onClick={() => triggerDownloadPDF(t)} 
+                title="Download Slip PDF" 
+                className="flex-1 touch-target flex items-center justify-center text-indigo-600 hover:bg-indigo-100 p-2 rounded-lg transition-colors bg-indigo-50"
+              >
+                <Download size={16}/>
+              </button>
+              {(currentUser.role === 'admin' || t.status === 'Pending') && (
+                <button 
+                  onClick={() => deleteTask(t.id)} 
+                  title="Delete Input" 
+                  className="flex-1 touch-target flex items-center justify-center text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors bg-red-50"
+                >
+                  <Trash2 size={16}/>
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+        {displayed.length === 0 && (
+          <div className="text-center py-8 text-slate-500 bg-white rounded-[20px] border border-slate-200 shadow-sm">
+            No records found.
           </div>
         )}
       </div>
+
+      {visibleCount < filtered.length && (
+        <div className="py-4 text-center">
+          <button 
+            onClick={() => setVisibleCount(v => v + 50)} 
+            className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full font-bold text-sm transition-colors shadow-sm"
+          >
+            Load More Records ({filtered.length - visibleCount} remaining)
+          </button>
+        </div>
+      )}
     </div>
   );
 }

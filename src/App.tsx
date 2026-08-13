@@ -529,7 +529,7 @@ export default function App() {
   if (!activeUser) return <LoginScreen onLogin={handleLogin} users={users} />;
 
   const GlobalFilterBar = () => (
-    <div className="bg-white p-3 rounded-ios-md border border-slate-200 shadow-sm flex overflow-x-auto no-scrollbar gap-3 items-center w-full mb-6 text-sm whitespace-nowrap md:flex-wrap">
+    <div className="bg-white p-3 sm:p-4 rounded-ios-md border border-slate-200 shadow-sm flex flex-wrap gap-2 sm:gap-3 items-center w-full mb-6 text-sm">
        <span className="font-bold text-slate-800 flex items-center gap-1.5">&#x1F50E; View Mode:</span>
        <select 
          value={globalFilters.status} 
@@ -733,14 +733,14 @@ export default function App() {
 
       <div className={`min-h-screen bg-transparent font-sans text-slate-800 flex-col print-hidden relative z-10 ${taskToPrint ? 'hidden' : 'flex'}`}>
         <header className={`safe-pt ${isImpersonating ? 'bg-gradient-to-r from-red-900 to-orange-800' : 'bg-gradient-to-r from-[#3B0764] via-[#581C87] to-[#2E1065]'} text-white shadow-sm transition-colors`}>
-          <div className="max-w-7xl mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm shadow-inner">
-                {isImpersonating ? <Shield size={20} className="text-white animate-pulse" /> : <User size={20} className="text-white" />}
+              <div className="bg-white/20 p-1.5 sm:p-2 rounded-lg backdrop-blur-sm shadow-inner">
+                {isImpersonating ? <Shield size={18} className="text-white animate-pulse" /> : <User size={18} className="text-white" />}
               </div>
               <div>
                 <h1 className="font-bold text-lg leading-tight tracking-wide">MLA Squad</h1>
-                <p className="text-xs text-blue-100 font-medium tracking-wider uppercase">
+                <p className="text-[10px] sm:text-xs text-blue-100 font-medium tracking-wider uppercase leading-none mt-0.5">
                   {isImpersonating ? `ACTING AS: ${activeUser.name}` : activeUser.name}
                 </p>
               </div>
@@ -759,9 +759,9 @@ export default function App() {
               </div>
               <button 
                 onClick={handleLogout} 
-                className="flex items-center gap-2 text-sm bg-red-500/90 hover:bg-red-600 transition-colors px-4 py-2 rounded-lg font-bold shadow-sm"
+                className="flex items-center gap-1.5 text-xs sm:text-sm bg-red-500/90 hover:bg-red-600 transition-colors px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-bold shadow-sm"
               >
-                <LogOut size={16} /> 
+                <LogOut size={14} className="sm:w-4 sm:h-4" /> 
                 <span className="hidden sm:inline">Logout</span>
               </button>
             </div>

@@ -92,7 +92,7 @@ export function WorkerTab({
           />
         </div>
       </div>
-      <div className="flex overflow-x-auto no-scrollbar gap-5 snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:overflow-visible w-full pb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 w-full pb-4">
         <Column title="New / Pending" count={todo.length} color="slate">
           {todo.map((t, idx) => (
             <WorkerTaskCard 
@@ -191,7 +191,7 @@ function Column({ title, count, color, children, onTogglePartially, showPartiall
     purple: 'border-purple-200 text-purple-700 bg-purple-100' 
   };
   return (
-    <div className="bg-[#F4F7FB] rounded-2xl p-3 border border-slate-200 flex flex-col h-[800px] overflow-hidden min-w-[85vw] sm:min-w-[300px] lg:min-w-0 snap-center">
+    <div className="bg-[#F4F7FB] rounded-2xl p-3 border border-slate-200 flex flex-col h-[600px] sm:h-[800px] overflow-hidden w-full">
       <h3 className="font-bold text-base mb-4 flex items-center justify-between pb-3 border-b border-slate-200">
         <div className="flex items-center gap-2">
           <span className="text-slate-800">{title}</span>

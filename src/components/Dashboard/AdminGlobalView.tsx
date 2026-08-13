@@ -160,7 +160,7 @@ export function AdminGlobalView({
             {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
           </select>
         </div>
-        <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200 h-fit">
+        <div className="hidden md:flex bg-slate-100 p-1 rounded-2xl border border-slate-200 h-fit">
           <button 
             onClick={() => setViewMode('grid')} 
             className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-white shadow-sm text-purple-600' : 'text-slate-500 hover:text-slate-700'}`} 
