@@ -547,7 +547,7 @@ const isImpersonating = !!impersonatedUser;
        <div className="relative inline-block">
          <div className="px-1.5 py-1.5 sm:px-3 sm:py-1.5 border border-slate-300 rounded-[10px] sm:rounded-lg font-bold text-slate-700 bg-slate-50 flex items-center justify-between gap-1 min-w-[70px]">
            <span className="sm:hidden text-xs">
-             📅 {
+             {
                globalFilters.dateRange === 'today' ? 'Today' :
                globalFilters.dateRange === 'yesterday' ? "Y'day" :
                globalFilters.dateRange === '7days' ? '7 Days' :

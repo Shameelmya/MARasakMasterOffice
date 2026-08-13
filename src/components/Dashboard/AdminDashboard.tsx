@@ -118,7 +118,7 @@ export function AdminDashboard({
   setGlobalFilters,
   loadArchive
 }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState('recent_updations');
+  const [activeTab, setActiveTab] = useState('alerts');
   const [globalSearch, setGlobalSearch] = useState('');
   const [initialOfficerFilter, setInitialOfficerFilter] = useState('');
   const [reportModalOpen, setReportModalOpen] = useState(false);
