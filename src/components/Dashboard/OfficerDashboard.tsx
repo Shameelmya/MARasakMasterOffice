@@ -392,46 +392,45 @@ export function OfficerDashboard({
       )}
 
       {/* Mobile Bottom Navigation */}
-      {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.08)] border-t border-slate-100 pb-safe pt-2 px-6 z-[90]">
-        <div className="flex justify-between items-end w-full max-w-md mx-auto h-16 pb-2">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.1)] border-t border-slate-100 pb-safe pt-3 px-4 sm:px-6 z-[90] min-h-[90px] safe-area-bottom">
+        <div className="flex justify-between items-end w-full max-w-md mx-auto h-full pb-3">
           <button 
             onClick={() => { setActiveTab('recent'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 transition-all ${activeTab === 'recent' && !mobileSettingsOpen ? 'text-red-600 scale-110' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`flex flex-col items-center gap-1 transition-all ${activeTab === 'recent' && !mobileSettingsOpen ? 'text-red-700 scale-110' : 'text-slate-500 hover:text-slate-700'}`}
           >
-            <div className={`p-2.5 rounded-2xl transition-colors ${activeTab === 'recent' && !mobileSettingsOpen ? 'bg-red-100' : 'bg-slate-50'}`}><Bell size={22} strokeWidth={2.5} /></div>
-            <span className="text-[10px] font-bold">Recent</span>
+            <div className={`p-3 rounded-2xl transition-colors ${activeTab === 'recent' && !mobileSettingsOpen ? 'bg-red-200' : 'bg-slate-100'}`}><Bell size={24} strokeWidth={2.5} /></div>
+            <span className="text-[10px] font-bold mt-0.5">Recent</span>
           </button>
           
           <button 
             onClick={() => { setActiveTab('input'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 transition-all ${activeTab === 'input' && !mobileSettingsOpen ? 'text-purple-600 scale-110' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`flex flex-col items-center gap-1 transition-all ${activeTab === 'input' && !mobileSettingsOpen ? 'text-purple-700 scale-110' : 'text-slate-500 hover:text-slate-700'}`}
           >
-            <div className={`p-2.5 rounded-2xl transition-colors ${activeTab === 'input' && !mobileSettingsOpen ? 'bg-purple-100' : 'bg-slate-50'}`}><Plus size={22} strokeWidth={2.5} /></div>
-            <span className="text-[10px] font-bold">Input</span>
+            <div className={`p-3 rounded-2xl transition-colors ${activeTab === 'input' && !mobileSettingsOpen ? 'bg-purple-200' : 'bg-slate-100'}`}><Plus size={24} strokeWidth={2.5} /></div>
+            <span className="text-[10px] font-bold mt-0.5">Input</span>
           </button>
           
           <button 
             onClick={() => { setActiveTab('worker'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center justify-center p-4 mb-2 rounded-[24px] shadow-xl transition-all ${activeTab === 'worker' && !mobileSettingsOpen ? 'bg-purple-600 text-white shadow-purple-500/40 scale-110' : 'bg-slate-800 text-white shadow-slate-900/20'}`}
+            className={`flex flex-col items-center justify-center p-4 mb-2 rounded-[24px] shadow-xl transition-all ${activeTab === 'worker' && !mobileSettingsOpen ? 'bg-purple-600 text-white shadow-purple-500/40 scale-110' : 'bg-slate-100 text-slate-600 shadow-slate-200/50'}`}
           >
-            <Activity size={26} strokeWidth={2.5} />
+            <Activity size={28} strokeWidth={2.5} />
           </button>
 
           <button 
             onClick={() => { setActiveTab('history'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 transition-all ${activeTab === 'history' && !mobileSettingsOpen ? 'text-slate-600 scale-110' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`flex flex-col items-center gap-1 transition-all ${activeTab === 'history' && !mobileSettingsOpen ? 'text-slate-700 scale-110' : 'text-slate-500 hover:text-slate-700'}`}
           >
-            <div className={`p-2.5 rounded-2xl transition-colors ${activeTab === 'history' && !mobileSettingsOpen ? 'bg-slate-200' : 'bg-slate-50'}`}><FileText size={22} strokeWidth={2.5} /></div>
-            <span className="text-[10px] font-bold">History</span>
+            <div className={`p-3 rounded-2xl transition-colors ${activeTab === 'history' && !mobileSettingsOpen ? 'bg-slate-200' : 'bg-slate-100'}`}><FileText size={24} strokeWidth={2.5} /></div>
+            <span className="text-[10px] font-bold mt-0.5">History</span>
           </button>
           
           <button 
             onClick={() => { setMobileSettingsOpen(!mobileSettingsOpen); }} 
-            className={`flex flex-col items-center gap-1 transition-all ${mobileSettingsOpen ? 'text-blue-600 scale-110' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`flex flex-col items-center gap-1 transition-all ${mobileSettingsOpen ? 'text-blue-700 scale-110' : 'text-slate-500 hover:text-slate-700'}`}
           >
-            <div className={`p-2.5 rounded-2xl transition-colors ${mobileSettingsOpen ? 'bg-blue-100' : 'bg-slate-50'}`}><MenuIcon size={22} strokeWidth={2.5} /></div>
-            <span className="text-[10px] font-bold">Menu</span>
+            <div className={`p-3 rounded-2xl transition-colors ${mobileSettingsOpen ? 'bg-blue-200' : 'bg-slate-100'}`}><MenuIcon size={24} strokeWidth={2.5} /></div>
+            <span className="text-[10px] font-bold mt-0.5">Menu</span>
           </button>
         </div>
       </div>
@@ -439,7 +438,7 @@ export function OfficerDashboard({
       {/* Mobile Settings Modal Menu */}
       {mobileSettingsOpen && (
         <div className="md:hidden fixed inset-0 z-[80] bg-slate-900/40 backdrop-blur-sm" onClick={() => setMobileSettingsOpen(false)}>
-          <div className="absolute bottom-[80px] left-4 right-4 bg-white rounded-3xl p-5 shadow-xl border border-slate-200 animate-in slide-in-from-bottom-10 flex flex-col gap-3" onClick={e => e.stopPropagation()}>
+          <div className="absolute bottom-[100px] left-4 right-4 bg-white rounded-3xl p-5 shadow-xl border border-slate-200 animate-in slide-in-from-bottom-10 flex flex-col gap-3" onClick={e => e.stopPropagation()}>
             <h3 className="font-bold text-slate-800 text-sm mb-2 border-b border-slate-100 pb-2">More Options</h3>
             <button 
               onClick={() => { setActiveTab('direct_worker'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 

@@ -206,8 +206,8 @@ export function RecentUpdationsTab({ tasks, users, triggerRecentUpdationsDownloa
             className="bg-transparent pl-1 pr-2 sm:pr-3 py-1.5 sm:py-2 font-bold text-[10px] sm:text-xs text-slate-700 outline-none cursor-pointer appearance-none text-center max-w-[80px] sm:max-w-none"
             title="Officer"
           >
-            <option value="All">All Offs</option>
-            {users.map(u => <option key={u.id} value={u.id}>{u.name.split(' ')[0]}</option>)}
+            <option value="All">All Officers</option>
+            {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
           </select>
         </div>
 
@@ -222,9 +222,9 @@ export function RecentUpdationsTab({ tasks, users, triggerRecentUpdationsDownloa
             className="bg-transparent pl-1 pr-2 sm:pr-3 py-1.5 sm:py-2 font-bold text-[10px] sm:text-xs text-slate-700 outline-none cursor-pointer appearance-none text-center max-w-[80px] sm:max-w-none"
             title="Messages"
           >
-            <option value="All">All Msgs</option>
-            <option value="Sent">Sent</option>
-            <option value="Not Sent">Unsent</option>
+            <option value="All">All Messages</option>
+            <option value="Sent">Message Sent</option>
+            <option value="Not Sent">Message Not Sent</option>
           </select>
         </div>
       </div>

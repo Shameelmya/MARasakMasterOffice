@@ -590,7 +590,7 @@ const isImpersonating = !!impersonatedUser;
        <select 
          value={globalFilters.applicationMode} 
          onChange={e => setGlobalFilters(p => ({...p, applicationMode: e.target.value as any}))} 
-         className="px-1.5 py-1.5 sm:px-3 sm:py-1.5 border border-slate-300 rounded-[10px] sm:rounded-lg font-bold text-slate-700 outline-none bg-slate-50 focus:border-indigo-500 transition-all min-w-min"
+         className="px-1.5 py-1.5 sm:px-3 sm:py-1.5 border border-slate-300 rounded-[10px] sm:rounded-lg font-bold text-slate-700 outline-none bg-slate-50 focus:border-indigo-500 transition-all min-w-[90px] max-w-[110px] sm:max-w-none truncate"
        >
          <option value="All">📝 All Applications</option>
          <option value="Office">📝 Self mode</option>
@@ -600,7 +600,7 @@ const isImpersonating = !!impersonatedUser;
          <select
            value={globalFilters.followUpFrequency || 'All'}
            onChange={e => setGlobalFilters(p => ({...p, followUpFrequency: e.target.value}))}
-           className="px-1.5 py-1.5 sm:px-3 sm:py-1.5 border border-slate-300 rounded-[10px] sm:rounded-lg font-bold text-slate-700 outline-none bg-blue-50 focus:border-purple-500 transition-all min-w-min"
+           className="px-1.5 py-1.5 sm:px-3 sm:py-1.5 border border-slate-300 rounded-[10px] sm:rounded-lg font-bold text-slate-700 outline-none bg-blue-50 focus:border-purple-500 transition-all min-w-[90px] max-w-[110px] sm:max-w-none truncate"
          >
            <option value="All">All Follow-ups</option>
            <option value="1W">1 Week</option>

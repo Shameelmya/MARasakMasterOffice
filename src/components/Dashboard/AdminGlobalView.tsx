@@ -129,36 +129,38 @@ export function AdminGlobalView({
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-5 flex-wrap bg-white p-5 rounded-[20px] border border-slate-200 shadow-sm justify-between">
-        <div className="flex flex-wrap gap-5 flex-1">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+      <div className="flex flex-col md:flex-row gap-2 sm:gap-5 bg-white p-3 sm:p-5 rounded-[20px] border border-slate-200 shadow-sm justify-between">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-5 flex-1">
+          <div className="relative flex-1 w-full">
+            <Search size={18} className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400" />
             <input 
               type="text" 
               placeholder="Search entries by Subject, Name, ID, Mobile..." 
               value={search} 
               onChange={e => setSearch(e.target.value)} 
-              className="w-full pl-12 pr-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl font-medium outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 bg-white" 
+              className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-[14px] sm:rounded-2xl font-medium outline-none focus:ring-2 focus:ring-blue-500 text-slate-800" 
             />
           </div>
-          {categories && (
+          <div className="flex gap-2 w-full sm:w-auto">
+            {categories && (
+              <select 
+                value={catFilter} 
+                onChange={e => setCatFilter(e.target.value)} 
+                className="flex-1 px-2 sm:px-4 py-2 sm:py-2.5 border border-slate-300 rounded-[14px] sm:rounded-2xl font-medium outline-none bg-white focus:ring-2 focus:ring-blue-500 min-w-0 font-bold text-[10px] sm:text-sm text-slate-700"
+              >
+                <option value="All">All Categories</option>
+                {sortedCategories.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            )}
             <select 
-              value={catFilter} 
-              onChange={e => setCatFilter(e.target.value)} 
-              className="px-4 py-2.5 border border-slate-300 rounded-2xl font-medium outline-none bg-white focus:ring-2 focus:ring-blue-500 min-w-[150px] font-bold text-slate-700"
+              value={officerFilter} 
+              onChange={e => setOfficerFilter(e.target.value)} 
+              className="flex-1 px-2 sm:px-4 py-2 sm:py-2.5 border border-slate-300 rounded-[14px] sm:rounded-2xl font-medium outline-none bg-white focus:ring-2 focus:ring-blue-500 min-w-0 font-bold text-[10px] sm:text-sm text-slate-700"
             >
-              <option value="All">All Categories</option>
-              {sortedCategories.map(c => <option key={c} value={c}>{c}</option>)}
+              <option value="All">All Assigned Officers</option>
+              {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
             </select>
-          )}
-          <select 
-            value={officerFilter} 
-            onChange={e => setOfficerFilter(e.target.value)} 
-            className="px-4 py-2.5 border border-slate-300 rounded-2xl font-medium outline-none bg-white focus:ring-2 focus:ring-blue-500 min-w-[150px] font-bold text-slate-700"
-          >
-            <option value="All">All Assigned Officers</option>
-            {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
-          </select>
+          </div>
         </div>
         <div className="hidden md:flex bg-slate-100 p-1 rounded-2xl border border-slate-200 h-fit">
           <button 
