@@ -423,7 +423,7 @@ export function OfficerDashboard({
             <div className={`flex items-center justify-center w-[48px] h-[48px] rounded-[16px] transition-all ${activeTab === 'worker' && !mobileSettingsOpen ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-blue-600' : 'bg-white/15 text-white/80'}`}>
               <Activity size={24} strokeWidth={2.5} />
             </div>
-            <span className="text-xs font-semibold leading-none">Worker</span>
+            <span className="text-xs font-semibold leading-none">Work</span>
           </button>
 
           <button 

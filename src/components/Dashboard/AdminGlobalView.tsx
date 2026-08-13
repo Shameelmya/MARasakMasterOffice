@@ -180,6 +180,24 @@ export function AdminGlobalView({
         </div>
       </div>
       
+      <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar py-1">
+         <div className="bg-[#EF4444] border border-red-600 rounded-[14px] sm:rounded-[20px] py-3 sm:py-4 px-4 sm:px-6 shadow-sm shrink-0 text-center flex flex-col items-center justify-center min-w-[100px] sm:min-w-[140px]">
+            <span className="text-3xl sm:text-4xl font-bold text-yellow-300 leading-none mb-1">{displayed.length}</span>
+            <span className="text-[8px] sm:text-xs font-bold text-white/90 uppercase tracking-widest">Total Found</span>
+         </div>
+         <div className="bg-white border border-slate-200 rounded-[14px] sm:rounded-[20px] py-3 sm:py-4 px-4 sm:px-6 shadow-sm shrink-0 text-center flex flex-col items-center justify-center min-w-[100px] sm:min-w-[140px]">
+            <span className="text-3xl sm:text-4xl font-bold text-slate-800 leading-none mb-1">{displayed.filter(t => t.status === 'Pending').length}</span>
+            <span className="text-[8px] sm:text-xs font-bold text-red-500 uppercase tracking-widest">Pending</span>
+         </div>
+         <div className="bg-white border border-slate-200 rounded-[14px] sm:rounded-[20px] py-3 sm:py-4 px-4 sm:px-6 shadow-sm shrink-0 text-center flex flex-col items-center justify-center min-w-[100px] sm:min-w-[140px]">
+            <span className="text-3xl sm:text-4xl font-bold text-slate-800 leading-none mb-1">{displayed.filter(t => t.status === 'In Progress').length}</span>
+            <span className="text-[8px] sm:text-xs font-bold text-orange-500 uppercase tracking-widest">In Progress</span>
+         </div>
+         <div className="bg-white border border-slate-200 rounded-[14px] sm:rounded-[20px] py-3 sm:py-4 px-4 sm:px-6 shadow-sm shrink-0 text-center flex flex-col items-center justify-center min-w-[100px] sm:min-w-[140px]">
+            <span className="text-3xl sm:text-4xl font-bold text-slate-800 leading-none mb-1">{displayed.filter(t => t.status === 'Completed').length}</span>
+            <span className="text-[8px] sm:text-xs font-bold text-green-500 uppercase tracking-widest">Completed</span>
+         </div>
+      </div>
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {displayed.map((t, i) => (

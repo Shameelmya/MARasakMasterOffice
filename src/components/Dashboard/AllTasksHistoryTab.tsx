@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { 
-  Search, Eye, Send, Printer, Download, Trash2 
+  Search, Eye, Send, Printer, Download, Trash2, Filter 
 } from 'lucide-react';
 import { Task, User, GlobalFilters } from '../../types';
 import { useFilteredTasks } from '../../hooks/useFilteredTasks';
@@ -60,23 +60,32 @@ export function AllTasksHistoryTab({
 
   return (
     <div id="all-tasks-history-tab" className="bg-white rounded-[20px] shadow-sm border border-slate-200 p-8 space-y-6">
-      <div className="flex gap-5 flex-wrap">
-        <input 
-          type="text" 
-          placeholder="Search history by Subject, Name, ID, Mobile..." 
-          value={search} 
-          onChange={e => setSearch(e.target.value)} 
-          className="flex-1 min-w-[250px] px-4 py-2 border border-slate-300 rounded-2xl font-medium outline-none focus:border-purple-500 bg-white text-slate-800" 
-        />
-        <select 
-          value={catFilter} 
-          onChange={e => setCatFilter(e.target.value)} 
-          className="px-4 py-2 border border-slate-300 rounded-2xl font-medium outline-none bg-white font-bold text-slate-700"
-        >
-          <option value="All">All Categories</option>
-          {sortedCategories.map(c => <option key={c} value={c}>{c}</option>)}
-          <option value="Direct Assignment">Direct Assignments</option>
-        </select>
+      <div className="flex gap-2 sm:gap-5">
+        <div className="relative flex-1 min-w-0">
+          <Search size={18} className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input 
+            type="text" 
+            placeholder="Search history by Subject, Name, ID, Mobile..." 
+            value={search} 
+            onChange={e => setSearch(e.target.value)} 
+            className="w-full pl-9 sm:pl-12 pr-4 py-2 sm:py-2.5 bg-white border border-slate-300 rounded-[12px] sm:rounded-2xl font-medium outline-none focus:border-purple-500 text-slate-800 text-[11px] sm:text-base" 
+          />
+        </div>
+        <div className="relative inline-block shrink-0">
+          <div className="flex items-center justify-center w-[36px] h-[36px] sm:w-auto sm:h-auto sm:px-4 sm:py-2.5 border border-slate-300 rounded-[12px] sm:rounded-2xl font-medium outline-none bg-white font-bold text-slate-700">
+            <span className="sm:hidden"><Filter size={18} className={catFilter !== 'All' ? 'text-purple-600' : 'text-slate-500'}/></span>
+            <span className="hidden sm:inline">{catFilter === 'All' ? 'All Categories' : catFilter}</span>
+          </div>
+          <select 
+            value={catFilter} 
+            onChange={e => setCatFilter(e.target.value)} 
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          >
+            <option value="All">All Categories</option>
+            {sortedCategories.map(c => <option key={c} value={c}>{c}</option>)}
+            <option value="Direct Assignment">Direct Assignments</option>
+          </select>
+        </div>
       </div>
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left text-sm text-slate-700 whitespace-nowrap">

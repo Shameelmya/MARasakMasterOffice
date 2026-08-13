@@ -529,7 +529,7 @@ const isImpersonating = !!impersonatedUser;
   if (!activeUser) return <LoginScreen onLogin={handleLogin} users={users} />;
 
   const GlobalFilterBar = () => (
-    <div className="bg-white p-2 sm:p-4 rounded-[16px] sm:rounded-ios-md border border-slate-200 shadow-sm flex flex-row gap-1 sm:gap-3 items-center w-full mb-4 sm:mb-6 text-[10px] sm:text-sm overflow-x-auto no-scrollbar">
+    <div className="bg-white p-2 sm:p-4 rounded-[16px] sm:rounded-ios-md border border-slate-200 shadow-sm flex flex-row gap-1 sm:gap-3 items-center w-full text-[10px] sm:text-sm overflow-x-auto no-scrollbar">
        <span className="hidden sm:flex font-bold text-slate-800 items-center gap-1.5">&#x1F50E; View Mode:</span>
        <select 
          value={globalFilters.status} 
@@ -764,44 +764,48 @@ const isImpersonating = !!impersonatedUser;
       )}
 
       <div className={`min-h-screen bg-transparent font-sans text-slate-800 flex-col print-hidden relative z-10 ${taskToPrint ? 'hidden' : 'flex'}`}>
-        <header className={`safe-pt ${isImpersonating ? 'bg-gradient-to-r from-red-900 to-orange-800' : 'bg-gradient-to-r from-[#3B0764] via-[#581C87] to-[#2E1065]'} text-white shadow-sm transition-colors`}>
-          <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:h-16 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-white/20 p-1.5 sm:p-2 rounded-lg backdrop-blur-sm shadow-inner">
-                {isImpersonating ? <Shield size={18} className="text-white animate-pulse" /> : <User size={18} className="text-white" />}
+        <div className="sticky top-0 z-[100] bg-slate-50/95 backdrop-blur-md shadow-sm border-b border-slate-200/50">
+          <header className={`safe-pt ${isImpersonating ? 'bg-gradient-to-r from-red-900 to-orange-800' : 'bg-gradient-to-r from-[#3B0764] via-[#581C87] to-[#2E1065]'} text-white shadow-sm transition-colors`}>
+            <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:h-16 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-white/20 p-1.5 sm:p-2 rounded-lg backdrop-blur-sm shadow-inner">
+                  {isImpersonating ? <Shield size={18} className="text-white animate-pulse" /> : <User size={18} className="text-white" />}
+                </div>
+                <div>
+                  <h1 className="font-bold text-lg leading-tight tracking-wide">MLA Squad</h1>
+                  <p className="text-[10px] sm:text-xs text-blue-100 font-medium tracking-wider uppercase leading-none mt-0.5">
+                    {isImpersonating ? `ACTING AS: ${activeUser.name}` : activeUser.name}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h1 className="font-bold text-lg leading-tight tracking-wide">MLA Squad</h1>
-                <p className="text-[10px] sm:text-xs text-blue-100 font-medium tracking-wider uppercase leading-none mt-0.5">
-                  {isImpersonating ? `ACTING AS: ${activeUser.name}` : activeUser.name}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-5">
-              {isImpersonating && (
+              <div className="flex items-center gap-5">
+                {isImpersonating && (
+                  <button 
+                    onClick={() => setImpersonatedUser(null)} 
+                    className="hidden sm:flex items-center gap-1 text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded border border-white/30 transition-colors font-bold"
+                  >
+                    Exit Profile
+                  </button>
+                )}
+                <div className="hidden md:flex items-center text-sm text-blue-100 bg-white/10 px-4 py-1.5 rounded-full border border-white/10">
+                  <LiveClock />
+                </div>
                 <button 
-                  onClick={() => setImpersonatedUser(null)} 
-                  className="hidden sm:flex items-center gap-1 text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded border border-white/30 transition-colors font-bold"
+                  onClick={handleLogout} 
+                  className="flex items-center gap-1.5 text-xs sm:text-sm bg-red-500/90 hover:bg-red-600 transition-colors px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-bold shadow-sm"
                 >
-                  Exit Profile
+                  <LogOut size={14} className="sm:w-4 sm:h-4" /> 
+                  <span className="hidden sm:inline">Logout</span>
                 </button>
-              )}
-              <div className="hidden md:flex items-center text-sm text-blue-100 bg-white/10 px-4 py-1.5 rounded-full border border-white/10">
-                <LiveClock />
               </div>
-              <button 
-                onClick={handleLogout} 
-                className="flex items-center gap-1.5 text-xs sm:text-sm bg-red-500/90 hover:bg-red-600 transition-colors px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-bold shadow-sm"
-              >
-                <LogOut size={14} className="sm:w-4 sm:h-4" /> 
-                <span className="hidden sm:inline">Logout</span>
-              </button>
             </div>
+          </header>
+          <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-2 sm:py-3">
+            <GlobalFilterBar />
           </div>
-        </header>
+        </div>
 
-        <main className="flex-grow max-w-7xl mx-auto w-full px-2 sm:px-4 lg:px-8 py-4 sm:py-8 safe-pb">
-          <GlobalFilterBar />
+        <main className="flex-grow max-w-7xl mx-auto w-full px-2 sm:px-4 lg:px-8 py-2 sm:py-4 safe-pb">
           {activeUser.role === 'admin' ? (
             <AdminDashboard 
               currentUser={activeUser}

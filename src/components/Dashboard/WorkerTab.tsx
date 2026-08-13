@@ -46,7 +46,6 @@ export function WorkerTab({
   triggerConfirm
 }: WorkerTabProps) {
   const [search, setSearch] = useState('');
-  const [showPartiallyCompleted, setShowPartiallyCompleted] = useState(false);
 
   useEffect(() => {
     if (initialSearch) setSearch(initialSearch);
@@ -73,8 +72,8 @@ export function WorkerTab({
   const todo = typeFiltered.filter(t => t.status !== 'Unsolved' && (!t.officerStatuses[user.id] || t.officerStatuses[user.id] === 'Pending'));
   const inProg = typeFiltered.filter(t => t.status !== 'Unsolved' && (t.officerStatuses[user.id] === 'Received' || t.officerStatuses[user.id] === 'In Progress'));
   const draft = typeFiltered.filter(t => t.status !== 'Unsolved' && t.officerStatuses[user.id] === 'Draft');
-  const comp = typeFiltered.filter(t => t.status !== 'Unsolved' && (t.officerStatuses[user.id] === 'Completed' || t.officerStatuses[user.id] === 'D Finished'));
-  const displayedComp = comp.filter(t => showPartiallyCompleted ? t.officerStatuses[user.id] === 'D Finished' : t.officerStatuses[user.id] === 'Completed');
+  const comp = typeFiltered.filter(t => t.status !== 'Unsolved' && t.officerStatuses[user.id] === 'Completed');
+  const displayedComp = comp;
   const unsolved = typeFiltered.filter(t => t.status === 'Unsolved');
 
   return (
@@ -133,11 +132,9 @@ export function WorkerTab({
           ))}
         </Column>
         <Column 
-          title={showPartiallyCompleted ? "D Finished" : "Completed"} 
-          count={comp.length} 
+          title="Completed" 
+          count={displayedComp.length} 
           color="green"
-          onTogglePartially={() => setShowPartiallyCompleted(!showPartiallyCompleted)}
-          showPartially={showPartiallyCompleted}
         >
           {displayedComp.map((t, idx) => (
              <WorkerTaskCard 
@@ -179,11 +176,9 @@ interface ColumnProps {
   count: number;
   color: 'slate' | 'blue' | 'green' | 'purple';
   children: React.ReactNode;
-  onTogglePartially?: () => void;
-  showPartially?: boolean;
 }
 
-function Column({ title, count, color, children, onTogglePartially, showPartially }: ColumnProps) {
+function Column({ title, count, color, children }: ColumnProps) {
   const colorMap = { 
     slate: 'border-slate-200 text-slate-700 bg-slate-100', 
     blue: 'border-blue-200 text-blue-700 bg-blue-100', 
@@ -193,18 +188,7 @@ function Column({ title, count, color, children, onTogglePartially, showPartiall
   return (
     <div className="bg-[#F4F7FB] rounded-2xl p-3 border border-slate-200 flex flex-col h-[600px] sm:h-[800px] overflow-hidden w-full">
       <h3 className="font-bold text-base mb-4 flex items-center justify-between pb-3 border-b border-slate-200">
-        <div className="flex items-center gap-2">
-          <span className="text-slate-800">{title}</span>
-          {onTogglePartially && (
-            <button 
-              onClick={onTogglePartially}
-              title="Toggle D Finished View"
-              className={`text-[9px] px-1.5 py-0.5 rounded font-bold border uppercase tracking-wider transition-colors ${showPartially ? 'bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200'}`}
-            >
-              DF
-            </button>
-          )}
-        </div>
+        <h3 className="font-bold text-slate-800 text-[13px]">{title}</h3>
         <span className={`text-xs px-2.5 py-1 rounded-full font-bold border ${colorMap[color]}`}>
           {count}
         </span>
@@ -259,8 +243,8 @@ const WorkerTaskCard = React.memo(({
     const allAssigned = task.assignedTo.map(id => newOffStat[id] || 'Pending');
     let globStat = task.status;
     
-    if (newStatus === 'Completed' || newStatus === 'D Finished') {
-      globStat = allAssigned.every(s => s === 'Completed' || s === 'D Finished') 
+    if (newStatus === 'Completed') {
+      globStat = allAssigned.every(s => s === 'Completed') 
         ? newStatus 
         : allAssigned.some(s => s === 'Draft') 
           ? 'Draft' 
@@ -414,24 +398,6 @@ const WorkerTaskCard = React.memo(({
                 <button 
                   onClick={() => {
                     triggerConfirm(
-                      "D Finished?", 
-                      `Mark task ID ${task.id} as D Finished?`, 
-                      (note: string) => {
-                        const evs = [];
-                        if (note && note.trim()) evs.push({ id: generateUid(), type: 'update', time: getNow(), by: user.name, text: `Partial Note: ${note}` });
-                        evs.push({ id: generateUid(), type: 'd finished', time: getNow(), by: user.name, text: 'Task marked as D Finished.' });
-                        changeStatus('D Finished', evs);
-                      }, 
-                      false, "Mark D Finished", true, "Optional note..."
-                    );
-                  }} 
-                  className="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1.5 rounded-lg text-[10px] font-bold transition-colors shadow-sm flex items-center justify-center gap-1 uppercase tracking-wider"
-                >
-                  <CheckCircle size={12}/> DF
-                </button>
-                <button 
-                  onClick={() => {
-                    triggerConfirm(
                       "Confirm Task Completion", 
                       `Are you sure you want to mark task ID ${task.id} as completely solved?`, 
                       (note: string) => {
@@ -443,14 +409,14 @@ const WorkerTaskCard = React.memo(({
                       false, "Mark Completed", true, "Enter optional completion note here..."
                     );
                   }} 
-                  className="w-1/2 bg-green-600 hover:bg-green-700 text-white px-2 py-1.5 rounded-lg text-[10px] font-bold transition-colors shadow-sm flex items-center justify-center gap-1 uppercase tracking-wider"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white px-2 py-1.5 rounded-lg text-[10px] font-bold transition-colors shadow-sm flex items-center justify-center gap-1 uppercase tracking-wider"
                 >
                   <CheckCircle size={12}/> Complete
                 </button>
               </div>
             </div>
           )}
-          {(status === 'Completed' || status === 'D Finished') && (
+          {status === 'Completed' && (
             <div className="w-full space-y-2">
                <button 
                  onClick={() => changeStatus('Draft', { id: generateUid(), type: 'reverted', time: getNow(), by: user.name, text: 'Reverted to Draft Box' })} 
