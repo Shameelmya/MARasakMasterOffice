@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Bell, FileText, Users, Plus, Zap, Eye, Database, FileOutput, Clock, CheckCircle, Paperclip, Ban, AlertCircle, ArrowRight, LogOut } from 'lucide-react';
+import { Bell, FileText, Users, Plus, Zap, Eye, Database, FileOutput, Clock, CheckCircle, Paperclip, Ban, AlertCircle, ArrowRight, LogOut, Trash2, Settings } from 'lucide-react';
 import { Task, User, GlobalFilters, BackupMeta } from '../../types';
 import { InputFormTab } from './InputFormTab';
 import { RecentAlertsTab } from './RecentAlertsTab';
@@ -68,15 +68,16 @@ const StatCard = ({ title, value, color, icon, onClick }: any) => {
     green: 'bg-green-50 text-green-600 border-green-200',
     purple: 'bg-purple-50 text-purple-600 border-purple-200',
     red: 'bg-red-50 text-red-600 border-red-200',
+    slate: 'bg-slate-50 text-slate-600 border-slate-200',
   };
   return (
-    <div className={`p-5 rounded-2xl border flex items-center gap-3 ${colors[color as keyof typeof colors]} hover:shadow-md transition-shadow cursor-pointer transition-all duration-300 hover:bg-slate-50`} onClick={onClick}>
-      <div className={`p-2 rounded-lg bg-white/60`}>
-        {icon}
+    <div className={`p-2 sm:p-5 rounded-[14px] sm:rounded-2xl border flex flex-col sm:flex-row items-center sm:items-start justify-center gap-1 sm:gap-3 text-center sm:text-left ${colors[color as keyof typeof colors]} hover:shadow-md transition-shadow cursor-pointer transition-all duration-300 hover:bg-white`} onClick={onClick}>
+      <div className={`p-1.5 sm:p-2 rounded-lg bg-white/60 shrink-0`}>
+        {React.cloneElement(icon, { className: 'w-4 h-4 sm:w-6 sm:h-6' })}
       </div>
       <div>
-        <h3 className="text-2xl font-bold leading-tight">{value}</h3>
-        <p className="text-[10px] font-bold uppercase tracking-wider opacity-80 mt-1">{title}</p>
+        <h3 className="text-lg sm:text-2xl font-bold leading-none sm:leading-tight">{value}</h3>
+        <p className="text-[7.5px] sm:text-[10px] font-bold uppercase tracking-wider opacity-80 mt-1 leading-none">{title}</p>
       </div>
     </div>
   );
@@ -117,13 +118,14 @@ export function AdminDashboard({
   setGlobalFilters,
   loadArchive
 }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState('alerts');
+  const [activeTab, setActiveTab] = useState('recent_updations');
   const [globalSearch, setGlobalSearch] = useState('');
   const [initialOfficerFilter, setInitialOfficerFilter] = useState('');
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [updationReportModalOpen, setUpdationReportModalOpen] = useState(false);
   const [officerModalOpen, setOfficerModalOpen] = useState<User | null>(null);
   const [showStatusFixer, setShowStatusFixer] = useState(false);
+  const [mobileSettingsOpen, setMobileSettingsOpen] = useState(false);
 
   const jumpToTask = (tab: string, taskId: string) => {
     setGlobalSearch(taskId);
@@ -145,6 +147,7 @@ export function AdminDashboard({
   const draft = baseTasks.filter(t => t.status === 'Draft').length;
   const pend = baseTasks.filter(t => t.status === 'Pending').length;
   const inProg = baseTasks.filter(t => t.status === 'In Progress').length;
+  const trashed = tasks.filter(t => t.isTrashed).length;
 
   const handleStatClick = (status: string) => {
     setGlobalFilters(prev => ({ ...prev, status, dateRange: 'all' }));
@@ -160,7 +163,7 @@ export function AdminDashboard({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-2 bg-white p-2 rounded-2xl shadow-sm border border-slate-200 w-full print-hidden">
+      <div className="hidden md:flex flex-wrap items-center gap-2 bg-white p-2 rounded-2xl shadow-sm border border-slate-200 w-full print-hidden">
         <button 
           onClick={() => { setActiveTab('alerts'); setGlobalSearch(''); }} 
           className={`flex-1 justify-center px-3 py-1.5 md:px-4 md:py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 whitespace-nowrap ${activeTab === 'alerts' ? 'bg-red-600 text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
@@ -241,8 +244,9 @@ export function AdminDashboard({
       )}
       
       {activeTab === 'overview' && (
-        <div className="space-y-6 animate-in fade-in">
-          <div className="flex justify-between items-center bg-white p-5 rounded-[20px] shadow-sm border border-slate-200">
+        <div className="space-y-4 sm:space-y-6 animate-in fade-in">
+          {/* Desktop Header */}
+          <div className="hidden md:flex justify-between items-center bg-white p-5 rounded-[20px] shadow-sm border border-slate-200">
             <div>
               <h2 className="text-xl font-bold text-slate-800">Analytics Dashboard</h2>
               <p className="text-sm font-medium text-slate-500">System wide tracking for active filters</p>
@@ -272,12 +276,40 @@ export function AdminDashboard({
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-            <StatCard title="Total Inputs" value={total} color="blue" icon={<FileText size={24}/>} onClick={() => handleStatClick('All')}/>
-            <StatCard title="Completed" value={comp} color="green" icon={<CheckCircle size={24}/>} onClick={() => handleStatClick('Completed')}/>
-            <StatCard title="Pending" value={pend} color="red" icon={<Clock size={24}/>} onClick={() => handleStatClick('Pending')}/>
-            <StatCard title="In Progress" value={inProg} color="indigo" icon={<Zap size={24}/>} onClick={() => handleStatClick('In Progress')}/>
-            <StatCard title="Drafts" value={draft} color="purple" icon={<Paperclip size={24}/>} onClick={() => handleStatClick('Draft')}/>
+
+          {/* Mobile Buttons Row */}
+          <div className="md:hidden flex flex-wrap gap-2 mt-2">
+            <button 
+              onClick={() => setShowStatusFixer(true)}
+              className="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-800 px-2 py-2 rounded-[14px] text-[10px] font-bold shadow-sm transition-all text-center leading-tight whitespace-nowrap"
+            >
+              Quick Status
+            </button>
+            <div className="flex gap-2 w-full sm:w-auto">
+              {currentUser.role === 'admin' && (
+                <button 
+                  onClick={() => { setUpdationReportModalOpen(true); loadArchive(); }} 
+                  className="flex-1 justify-center bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-[14px] text-[10px] font-bold shadow flex items-center gap-1 transition-colors leading-tight whitespace-nowrap"
+                >
+                  <FileOutput size={12}/> Updation Report
+                </button>
+              )}
+              <button 
+                onClick={() => { setReportModalOpen(true); loadArchive(); }} 
+                className="flex-1 justify-center bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-[14px] text-[10px] font-bold shadow flex items-center gap-1 transition-colors leading-tight whitespace-nowrap"
+              >
+                <FileOutput size={12}/> Master Report
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-5">
+            <StatCard title="Inputs" value={total} color="blue" icon={<FileText />} onClick={() => handleStatClick('All')}/>
+            <StatCard title="Completed" value={comp} color="green" icon={<CheckCircle />} onClick={() => handleStatClick('Completed')}/>
+            <StatCard title="Pending" value={pend} color="red" icon={<Clock />} onClick={() => handleStatClick('Pending')}/>
+            <StatCard title="In Prog" value={inProg} color="indigo" icon={<Zap />} onClick={() => handleStatClick('In Progress')}/>
+            <StatCard title="Drafts" value={draft} color="purple" icon={<Paperclip />} onClick={() => handleStatClick('Draft')}/>
+            <StatCard title="Trash" value={trashed} color="slate" icon={<Trash2 />} onClick={() => {}}/>
           </div>
           <AdminGlobalView 
             currentUser={currentUser}
@@ -454,6 +486,81 @@ export function AdminDashboard({
           updateTask={updateTask}
           onClose={() => setShowStatusFixer(false)}
         />
+      )}
+
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-4px_24px_rgba(0,0,0,0.06)] border-t border-slate-200 pb-safe pt-2 px-4 z-[90]">
+        <div className="flex justify-between items-center w-full max-w-md mx-auto">
+          <button 
+            onClick={() => { setActiveTab('alerts'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+            className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${activeTab === 'alerts' && !mobileSettingsOpen ? 'text-red-600' : 'text-slate-400'}`}
+          >
+            <div className={`p-2 rounded-2xl ${activeTab === 'alerts' && !mobileSettingsOpen ? 'bg-red-50' : ''}`}><Bell size={20} /></div>
+            <span className="text-[9px] font-bold">Recent</span>
+          </button>
+          <button 
+            onClick={() => { setActiveTab('input'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+            className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${activeTab === 'input' && !mobileSettingsOpen ? 'text-purple-600' : 'text-slate-400'}`}
+          >
+            <div className={`p-2 rounded-2xl ${activeTab === 'input' && !mobileSettingsOpen ? 'bg-purple-50' : ''}`}><Plus size={20} /></div>
+            <span className="text-[9px] font-bold">Input</span>
+          </button>
+          
+          <button 
+            onClick={() => { setActiveTab('overview'); setGlobalSearch(''); setInitialOfficerFilter(''); setMobileSettingsOpen(false); }} 
+            className={`flex flex-col items-center justify-center p-4 -mt-6 rounded-[24px] shadow-lg transition-all ${activeTab === 'overview' && !mobileSettingsOpen ? 'bg-purple-600 text-white shadow-purple-500/40' : 'bg-slate-800 text-white shadow-slate-900/20'}`}
+          >
+            <Eye size={24} />
+          </button>
+
+          <button 
+            onClick={() => { setActiveTab('citizens'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
+            className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${activeTab === 'citizens' && !mobileSettingsOpen ? 'text-teal-600' : 'text-slate-400'}`}
+          >
+            <div className={`p-2 rounded-2xl ${activeTab === 'citizens' && !mobileSettingsOpen ? 'bg-teal-50' : ''}`}><Users size={20} /></div>
+            <span className="text-[9px] font-bold">Citizens</span>
+          </button>
+          <button 
+            onClick={() => { setMobileSettingsOpen(!mobileSettingsOpen); }} 
+            className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${mobileSettingsOpen ? 'text-blue-600' : 'text-slate-400'}`}
+          >
+            <div className={`p-2 rounded-2xl ${mobileSettingsOpen ? 'bg-blue-50' : ''}`}><Settings size={20} /></div>
+            <span className="text-[9px] font-bold">Menu</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Settings Modal Menu */}
+      {mobileSettingsOpen && (
+        <div className="md:hidden fixed inset-0 z-[80] bg-slate-900/40 backdrop-blur-sm" onClick={() => setMobileSettingsOpen(false)}>
+          <div className="absolute bottom-[80px] left-4 right-4 bg-white rounded-3xl p-5 shadow-xl border border-slate-200 animate-in slide-in-from-bottom-10 flex flex-col gap-3" onClick={e => e.stopPropagation()}>
+            <h3 className="font-bold text-slate-800 text-sm mb-2 border-b border-slate-100 pb-2">More Options</h3>
+            <button 
+              onClick={() => { setActiveTab('direct'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+              className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+            >
+              <Zap size={16} className="text-purple-600" /> Direct Desk
+            </button>
+            <button 
+              onClick={() => { setActiveTab('recent_updations'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
+              className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+            >
+              <Zap size={16} className="text-amber-500" /> Updations
+            </button>
+            <button 
+              onClick={() => { setActiveTab('users'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+              className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+            >
+              <Users size={16} className="text-indigo-600" /> Manage Officers
+            </button>
+            <button 
+              onClick={() => { setActiveTab('database'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
+              className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+            >
+              <Database size={16} className="text-red-600" /> DB & Backup
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

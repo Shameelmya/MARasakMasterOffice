@@ -524,82 +524,83 @@ export default function App() {
   }, [liveCurrentUser, currentUser, triggerConfirm]);
 
   const activeUser = impersonatedUser || liveCurrentUser;
-  const isImpersonating = !!impersonatedUser;
+const isImpersonating = !!impersonatedUser;
 
   if (!activeUser) return <LoginScreen onLogin={handleLogin} users={users} />;
 
   const GlobalFilterBar = () => (
-    <div className="bg-white p-3 sm:p-4 rounded-ios-md border border-slate-200 shadow-sm flex flex-wrap gap-2 sm:gap-3 items-center w-full mb-6 text-sm">
-       <span className="font-bold text-slate-800 flex items-center gap-1.5">&#x1F50E; View Mode:</span>
+    <div className="bg-white p-2 sm:p-4 rounded-[16px] sm:rounded-ios-md border border-slate-200 shadow-sm flex flex-row gap-1 sm:gap-3 items-center w-full mb-4 sm:mb-6 text-[10px] sm:text-sm overflow-x-auto no-scrollbar">
+       <span className="hidden sm:flex font-bold text-slate-800 items-center gap-1.5">&#x1F50E; View Mode:</span>
        <select 
          value={globalFilters.status} 
          onChange={e => setGlobalFilters(p => ({...p, status: e.target.value}))} 
-         className="px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-slate-700 outline-none bg-white focus:border-indigo-500 transition-all font-sans"
+         className="px-1.5 py-1.5 sm:px-3 sm:py-1.5 border border-slate-300 rounded-[10px] sm:rounded-lg font-bold text-slate-700 outline-none bg-slate-50 focus:border-indigo-500 transition-all min-w-min"
        >
-         <option value="Active">Active Actions</option>
-         <option value="Pending">Pending Only</option>
-         <option value="In Progress">In Progress Only</option>
-         <option value="Completed">Completed Only</option>
-         <option value="Draft">Drafts Only</option>
-         <option value="Trash">Trash</option>
-         <option value="All">All Statuses</option>
+         <option value="Active">🔴 Active</option>
+         <option value="Pending">🕒 Pending</option>
+         <option value="In Progress">⚡ In Prog</option>
+         <option value="Completed">✅ Done</option>
+         <option value="Draft">📝 Drafts</option>
+         <option value="Trash">🗑️ Trash</option>
+         <option value="All">All Status</option>
        </select>
        <select 
          value={globalFilters.dateRange} 
          onChange={e => setGlobalFilters(p => ({...p, dateRange: e.target.value}))} 
-         className="px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-slate-700 outline-none bg-white focus:border-indigo-500 transition-all font-sans"
+         className="px-1.5 py-1.5 sm:px-3 sm:py-1.5 border border-slate-300 rounded-[10px] sm:rounded-lg font-bold text-slate-700 outline-none bg-slate-50 focus:border-indigo-500 transition-all min-w-min"
        >
-         <option value="today">Today Only</option>
-         <option value="yesterday">Yesterday Only</option>
-         <option value="7days">Last 7 Days</option>
-         <option value="1month">Last Month</option>
-         <option value="6months">Last 6 Months</option>
-         <option value="1year">Last Year</option>
-         <option value="all">All Time</option>
-         <option value="custom">Custom Single Date</option>
-         <option value="custom_range">Custom Date Range</option>
+         <option value="today">📅 Today</option>
+         <option value="yesterday">📅 Y'day</option>
+         <option value="7days">📅 7 Days</option>
+         <option value="1month">📅 1 Month</option>
+         <option value="6months">📅 6 Months</option>
+         <option value="1year">📅 1 Year</option>
+         <option value="all">📅 All Time</option>
+         <option value="custom">📅 Date</option>
+         <option value="custom_range">📅 Range</option>
        </select>
        {globalFilters.dateRange === 'custom' && (
-          <div className="flex items-center gap-2 bg-white border border-slate-300 rounded-lg px-2 py-1">
+          <div className="flex items-center gap-1 bg-slate-50 border border-slate-300 rounded-[10px] px-1.5 py-1">
             <input 
               type="date" 
               value={globalFilters.customStartDate || ''} 
               onChange={e => setGlobalFilters(p => ({...p, customStartDate: e.target.value, customEndDate: e.target.value}))} 
-              className="text-sm font-bold text-slate-700 outline-none bg-transparent" 
+              className="text-[10px] sm:text-sm font-bold text-slate-700 outline-none bg-transparent" 
             />
           </div>
        )}
        {globalFilters.dateRange === 'custom_range' && (
-          <div className="flex items-center gap-2 bg-white border border-slate-300 rounded-lg px-2 py-1">
+          <div className="flex items-center gap-1 bg-slate-50 border border-slate-300 rounded-[10px] px-1.5 py-1">
             <input 
               type="date" 
               value={globalFilters.customStartDate || ''} 
               onChange={e => setGlobalFilters(p => ({...p, customStartDate: e.target.value}))} 
-              className="text-sm font-bold text-slate-700 outline-none bg-transparent" 
+              className="text-[10px] sm:text-sm font-bold text-slate-700 outline-none bg-transparent max-w-[85px] sm:max-w-none" 
             />
-            <span className="text-xs font-bold text-slate-400">to</span>
+            <span className="text-[9px] sm:text-xs font-bold text-slate-400">to</span>
             <input 
               type="date" 
               value={globalFilters.customEndDate || ''} 
               onChange={e => setGlobalFilters(p => ({...p, customEndDate: e.target.value}))} 
-              className="text-sm font-bold text-slate-700 outline-none bg-transparent" 
+              className="text-[10px] sm:text-sm font-bold text-slate-700 outline-none bg-transparent max-w-[85px] sm:max-w-none" 
             />
           </div>
        )}
+       
        <select 
          value={globalFilters.applicationMode} 
-         onChange={e => setGlobalFilters(p => ({...p, applicationMode: e.target.value}))} 
-         className="px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-slate-700 outline-none bg-yellow-50 focus:border-yellow-500 transition-all font-sans"
+         onChange={e => setGlobalFilters(p => ({...p, applicationMode: e.target.value as any}))} 
+         className="px-1.5 py-1.5 sm:px-3 sm:py-1.5 border border-slate-300 rounded-[10px] sm:rounded-lg font-bold text-slate-700 outline-none bg-slate-50 focus:border-indigo-500 transition-all min-w-min"
        >
-         <option value="All">All Application Modes</option>
-         <option value="Citizen">Citizen Registrations Only</option>
-         <option value="Self">Self Mode Only (No Citizen)</option>
+         <option value="All">📱 All Apps</option>
+         <option value="Office">🏢 Office</option>
+         <option value="Citizen">👤 Citizen</option>
        </select>
        {activeUser?.name === 'M. A. Razak Master (MLA)' && (
          <select
            value={globalFilters.followUpFrequency || 'All'}
            onChange={e => setGlobalFilters(p => ({...p, followUpFrequency: e.target.value}))}
-           className="px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-slate-700 outline-none bg-blue-50 focus:border-purple-500 transition-all font-sans"
+           className="px-1.5 py-1.5 sm:px-3 sm:py-1.5 border border-slate-300 rounded-[10px] sm:rounded-lg font-bold text-slate-700 outline-none bg-blue-50 focus:border-purple-500 transition-all min-w-min"
          >
            <option value="All">All Follow-ups</option>
            <option value="1W">1 Week</option>

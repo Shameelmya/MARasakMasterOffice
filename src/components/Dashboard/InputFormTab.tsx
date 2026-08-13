@@ -344,18 +344,17 @@ export function InputFormTab({
       noValidate 
       className={`bg-white rounded-[20px] shadow-sm border overflow-hidden ${form.isSelfMode ? 'border-yellow-300' : 'border-slate-200'}`}
     >
-      <div className="bg-white/90 backdrop-blur-xl px-10 py-4 flex justify-between items-center text-slate-800 border-b border-slate-200 shadow-sm">
-        <h2 className="font-bold text-lg flex items-center gap-2"><Plus size={20}/> New Registration</h2>
-        <div className="flex gap-3">
-
-          <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 bg-purple-600 hover:bg-purple-700 hover:-translate-y-0.5 transition-all duration-300 text-white shadow-sm px-4 py-2 rounded-2xl border border-slate-600 transition-colors">
+      <div className="bg-white/90 backdrop-blur-xl px-4 sm:px-10 py-3 sm:py-4 flex flex-col sm:flex-row justify-center sm:justify-between items-center text-slate-800 border-b border-slate-200 shadow-sm gap-2 sm:gap-0">
+        <h2 className="hidden sm:flex font-bold text-lg items-center gap-2"><Plus size={20}/> New Registration</h2>
+        <div className="flex gap-2 w-full sm:w-auto justify-center">
+          <label className="flex items-center justify-center gap-1.5 cursor-pointer bg-purple-600 hover:bg-purple-700 text-white shadow-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-[14px] sm:rounded-2xl border border-slate-600 transition-colors w-full sm:w-auto">
             <input 
               type="checkbox" 
               checked={form.isSelfMode} 
               onChange={(e) => setForm(f => ({ ...f, isSelfMode: e.target.checked }))} 
-              className="w-4 h-4 text-yellow-500 rounded focus:ring-yellow-500 bg-slate-900" 
+              className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500 rounded focus:ring-yellow-500 bg-slate-900" 
             />
-            <span className="font-bold text-sm text-white">Self Application Mode (No Citizen Contact)</span>
+            <span className="font-bold text-xs sm:text-sm text-white">Self App Mode (No Citizen)</span>
           </label>
         </div>
       </div>

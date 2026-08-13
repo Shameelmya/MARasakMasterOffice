@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Activity, Database, Plus, Bell, Eye, AlertCircle, Ban, 
-  Trash2, EyeOff, FileText, ArrowRight, Zap, FileOutput, CheckCircle
+  Trash2, EyeOff, FileText, ArrowRight, Zap, FileOutput, CheckCircle, Settings, Users
 } from 'lucide-react';
 import { Task, User, GlobalFilters } from '../../types';
 import { WorkerTab } from './WorkerTab';
@@ -105,6 +105,7 @@ export function OfficerDashboard({
   const [activeTab, setActiveTab] = useState(initialTab);
   const [globalSearch, setGlobalSearch] = useState('');
   const [updationReportModalOpen, setUpdationReportModalOpen] = useState(false);
+  const [mobileSettingsOpen, setMobileSettingsOpen] = useState(false);
 
   // Handle jump/scroll to task card from Recent Alerts / Assignments
   const jumpToTask = (tab: string, taskId: string) => {
@@ -133,7 +134,7 @@ export function OfficerDashboard({
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Dynamic Compact Nav/Tabs List to fit on one line */}
-      <div className="flex flex-wrap items-center gap-2 bg-white p-2 rounded-[20px] shadow-sm border border-slate-200 w-full print-hidden">
+      <div className="hidden md:flex flex-wrap items-center gap-2 bg-white p-2 rounded-[20px] shadow-sm border border-slate-200 w-full print-hidden">
         <button 
           onClick={() => { setActiveTab('recent'); setGlobalSearch(''); }} 
           className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'recent' ? 'bg-[#EF4444] text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
@@ -389,6 +390,79 @@ export function OfficerDashboard({
           onGenerate={(c) => { setUpdationReportModalOpen(false); if (triggerUpdationDownload) triggerUpdationDownload(c); }}
           users={users}
         />
+      )}
+
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-4px_24px_rgba(0,0,0,0.06)] border-t border-slate-200 pb-safe pt-2 px-4 z-[90]">
+        <div className="flex justify-between items-center w-full max-w-md mx-auto">
+          <button 
+            onClick={() => { setActiveTab('recent'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+            className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${activeTab === 'recent' && !mobileSettingsOpen ? 'text-red-600' : 'text-slate-400'}`}
+          >
+            <div className={`p-2 rounded-2xl ${activeTab === 'recent' && !mobileSettingsOpen ? 'bg-red-50' : ''}`}><Bell size={20} /></div>
+            <span className="text-[9px] font-bold">Recent</span>
+          </button>
+          <button 
+            onClick={() => { setActiveTab('input'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+            className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${activeTab === 'input' && !mobileSettingsOpen ? 'text-purple-600' : 'text-slate-400'}`}
+          >
+            <div className={`p-2 rounded-2xl ${activeTab === 'input' && !mobileSettingsOpen ? 'bg-purple-50' : ''}`}><Plus size={20} /></div>
+            <span className="text-[9px] font-bold">Input</span>
+          </button>
+          
+          <button 
+            onClick={() => { setActiveTab('worker'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+            className={`flex flex-col items-center justify-center p-4 -mt-6 rounded-[24px] shadow-lg transition-all ${activeTab === 'worker' && !mobileSettingsOpen ? 'bg-purple-600 text-white shadow-purple-500/40' : 'bg-slate-800 text-white shadow-slate-900/20'}`}
+          >
+            <Activity size={24} />
+          </button>
+
+          <button 
+            onClick={() => { setActiveTab('history'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
+            className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${activeTab === 'history' && !mobileSettingsOpen ? 'text-slate-600' : 'text-slate-400'}`}
+          >
+            <div className={`p-2 rounded-2xl ${activeTab === 'history' && !mobileSettingsOpen ? 'bg-slate-100' : ''}`}><FileText size={20} /></div>
+            <span className="text-[9px] font-bold">History</span>
+          </button>
+          <button 
+            onClick={() => { setMobileSettingsOpen(!mobileSettingsOpen); }} 
+            className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${mobileSettingsOpen ? 'text-blue-600' : 'text-slate-400'}`}
+          >
+            <div className={`p-2 rounded-2xl ${mobileSettingsOpen ? 'bg-blue-50' : ''}`}><Settings size={20} /></div>
+            <span className="text-[9px] font-bold">Menu</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Settings Modal Menu */}
+      {mobileSettingsOpen && (
+        <div className="md:hidden fixed inset-0 z-[80] bg-slate-900/40 backdrop-blur-sm" onClick={() => setMobileSettingsOpen(false)}>
+          <div className="absolute bottom-[80px] left-4 right-4 bg-white rounded-3xl p-5 shadow-xl border border-slate-200 animate-in slide-in-from-bottom-10 flex flex-col gap-3" onClick={e => e.stopPropagation()}>
+            <h3 className="font-bold text-slate-800 text-sm mb-2 border-b border-slate-100 pb-2">More Options</h3>
+            <button 
+              onClick={() => { setActiveTab('direct_worker'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+              className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+            >
+              <Zap size={16} className="text-purple-600" /> Assignments from MLA
+            </button>
+            {hasGlobalOverviewPermission && (
+              <button 
+                onClick={() => { setActiveTab('overview'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+                className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+              >
+                <Eye size={16} className="text-purple-600" /> Global Overview
+              </button>
+            )}
+            {user.canSeeRecentUpdations && (
+              <button 
+                onClick={() => { setActiveTab('recent_updations'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
+                className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+              >
+                <Zap size={16} className="text-amber-500" /> Updations
+              </button>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

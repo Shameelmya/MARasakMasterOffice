@@ -87,28 +87,28 @@ export function RecentAlertsTab({ user, tasks, jumpToTask, users, setImpersonate
       </div>
 
       {user.role === 'admin' && users && setImpersonatedUser ? (
-        <div className="flex flex-col md:flex-row gap-8 mb-8 w-full justify-center items-center">
+        <div className="flex flex-row gap-2 sm:gap-8 mb-4 sm:mb-8 w-full justify-center items-stretch">
           {/* Big Active Box */}
-          <div className="bg-white border border-[#FEE2E2] rounded-[24px] py-4 px-4 md:py-6 md:px-8 shadow-sm flex flex-col items-center justify-center shrink-0 max-w-[280px] w-full">
-            <div className="text-5xl md:text-6xl font-bold text-[#EF4444] tracking-tight leading-none mb-2">
+          <div className="bg-white border border-[#FEE2E2] rounded-[16px] sm:rounded-[24px] py-3 px-2 sm:py-6 sm:px-8 shadow-sm flex flex-col items-center justify-center shrink-0 w-[35%] sm:w-auto sm:max-w-[280px]">
+            <div className="text-3xl sm:text-6xl font-bold text-[#EF4444] tracking-tight leading-none mb-1 sm:mb-2">
               {activeTasks.length}
             </div>
-            <div className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 text-center">
+            <div className="text-[8px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 sm:mb-3 text-center leading-tight">
               ACTIVE ACTIONS
             </div>
-            <div className="flex flex-col md:flex-row items-center gap-1 md:gap-5 text-xs md:text-sm font-bold mt-1">
-              <span className="text-red-500 whitespace-nowrap">{pendingCount} Pending</span>
-              <span className="text-orange-500 whitespace-nowrap">{inProgressCount} In Progress</span>
+            <div className="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-5 text-[9px] sm:text-sm font-bold mt-1">
+              <span className="text-red-500 whitespace-nowrap">{pendingCount} Pend</span>
+              <span className="text-orange-500 whitespace-nowrap">{inProgressCount} Prog</span>
             </div>
             {overdueCount > 0 && (
-              <div className="text-red-600 font-bold text-[9px] md:text-[10px] uppercase bg-red-100 px-3 py-1 rounded-full mt-3">
+              <div className="text-red-600 font-bold text-[7px] sm:text-[10px] uppercase bg-red-100 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full mt-2 sm:mt-3 text-center">
                 {overdueCount} Overdues
               </div>
             )}
           </div>
 
           {/* Officer Grid */}
-          <div className="grid grid-cols-3 gap-2 md:gap-3 w-full max-w-[500px]">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-3 w-[65%] sm:max-w-[500px]">
             {users.filter(u => u.enabled).map(u => {
               const uPending = tasks.filter(t => 
                 t.assignedTo.includes(u.id) && 
@@ -130,15 +130,15 @@ export function RecentAlertsTab({ user, tasks, jumpToTask, users, setImpersonate
                       setImpersonatedUser(u);
                     }
                   }}
-                  className="flex flex-col items-stretch justify-center gap-1 md:gap-1.5 p-2 md:p-3 bg-white rounded-2xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all shadow-sm group cursor-pointer transition-all duration-300 hover:bg-slate-50 w-full min-w-0"
+                  className="flex flex-col items-stretch justify-center gap-0.5 sm:gap-1.5 p-1.5 sm:p-3 bg-white rounded-xl sm:rounded-2xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all shadow-sm group cursor-pointer duration-300 hover:bg-slate-50 w-full min-w-0"
                 >
-                  <div className="flex items-start md:items-center justify-between gap-1 md:gap-3 w-full">
-                    <div className="text-[9px] md:text-xs font-bold text-slate-800 truncate text-left">{u.name}</div>
-                    <div className={`w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full text-[9px] md:text-[10px] font-bold shrink-0 ${uActive > 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-500'}`}>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-3 w-full">
+                    <div className="text-[8px] sm:text-xs font-bold text-slate-800 truncate text-left w-full sm:w-auto leading-tight">{u.name}</div>
+                    <div className={`w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-[8px] sm:text-[10px] font-bold shrink-0 self-end sm:self-auto ${uActive > 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-500'}`}>
                       {uActive}
                     </div>
                   </div>
-                  <div className="flex flex-col lg:flex-row justify-between w-full text-[8px] md:text-[10px] font-bold text-left md:text-center mt-1 md:mt-0">
+                  <div className="flex flex-col xl:flex-row justify-between w-full text-[7px] sm:text-[10px] font-bold text-left sm:text-center mt-1">
                     <span className="text-red-500">{uPending} Pend</span>
                     <span className="text-orange-500">{uInProgress} Prog</span>
                   </div>
