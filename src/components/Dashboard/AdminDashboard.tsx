@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Bell, FileText, Users, Plus, Zap, Eye, Database, FileOutput, Clock, CheckCircle, Paperclip, Ban, AlertCircle, ArrowRight, LogOut, Trash2, Settings } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Bell, FileText, Users, Plus, Zap, Eye, Database, FileOutput, Clock, CheckCircle, Paperclip, Ban, AlertCircle, ArrowRight, LogOut, Trash2, Settings, Menu as MenuIcon, Globe } from 'lucide-react';
 import { Task, User, GlobalFilters, BackupMeta } from '../../types';
 import { InputFormTab } from './InputFormTab';
 import { RecentAlertsTab } from './RecentAlertsTab';
@@ -489,43 +489,45 @@ export function AdminDashboard({
       )}
 
       {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-4px_24px_rgba(0,0,0,0.06)] border-t border-slate-200 pb-safe pt-2 px-4 z-[90]">
-        <div className="flex justify-between items-center w-full max-w-md mx-auto">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.08)] border-t border-slate-100 pb-safe pt-2 px-6 z-[90]">
+        <div className="flex justify-between items-end w-full max-w-md mx-auto h-16 pb-2">
           <button 
-            onClick={() => { setActiveTab('alerts'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${activeTab === 'alerts' && !mobileSettingsOpen ? 'text-red-600' : 'text-slate-400'}`}
+            onClick={() => { setActiveTab('recent_updations'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+            className={`flex flex-col items-center gap-1 transition-all ${activeTab === 'recent_updations' && !mobileSettingsOpen ? 'text-amber-600 scale-110' : 'text-slate-500 hover:text-slate-700'}`}
           >
-            <div className={`p-2 rounded-2xl ${activeTab === 'alerts' && !mobileSettingsOpen ? 'bg-red-50' : ''}`}><Bell size={20} /></div>
-            <span className="text-[9px] font-bold">Recent</span>
+            <div className={`p-2.5 rounded-2xl transition-colors ${activeTab === 'recent_updations' && !mobileSettingsOpen ? 'bg-amber-100' : 'bg-slate-50'}`}><Bell size={22} strokeWidth={2.5} /></div>
+            <span className="text-[10px] font-bold">Recent</span>
           </button>
+          
           <button 
             onClick={() => { setActiveTab('input'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${activeTab === 'input' && !mobileSettingsOpen ? 'text-purple-600' : 'text-slate-400'}`}
+            className={`flex flex-col items-center gap-1 transition-all ${activeTab === 'input' && !mobileSettingsOpen ? 'text-purple-600 scale-110' : 'text-slate-500 hover:text-slate-700'}`}
           >
-            <div className={`p-2 rounded-2xl ${activeTab === 'input' && !mobileSettingsOpen ? 'bg-purple-50' : ''}`}><Plus size={20} /></div>
-            <span className="text-[9px] font-bold">Input</span>
+            <div className={`p-2.5 rounded-2xl transition-colors ${activeTab === 'input' && !mobileSettingsOpen ? 'bg-purple-100' : 'bg-slate-50'}`}><Plus size={22} strokeWidth={2.5} /></div>
+            <span className="text-[10px] font-bold">Input</span>
           </button>
           
           <button 
             onClick={() => { setActiveTab('overview'); setGlobalSearch(''); setInitialOfficerFilter(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center justify-center p-4 -mt-6 rounded-[24px] shadow-lg transition-all ${activeTab === 'overview' && !mobileSettingsOpen ? 'bg-purple-600 text-white shadow-purple-500/40' : 'bg-slate-800 text-white shadow-slate-900/20'}`}
+            className={`flex flex-col items-center justify-center p-4 mb-2 rounded-[24px] shadow-xl transition-all ${activeTab === 'overview' && !mobileSettingsOpen ? 'bg-purple-600 text-white shadow-purple-500/40 scale-110' : 'bg-slate-800 text-white shadow-slate-900/20'}`}
           >
-            <Eye size={24} />
+            <Globe size={26} strokeWidth={2.5} />
           </button>
 
           <button 
             onClick={() => { setActiveTab('citizens'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${activeTab === 'citizens' && !mobileSettingsOpen ? 'text-teal-600' : 'text-slate-400'}`}
+            className={`flex flex-col items-center gap-1 transition-all ${activeTab === 'citizens' && !mobileSettingsOpen ? 'text-teal-600 scale-110' : 'text-slate-500 hover:text-slate-700'}`}
           >
-            <div className={`p-2 rounded-2xl ${activeTab === 'citizens' && !mobileSettingsOpen ? 'bg-teal-50' : ''}`}><Users size={20} /></div>
-            <span className="text-[9px] font-bold">Citizens</span>
+            <div className={`p-2.5 rounded-2xl transition-colors ${activeTab === 'citizens' && !mobileSettingsOpen ? 'bg-teal-100' : 'bg-slate-50'}`}><Users size={22} strokeWidth={2.5} /></div>
+            <span className="text-[10px] font-bold">Citizens</span>
           </button>
+          
           <button 
             onClick={() => { setMobileSettingsOpen(!mobileSettingsOpen); }} 
-            className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${mobileSettingsOpen ? 'text-blue-600' : 'text-slate-400'}`}
+            className={`flex flex-col items-center gap-1 transition-all ${mobileSettingsOpen ? 'text-blue-600 scale-110' : 'text-slate-500 hover:text-slate-700'}`}
           >
-            <div className={`p-2 rounded-2xl ${mobileSettingsOpen ? 'bg-blue-50' : ''}`}><Settings size={20} /></div>
-            <span className="text-[9px] font-bold">Menu</span>
+            <div className={`p-2.5 rounded-2xl transition-colors ${mobileSettingsOpen ? 'bg-blue-100' : 'bg-slate-50'}`}><MenuIcon size={22} strokeWidth={2.5} /></div>
+            <span className="text-[10px] font-bold">Menu</span>
           </button>
         </div>
       </div>

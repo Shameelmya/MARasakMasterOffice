@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Download, Calendar, User as UserIcon, FileText, CheckCircle, FileEdit, Zap, Database } from 'lucide-react';
+import { Search, Download, Calendar, User as UserIcon, FileText, CheckCircle, FileEdit, Zap, Database, MessageSquare } from 'lucide-react';
 import { Task, User, TimelineItem } from '../../types';
 import { formatDate, formatTime } from '../../utils/formatters';
 import { WhatsAppButton } from '../Shared/WhatsAppButton';
@@ -161,73 +161,91 @@ export function RecentUpdationsTab({ tasks, users, triggerRecentUpdationsDownloa
         </button>
       </div>
 
-      <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap gap-5 items-end">
-        <div className="flex-1 min-w-[200px]">
-          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 flex items-center gap-1"><Search size={12}/> Search</label>
+      <div className="bg-[#F4F7FB] p-3 sm:p-5 rounded-[16px] sm:rounded-2xl border border-slate-200 flex flex-wrap sm:flex-nowrap gap-2 sm:gap-4 items-center">
+        
+        {/* Search */}
+        <div className="relative flex-1 min-w-[120px]">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input 
             type="text" 
-            placeholder="Task ID, subject, name, or update text..." 
+            placeholder="Search..." 
             value={search} 
             onChange={e => setSearch(e.target.value)} 
-            className="w-full px-3 py-2 bg-[#F4F7FB] border border-slate-200 rounded-lg font-bold text-slate-700 outline-none focus:ring-2 focus:ring-amber-500 transition-all"
+            className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-[10px] sm:rounded-lg text-xs sm:text-sm font-bold text-slate-700 outline-none focus:border-amber-500 transition-all"
           />
         </div>
         
-        <div className="min-w-[150px]">
-          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 flex items-center gap-1"><Calendar size={12}/> Period</label>
+        {/* Date Filter */}
+        <div className="relative shrink-0 flex items-center bg-white border border-slate-200 rounded-[10px] sm:rounded-lg focus-within:border-amber-500 overflow-hidden">
+          <div className="pl-2 sm:pl-3 pr-1 py-1.5 sm:py-2 text-slate-500 pointer-events-none">
+            <Calendar size={16} />
+          </div>
           <select 
             value={dateRange} 
             onChange={e => setDateRange(e.target.value)} 
-            className="w-full px-3 py-2 bg-[#F4F7FB] border border-slate-200 rounded-lg font-bold text-slate-700 outline-none focus:ring-2 focus:ring-amber-500 transition-all"
+            className="bg-transparent pl-1 pr-2 sm:pr-3 py-1.5 sm:py-2 font-bold text-[10px] sm:text-xs text-slate-700 outline-none cursor-pointer appearance-none text-center"
+            title="Period"
           >
-            <option value="3days">Last 3 Days</option>
-            <option value="7days">Last Week</option>
-            <option value="1month">Last Month</option>
-            <option value="1year">Last Year</option>
-            <option value="custom">Custom Date</option>
-            <option value="all">All Time</option>
+            <option value="3days">3 Days</option>
+            <option value="7days">Week</option>
+            <option value="1month">Month</option>
+            <option value="1year">Year</option>
+            <option value="custom">Custom</option>
+            <option value="all">All</option>
           </select>
         </div>
 
-        {dateRange === 'custom' && (
-          <div className="flex items-center gap-2 bg-[#F4F7FB] border border-slate-200 rounded-lg px-2 py-1.5 min-w-[220px]">
-            <input 
-              type="date" 
-              value={customStart} 
-              onChange={e => setCustomStart(e.target.value)} 
-              className="text-xs font-bold text-slate-700 outline-none bg-transparent w-full" 
-            />
-            <span className="text-[10px] font-bold text-slate-400">to</span>
-            <input 
-              type="date" 
-              value={customEnd} 
-              onChange={e => setCustomEnd(e.target.value)} 
-              className="text-xs font-bold text-slate-700 outline-none bg-transparent w-full" 
-            />
+        {/* Officer Filter */}
+        <div className="relative shrink-0 flex items-center bg-white border border-slate-200 rounded-[10px] sm:rounded-lg focus-within:border-amber-500 overflow-hidden">
+          <div className="pl-2 sm:pl-3 pr-1 py-1.5 sm:py-2 text-slate-500 pointer-events-none">
+            <UserIcon size={16} />
           </div>
-        )}
+          <select 
+            value={officerFilter}
+            onChange={e => setOfficerFilter(e.target.value)}
+            className="bg-transparent pl-1 pr-2 sm:pr-3 py-1.5 sm:py-2 font-bold text-[10px] sm:text-xs text-slate-700 outline-none cursor-pointer appearance-none text-center max-w-[80px] sm:max-w-none"
+            title="Officer"
+          >
+            <option value="All">All Offs</option>
+            {users.map(u => <option key={u.id} value={u.id}>{u.name.split(' ')[0]}</option>)}
+          </select>
+        </div>
 
-          <div className="flex flex-col md:flex-row gap-3 w-full max-w-2xl ml-auto">
-            <select 
-              value={officerFilter}
-              onChange={e => setOfficerFilter(e.target.value)}
-              className="w-full md:w-1/2 px-3 py-2 border border-slate-200 rounded-2xl font-bold text-sm text-slate-700 bg-[#F4F7FB] focus:bg-white focus:border-indigo-500 outline-none"
-            >
-              <option value="All">All Assigned Officers</option>
-              {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
-            </select>
-            
-            <select
-              value={msgFilter}
-              onChange={e => setMsgFilter(e.target.value)}
-              className="w-full md:w-1/2 px-3 py-2 border border-slate-200 rounded-2xl font-bold text-sm text-slate-700 bg-[#F4F7FB] focus:bg-white focus:border-indigo-500 outline-none"
-            >
-              <option value="All">All Messages</option>
-              <option value="Sent">Message Sent</option>
-              <option value="Not Sent">Message Not Sent</option>
-            </select>
+        {/* Msg Filter */}
+        <div className="relative shrink-0 flex items-center bg-white border border-slate-200 rounded-[10px] sm:rounded-lg focus-within:border-amber-500 overflow-hidden">
+          <div className="pl-2 sm:pl-3 pr-1 py-1.5 sm:py-2 text-slate-500 pointer-events-none">
+            <MessageSquare size={16} />
           </div>
+          <select 
+            value={msgFilter}
+            onChange={e => setMsgFilter(e.target.value)}
+            className="bg-transparent pl-1 pr-2 sm:pr-3 py-1.5 sm:py-2 font-bold text-[10px] sm:text-xs text-slate-700 outline-none cursor-pointer appearance-none text-center max-w-[80px] sm:max-w-none"
+            title="Messages"
+          >
+            <option value="All">All Msgs</option>
+            <option value="Sent">Sent</option>
+            <option value="Not Sent">Unsent</option>
+          </select>
+        </div>
       </div>
+
+      {dateRange === 'custom' && (
+        <div className="flex items-center gap-2 bg-[#F4F7FB] border border-slate-200 rounded-[10px] sm:rounded-lg px-3 py-2 w-full max-w-sm">
+          <input 
+            type="date" 
+            value={customStart} 
+            onChange={e => setCustomStart(e.target.value)} 
+            className="text-xs font-bold text-slate-700 outline-none bg-transparent flex-1" 
+          />
+          <span className="text-[10px] font-bold text-slate-400">to</span>
+          <input 
+            type="date" 
+            value={customEnd} 
+            onChange={e => setCustomEnd(e.target.value)} 
+            className="text-xs font-bold text-slate-700 outline-none bg-transparent flex-1" 
+          />
+        </div>
+      )}
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="max-h-[600px] overflow-y-auto custom-scrollbar p-2">

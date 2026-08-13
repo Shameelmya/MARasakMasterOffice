@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Users, List, Printer, Download, Search, Phone, MessageSquare } from 'lucide-react';
+import { Users, List, Printer, Download, Search, Phone, MessageSquare, Filter } from 'lucide-react';
 import { Task, PersonalDetails } from '../../types';
 import { formatDate } from '../../utils/formatters';
 
@@ -127,26 +127,32 @@ export function AdminCitizenDirectory({
           </button>
         </div>
       </div>
-      <div className="flex gap-5 mb-6 bg-[#F4F7FB] p-5 rounded-2xl border border-slate-200">
+      <div className="flex gap-2 sm:gap-5 mb-4 sm:mb-6 bg-[#F4F7FB] p-3 sm:p-5 rounded-[16px] sm:rounded-2xl border border-slate-200">
         <div className="relative flex-1">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search size={18} className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400" />
           <input 
             type="text" 
             placeholder="Search by Name, Mobile, Place..." 
             value={search} 
             onChange={e => setSearch(e.target.value)} 
-            className="w-full pl-12 pr-4 py-2 bg-white border border-slate-200 rounded-lg font-medium outline-none focus:border-teal-500 text-slate-800" 
+            className="w-full pl-9 sm:pl-12 pr-3 sm:pr-4 py-2 bg-white border border-slate-200 rounded-[10px] sm:rounded-lg text-sm sm:text-base font-medium outline-none focus:border-teal-500 text-slate-800" 
           />
         </div>
-        <select 
-          value={sortBy} 
-          onChange={e => setSortBy(e.target.value)} 
-          className="px-4 py-2 bg-white border border-slate-200 rounded-lg font-bold text-slate-700 outline-none focus:border-teal-500"
-        >
-          <option value="visits">Sort by Most Visits</option>
-          <option value="recent">Sort by Most Recent</option>
-          <option value="name">Sort Alphabetically</option>
-        </select>
+        <div className="relative shrink-0 flex items-center bg-white border border-slate-200 rounded-[10px] sm:rounded-lg focus-within:border-teal-500 overflow-hidden">
+          <div className="pl-3 pr-1 py-2 text-slate-500 pointer-events-none">
+            <Filter size={18} />
+          </div>
+          <select 
+            value={sortBy} 
+            onChange={e => setSortBy(e.target.value)} 
+            className="bg-transparent pl-1 pr-3 py-2 font-bold text-[11px] sm:text-sm text-slate-700 outline-none cursor-pointer appearance-none text-center"
+            title="Sort By"
+          >
+            <option value="visits">Visits</option>
+            <option value="recent">Recent</option>
+            <option value="name">A-Z</option>
+          </select>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm text-slate-700 whitespace-nowrap">

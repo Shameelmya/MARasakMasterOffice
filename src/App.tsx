@@ -538,8 +538,8 @@ const isImpersonating = !!impersonatedUser;
        >
          <option value="Active">🔴 Active</option>
          <option value="Pending">🕒 Pending</option>
-         <option value="In Progress">⚡ In Prog</option>
-         <option value="Completed">✅ Done</option>
+         <option value="In Progress">⚡ In Progress</option>
+         <option value="Completed">✅ Completed</option>
          <option value="Draft">📝 Drafts</option>
          <option value="Trash">🗑️ Trash</option>
          <option value="All">All Status</option>
@@ -592,9 +592,9 @@ const isImpersonating = !!impersonatedUser;
          onChange={e => setGlobalFilters(p => ({...p, applicationMode: e.target.value as any}))} 
          className="px-1.5 py-1.5 sm:px-3 sm:py-1.5 border border-slate-300 rounded-[10px] sm:rounded-lg font-bold text-slate-700 outline-none bg-slate-50 focus:border-indigo-500 transition-all min-w-min"
        >
-         <option value="All">📱 All Apps</option>
-         <option value="Office">🏢 Office</option>
-         <option value="Citizen">👤 Citizen</option>
+         <option value="All">📝 All Applications</option>
+         <option value="Office">📝 Self mode</option>
+         <option value="Citizen">📝 Citizen Application</option>
        </select>
        {activeUser?.name === 'M. A. Razak Master (MLA)' && (
          <select
