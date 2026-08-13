@@ -487,54 +487,54 @@ export function AdminDashboard({
       )}
 
       {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#2d1b4e] shadow-[0_-10px_30px_rgba(0,0,0,0.2)] border-t border-purple-800/50 pt-2 px-2 sm:px-4 z-[90] pb-2 sm:pb-4 transition-transform duration-300 transform-gpu translate-y-0">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.1)] border-t border-slate-100 pt-2 px-2 sm:px-4 z-[90] pb-2 sm:pb-4">
         <div className="flex justify-between items-end w-full max-w-md mx-auto h-full">
           <button 
             onClick={() => { setActiveTab('recent_updations'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${activeTab === 'recent_updations' && !mobileSettingsOpen ? 'text-[#2d1b4e]' : 'text-purple-300/70 hover:text-purple-200'}`}
+            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${activeTab === 'recent_updations' && !mobileSettingsOpen ? 'text-red-600' : 'text-[#2d1b4e] hover:text-purple-700'}`}
           >
-            <div className={`p-2 sm:p-2.5 rounded-[18px] transition-colors ${activeTab === 'recent_updations' && !mobileSettingsOpen ? 'bg-white shadow-sm' : 'bg-transparent'}`}><Bell size={22} strokeWidth={2.5} /></div>
+            <div className={`p-3 rounded-xl transition-colors ${activeTab === 'recent_updations' && !mobileSettingsOpen ? 'bg-red-500 text-white shadow-md' : 'bg-transparent text-[#2d1b4e]'}`}><Bell size={26} strokeWidth={2.5} /></div>
             <span className="text-[10px] font-bold mt-0.5">Recent</span>
           </button>
           
           <button 
             onClick={() => { setActiveTab('input'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${activeTab === 'input' && !mobileSettingsOpen ? 'text-[#2d1b4e]' : 'text-purple-300/70 hover:text-purple-200'}`}
+            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${activeTab === 'input' && !mobileSettingsOpen ? 'text-purple-600' : 'text-[#2d1b4e] hover:text-purple-700'}`}
           >
-            <div className={`p-2 sm:p-2.5 rounded-[18px] transition-colors ${activeTab === 'input' && !mobileSettingsOpen ? 'bg-white shadow-sm' : 'bg-transparent'}`}><Plus size={22} strokeWidth={2.5} /></div>
+            <div className={`p-3 rounded-xl transition-colors ${activeTab === 'input' && !mobileSettingsOpen ? 'bg-purple-600 text-white shadow-md' : 'bg-transparent text-[#2d1b4e]'}`}><Plus size={26} strokeWidth={2.5} /></div>
             <span className="text-[10px] font-bold mt-0.5">Input</span>
           </button>
           
           <button 
             onClick={() => { setActiveTab('overview'); setGlobalSearch(''); setInitialOfficerFilter(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${activeTab === 'overview' && !mobileSettingsOpen ? 'text-[#2d1b4e]' : 'text-purple-300/70 hover:text-purple-200'}`}
+            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${activeTab === 'overview' && !mobileSettingsOpen ? 'text-blue-600' : 'text-[#2d1b4e] hover:text-purple-700'}`}
           >
-            <div className={`p-2 sm:p-2.5 rounded-[18px] transition-colors ${activeTab === 'overview' && !mobileSettingsOpen ? 'bg-white shadow-sm' : 'bg-transparent'}`}><Globe size={22} strokeWidth={2.5} /></div>
+            <div className={`p-3 rounded-xl transition-colors ${activeTab === 'overview' && !mobileSettingsOpen ? 'bg-blue-600 text-white shadow-md' : 'bg-transparent text-[#2d1b4e]'}`}><Globe size={26} strokeWidth={2.5} /></div>
             <span className="text-[10px] font-bold mt-0.5">Overview</span>
           </button>
 
           <button 
             onClick={() => { setActiveTab('citizens'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${activeTab === 'citizens' && !mobileSettingsOpen ? 'text-[#2d1b4e]' : 'text-purple-300/70 hover:text-purple-200'}`}
+            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${activeTab === 'citizens' && !mobileSettingsOpen ? 'text-teal-600' : 'text-[#2d1b4e] hover:text-purple-700'}`}
           >
-            <div className={`p-2 sm:p-2.5 rounded-[18px] transition-colors ${activeTab === 'citizens' && !mobileSettingsOpen ? 'bg-white shadow-sm' : 'bg-transparent'}`}><Users size={22} strokeWidth={2.5} /></div>
+            <div className={`p-3 rounded-xl transition-colors ${activeTab === 'citizens' && !mobileSettingsOpen ? 'bg-teal-500 text-white shadow-md' : 'bg-transparent text-[#2d1b4e]'}`}><Users size={26} strokeWidth={2.5} /></div>
             <span className="text-[10px] font-bold mt-0.5">Citizens</span>
           </button>
           
           <button 
             onClick={() => { setMobileSettingsOpen(!mobileSettingsOpen); }} 
-            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${mobileSettingsOpen ? 'text-[#2d1b4e]' : 'text-purple-300/70 hover:text-purple-200'}`}
+            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${mobileSettingsOpen ? 'text-orange-600' : 'text-[#2d1b4e] hover:text-purple-700'}`}
           >
-            <div className={`p-2 sm:p-2.5 rounded-[18px] transition-colors ${mobileSettingsOpen ? 'bg-white shadow-sm' : 'bg-transparent'}`}><MenuIcon size={22} strokeWidth={2.5} /></div>
-            <span className="text-[10px] font-bold mt-0.5">Menu</span>
+            <div className={`p-3 rounded-xl transition-colors ${mobileSettingsOpen ? 'bg-orange-500 text-white shadow-md' : 'bg-transparent text-[#2d1b4e]'}`}><MenuIcon size={26} strokeWidth={2.5} /></div>
+            <span className="text-[10px] font-bold mt-0.5">More</span>
           </button>
         </div>
       </div>
 
       {/* Mobile Settings Modal Menu */}
       {mobileSettingsOpen && (
-        <div className="md:hidden fixed inset-0 z-[80] bg-slate-900/40 backdrop-blur-sm" onClick={() => setMobileSettingsOpen(false)}>
-          <div className="absolute bottom-[90px] left-4 right-4 bg-white rounded-3xl p-5 shadow-xl border border-slate-200 animate-in slide-in-from-bottom-10 flex flex-col gap-3" onClick={e => e.stopPropagation()}>
+        <div className="md:hidden fixed inset-0 z-[80] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setMobileSettingsOpen(false)}>
+          <div className="w-full max-w-sm bg-white rounded-3xl p-5 shadow-xl border border-slate-200 flex flex-col gap-3 animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
             <h3 className="font-bold text-slate-800 text-sm mb-2 border-b border-slate-100 pb-2">More Options</h3>
             <button 
               onClick={() => { setActiveTab('direct'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
