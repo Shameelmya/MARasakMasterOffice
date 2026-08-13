@@ -49,7 +49,7 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
         <div className="bg-white/90 backdrop-blur-2xl rounded-[32px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.08)] border border-white max-w-5xl w-full overflow-hidden grid grid-cols-1 md:grid-cols-12 min-h-[450px] transition-all">
           
           {/* Left Column: Premium Corporate Purple Gradient */}
-          <div className="md:col-span-5 col-span-1 bg-gradient-to-br from-[#3B0764] via-[#581C87] to-[#2E1065] text-white p-10 flex flex-col justify-between relative overflow-hidden backdrop-blur-3xl">
+          <div className="md:col-span-5 col-span-1 bg-gradient-to-br from-[#3B0764] via-[#581C87] to-[#2E1065] text-white p-6 md:p-10 flex flex-col justify-center gap-6 relative overflow-hidden backdrop-blur-3xl">
             
             {/* Geometric wireframe layout graphics */}
             <div className="absolute inset-0 opacity-15 pointer-events-none">
@@ -58,32 +58,37 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
               <div className="absolute -bottom-12 -left-12 w-36 h-36 rounded-full border border-white/10"></div>
             </div>
 
-            <div className="relative z-10 space-y-6">
-              {/* Profile icon badge */}
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 h-16 w-16 rounded-[22px] flex items-center justify-center shadow-lg">
-                <Shield size={32} className="text-white" />
-              </div>
-              
-              <div className="space-y-2">
-                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight drop-shadow-sm font-['Outfit'] text-white">
+            <div className="relative z-10 flex flex-col justify-center space-y-4">
+              <div className="flex items-center gap-4">
+                {/* Profile icon badge */}
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 h-14 w-14 sm:h-16 sm:w-16 rounded-[18px] sm:rounded-[22px] flex items-center justify-center shadow-lg shrink-0">
+                  <Shield size={28} className="text-white sm:w-[32px] sm:h-[32px]" />
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight drop-shadow-sm font-['Outfit'] text-white">
                   MLA Squad
                 </h2>
-                <div className="h-1 w-12 bg-purple-500 rounded-full"></div>
-                <p className="text-sm sm:text-base font-medium text-slate-300 tracking-wider">
-                  M. A. Razak Master • Kunnamangalam Constituency
+              </div>
+              
+              <div className="pt-2">
+                <p className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight drop-shadow-sm leading-tight">
+                  M. A. Razak Master
+                </p>
+                <div className="h-1 w-12 bg-purple-400 rounded-full my-3"></div>
+                <p className="text-[11px] sm:text-sm font-bold text-purple-200 tracking-widest uppercase">
+                  Kunnamangalam Constituency
                 </p>
               </div>
             </div>
 
             {/* Date-time element inside a pill near the bottom */}
-            <div className="relative z-10 mt-12 mb-8">
-              <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-5 py-3 rounded-2xl font-medium text-sm text-slate-200 shadow-lg w-full justify-center transition-all">
+            <div className="relative z-10 mt-2 sm:mt-6">
+              <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl font-medium text-xs sm:text-sm text-slate-200 shadow-lg w-full justify-center transition-all">
                 <LiveClock className="text-slate-200 flex items-center justify-center gap-2" />
               </div>
             </div>
 
             {/* Copyright badge at bottom */}
-            <div className="relative z-10 text-[10px] font-bold uppercase text-slate-400 tracking-[0.2em] border-t border-white/10 pt-5">
+            <div className="relative z-10 text-[9px] sm:text-[10px] font-bold uppercase text-slate-400 tracking-[0.2em] border-t border-white/10 pt-3 sm:pt-5 mt-auto">
               <span>© 2026 SECURE SYSTEM</span>
             </div>
 
