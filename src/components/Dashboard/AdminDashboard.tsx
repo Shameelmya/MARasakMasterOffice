@@ -162,7 +162,7 @@ export function AdminDashboard({
   }, [tasks]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-[120px]">
       <div className="hidden md:flex flex-wrap items-center gap-2 bg-white p-2 rounded-2xl shadow-sm border border-slate-200 w-full print-hidden">
         <button 
           onClick={() => { setActiveTab('alerts'); setGlobalSearch(''); }} 
@@ -489,10 +489,10 @@ export function AdminDashboard({
       {/* Mobile Bottom Navigation */}
       <div className="md:hidden fixed bottom-3 left-4 right-4 h-[85px] bg-gradient-to-r from-purple-800 to-[#2d1b4e] rounded-[24px] shadow-[0_8px_32px_rgba(45,27,78,0.4)] border border-white/10 z-[90] flex justify-around items-center px-1">
           <button 
-            onClick={() => { setActiveTab('recent_updations'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center justify-center gap-1 w-[58px] transition-colors ${activeTab === 'recent_updations' && !mobileSettingsOpen ? 'text-white' : 'text-white/60 hover:text-white/80'}`}
+            onClick={() => { setActiveTab('alerts'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+            className={`flex flex-col items-center justify-center gap-1 w-[58px] transition-colors ${activeTab === 'alerts' && !mobileSettingsOpen ? 'text-white' : 'text-white/60 hover:text-white/80'}`}
           >
-            <div className={`flex items-center justify-center w-[48px] h-[48px] rounded-[16px] transition-all ${activeTab === 'recent_updations' && !mobileSettingsOpen ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-red-500' : 'bg-white/15 text-white/80'}`}>
+            <div className={`flex items-center justify-center w-[48px] h-[48px] rounded-[16px] transition-all ${activeTab === 'alerts' && !mobileSettingsOpen ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-red-500' : 'bg-white/15 text-white/80'}`}>
               <Bell size={24} strokeWidth={2.5} />
             </div>
             <span className="text-xs font-semibold leading-none">Recent</span>
@@ -542,31 +542,31 @@ export function AdminDashboard({
       {/* Mobile Settings Modal Menu */}
       {mobileSettingsOpen && (
         <div className="md:hidden fixed inset-0 z-[80] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setMobileSettingsOpen(false)}>
-          <div className="w-full max-w-sm bg-white rounded-3xl p-5 shadow-xl border border-slate-200 flex flex-col gap-3 animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-sm bg-white rounded-3xl p-5 shadow-xl border border-slate-200 flex flex-col gap-4 animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
             <h3 className="font-bold text-slate-800 text-sm mb-2 border-b border-slate-100 pb-2">More Options</h3>
             <button 
               onClick={() => { setActiveTab('direct'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-              className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+              className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-colors"
             >
-              <Zap size={16} className="text-purple-600" /> Direct Desk
+              <Zap size={20} className="text-purple-600" /> Direct Desk
             </button>
             <button 
               onClick={() => { setActiveTab('recent_updations'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
-              className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+              className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-colors"
             >
-              <Zap size={16} className="text-amber-500" /> Updations
+              <Zap size={20} className="text-amber-500" /> Updations
             </button>
             <button 
               onClick={() => { setActiveTab('users'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-              className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+              className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-colors"
             >
-              <Users size={16} className="text-indigo-600" /> Manage Officers
+              <Users size={20} className="text-indigo-600" /> Manage Officers
             </button>
             <button 
               onClick={() => { setActiveTab('database'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
-              className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+              className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-colors"
             >
-              <Database size={16} className="text-red-600" /> DB & Backup
+              <Database size={20} className="text-red-600" /> DB & Backup
             </button>
           </div>
         </div>

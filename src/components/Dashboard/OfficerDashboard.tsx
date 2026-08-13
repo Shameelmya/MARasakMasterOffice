@@ -131,7 +131,7 @@ export function OfficerDashboard({
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
+    <div className="space-y-6 animate-in fade-in duration-200 pb-[120px]">
       {/* Dynamic Compact Nav/Tabs List to fit on one line */}
       <div className="hidden md:flex flex-wrap items-center gap-2 bg-white p-2 rounded-[20px] shadow-sm border border-slate-200 w-full print-hidden">
         <button 
@@ -449,28 +449,28 @@ export function OfficerDashboard({
       {/* Mobile Settings Modal Menu */}
       {mobileSettingsOpen && (
         <div className="md:hidden fixed inset-0 z-[80] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setMobileSettingsOpen(false)}>
-          <div className="w-full max-w-sm bg-white rounded-3xl p-5 shadow-xl border border-slate-200 flex flex-col gap-3 animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-sm bg-white rounded-3xl p-5 shadow-xl border border-slate-200 flex flex-col gap-4 animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
             <h3 className="font-bold text-slate-800 text-sm mb-2 border-b border-slate-100 pb-2">More Options</h3>
             <button 
               onClick={() => { setActiveTab('direct_worker'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-              className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+              className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-colors"
             >
-              <Zap size={16} className="text-purple-600" /> Assignments from MLA
+              <Zap size={20} className="text-purple-600" /> Assignments from MLA
             </button>
             {hasGlobalOverviewPermission && (
               <button 
                 onClick={() => { setActiveTab('overview'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-                className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+                className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-colors"
               >
-                <Eye size={16} className="text-purple-600" /> Global Overview
+                <Eye size={20} className="text-purple-600" /> Global Overview
               </button>
             )}
             {user.canSeeRecentUpdations && (
               <button 
                 onClick={() => { setActiveTab('recent_updations'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
-                className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs"
+                className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-colors"
               >
-                <Zap size={16} className="text-amber-500" /> Updations
+                <Zap size={20} className="text-amber-500" /> Updations
               </button>
             )}
           </div>

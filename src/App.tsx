@@ -544,21 +544,52 @@ const isImpersonating = !!impersonatedUser;
          <option value="Trash">🗑️ Trash</option>
          <option value="All">All Status</option>
        </select>
-       <select 
-         value={globalFilters.dateRange} 
-         onChange={e => setGlobalFilters(p => ({...p, dateRange: e.target.value}))} 
-         className="px-1.5 py-1.5 sm:px-3 sm:py-1.5 border border-slate-300 rounded-[10px] sm:rounded-lg font-bold text-slate-700 outline-none bg-slate-50 focus:border-indigo-500 transition-all min-w-min"
-       >
-         <option value="today">📅 Today</option>
-         <option value="yesterday">📅 Y'day</option>
-         <option value="7days">📅 7 Days</option>
-         <option value="1month">📅 1 Month</option>
-         <option value="6months">📅 6 Months</option>
-         <option value="1year">📅 1 Year</option>
-         <option value="all">📅 All Time</option>
-         <option value="custom">📅 Date</option>
-         <option value="custom_range">📅 Range</option>
-       </select>
+       <div className="relative inline-block">
+         <div className="px-1.5 py-1.5 sm:px-3 sm:py-1.5 border border-slate-300 rounded-[10px] sm:rounded-lg font-bold text-slate-700 bg-slate-50 flex items-center justify-between gap-1 min-w-[70px]">
+           <span className="sm:hidden text-xs">
+             📅 {
+               globalFilters.dateRange === 'today' ? 'Today' :
+               globalFilters.dateRange === 'yesterday' ? "Y'day" :
+               globalFilters.dateRange === '7days' ? '7 Days' :
+               globalFilters.dateRange === '1month' ? '1 Mon' :
+               globalFilters.dateRange === '6months' ? '6 Mon' :
+               globalFilters.dateRange === '1year' ? '1 Yr' :
+               globalFilters.dateRange === 'all' ? 'All Time' :
+               globalFilters.dateRange === 'custom' ? 'Date' :
+               'Range'
+             }
+           </span>
+           <span className="hidden sm:inline">
+             📅 {
+               globalFilters.dateRange === 'today' ? 'Today' :
+               globalFilters.dateRange === 'yesterday' ? 'Yesterday' :
+               globalFilters.dateRange === '7days' ? 'Last 7 Days' :
+               globalFilters.dateRange === '1month' ? 'Last 1 Month' :
+               globalFilters.dateRange === '6months' ? 'Last 6 Months' :
+               globalFilters.dateRange === '1year' ? 'Last 1 Year' :
+               globalFilters.dateRange === 'all' ? 'All Time' :
+               globalFilters.dateRange === 'custom' ? 'Specific Date' :
+               'Custom Range'
+             }
+           </span>
+           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 opacity-70"><path d="M6 9l6 6 6-6"/></svg>
+         </div>
+         <select 
+           value={globalFilters.dateRange} 
+           onChange={e => setGlobalFilters(p => ({...p, dateRange: e.target.value}))} 
+           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+         >
+           <option value="today">📅 Today</option>
+           <option value="yesterday">📅 Yesterday</option>
+           <option value="7days">📅 Last 7 Days</option>
+           <option value="1month">📅 Last 1 Month</option>
+           <option value="6months">📅 Last 6 Months</option>
+           <option value="1year">📅 Last 1 Year</option>
+           <option value="all">📅 All Time</option>
+           <option value="custom">📅 Specific Date</option>
+           <option value="custom_range">📅 Custom Range</option>
+         </select>
+       </div>
        {globalFilters.dateRange === 'custom' && (
           <div className="flex items-center gap-1 bg-slate-50 border border-slate-300 rounded-[10px] px-1.5 py-1">
             <input 
