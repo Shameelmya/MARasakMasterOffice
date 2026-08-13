@@ -133,7 +133,7 @@ export function OfficerDashboard({
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Dynamic Compact Nav/Tabs List to fit on one line */}
-      <div className="flex items-center gap-2 bg-white p-1.5 rounded-[20px] shadow-sm border border-slate-200 w-full print-hidden overflow-x-auto no-scrollbar md:flex-wrap">
+      <div className="flex flex-wrap items-center gap-2 bg-white p-2 rounded-[20px] shadow-sm border border-slate-200 w-full print-hidden">
         <button 
           onClick={() => { setActiveTab('recent'); setGlobalSearch(''); }} 
           className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'recent' ? 'bg-[#EF4444] text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
