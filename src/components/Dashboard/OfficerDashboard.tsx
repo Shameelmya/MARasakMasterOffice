@@ -393,48 +393,57 @@ export function OfficerDashboard({
 
       {/* Mobile Bottom Navigation */}
       {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.1)] border-t border-slate-100 pt-2 px-2 sm:px-4 z-[90] pb-2 sm:pb-4">
-        <div className="flex justify-between items-end w-full max-w-md mx-auto h-full">
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden fixed bottom-3 left-4 right-4 h-[85px] bg-gradient-to-r from-purple-800 to-[#2d1b4e] rounded-[24px] shadow-[0_8px_32px_rgba(45,27,78,0.4)] border border-white/10 z-[90] flex justify-around items-center px-1">
           <button 
             onClick={() => { setActiveTab('recent'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${activeTab === 'recent' && !mobileSettingsOpen ? 'text-red-600' : 'text-[#2d1b4e] hover:text-purple-700'}`}
+            className={`flex flex-col items-center justify-center gap-1 w-[58px] transition-colors ${activeTab === 'recent' && !mobileSettingsOpen ? 'text-white' : 'text-white/60 hover:text-white/80'}`}
           >
-            <div className={`p-3 rounded-xl transition-colors ${activeTab === 'recent' && !mobileSettingsOpen ? 'bg-red-500 text-white shadow-md' : 'bg-transparent text-[#2d1b4e]'}`}><Bell size={26} strokeWidth={2.5} /></div>
-            <span className="text-[10px] font-bold mt-0.5">Recent</span>
+            <div className={`flex items-center justify-center w-[48px] h-[48px] rounded-[16px] transition-all ${activeTab === 'recent' && !mobileSettingsOpen ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-red-500' : 'bg-white/15 text-white/80'}`}>
+              <Bell size={24} strokeWidth={2.5} />
+            </div>
+            <span className="text-xs font-semibold leading-none">Recent</span>
           </button>
           
           <button 
             onClick={() => { setActiveTab('input'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${activeTab === 'input' && !mobileSettingsOpen ? 'text-purple-600' : 'text-[#2d1b4e] hover:text-purple-700'}`}
+            className={`flex flex-col items-center justify-center gap-1 w-[58px] transition-colors ${activeTab === 'input' && !mobileSettingsOpen ? 'text-white' : 'text-white/60 hover:text-white/80'}`}
           >
-            <div className={`p-3 rounded-xl transition-colors ${activeTab === 'input' && !mobileSettingsOpen ? 'bg-purple-600 text-white shadow-md' : 'bg-transparent text-[#2d1b4e]'}`}><Plus size={26} strokeWidth={2.5} /></div>
-            <span className="text-[10px] font-bold mt-0.5">Input</span>
+            <div className={`flex items-center justify-center w-[48px] h-[48px] rounded-[16px] transition-all ${activeTab === 'input' && !mobileSettingsOpen ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-purple-600' : 'bg-white/15 text-white/80'}`}>
+              <Plus size={24} strokeWidth={2.5} />
+            </div>
+            <span className="text-xs font-semibold leading-none">Input</span>
           </button>
           
           <button 
             onClick={() => { setActiveTab('worker'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${activeTab === 'worker' && !mobileSettingsOpen ? 'text-blue-600' : 'text-[#2d1b4e] hover:text-purple-700'}`}
+            className={`flex flex-col items-center justify-center gap-1 w-[58px] transition-colors ${activeTab === 'worker' && !mobileSettingsOpen ? 'text-white' : 'text-white/60 hover:text-white/80'}`}
           >
-            <div className={`p-3 rounded-xl transition-colors ${activeTab === 'worker' && !mobileSettingsOpen ? 'bg-blue-600 text-white shadow-md' : 'bg-transparent text-[#2d1b4e]'}`}><Activity size={26} strokeWidth={2.5} /></div>
-            <span className="text-[10px] font-bold mt-0.5">Worker</span>
+            <div className={`flex items-center justify-center w-[48px] h-[48px] rounded-[16px] transition-all ${activeTab === 'worker' && !mobileSettingsOpen ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-blue-600' : 'bg-white/15 text-white/80'}`}>
+              <Activity size={24} strokeWidth={2.5} />
+            </div>
+            <span className="text-xs font-semibold leading-none">Worker</span>
           </button>
 
           <button 
             onClick={() => { setActiveTab('history'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${activeTab === 'history' && !mobileSettingsOpen ? 'text-teal-600' : 'text-[#2d1b4e] hover:text-purple-700'}`}
+            className={`flex flex-col items-center justify-center gap-1 w-[58px] transition-colors ${activeTab === 'history' && !mobileSettingsOpen ? 'text-white' : 'text-white/60 hover:text-white/80'}`}
           >
-            <div className={`p-3 rounded-xl transition-colors ${activeTab === 'history' && !mobileSettingsOpen ? 'bg-teal-500 text-white shadow-md' : 'bg-transparent text-[#2d1b4e]'}`}><FileText size={26} strokeWidth={2.5} /></div>
-            <span className="text-[10px] font-bold mt-0.5">History</span>
+            <div className={`flex items-center justify-center w-[48px] h-[48px] rounded-[16px] transition-all ${activeTab === 'history' && !mobileSettingsOpen ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-teal-600' : 'bg-white/15 text-white/80'}`}>
+              <FileText size={24} strokeWidth={2.5} />
+            </div>
+            <span className="text-xs font-semibold leading-none">History</span>
           </button>
           
           <button 
             onClick={() => { setMobileSettingsOpen(!mobileSettingsOpen); }} 
-            className={`flex flex-col items-center gap-1 transition-all flex-1 py-1 ${mobileSettingsOpen ? 'text-orange-600' : 'text-[#2d1b4e] hover:text-purple-700'}`}
+            className={`flex flex-col items-center justify-center gap-1 w-[58px] transition-colors ${mobileSettingsOpen ? 'text-white' : 'text-white/60 hover:text-white/80'}`}
           >
-            <div className={`p-3 rounded-xl transition-colors ${mobileSettingsOpen ? 'bg-orange-500 text-white shadow-md' : 'bg-transparent text-[#2d1b4e]'}`}><MenuIcon size={26} strokeWidth={2.5} /></div>
-            <span className="text-[10px] font-bold mt-0.5">More</span>
+            <div className={`flex items-center justify-center w-[48px] h-[48px] rounded-[16px] transition-all ${mobileSettingsOpen ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-orange-500' : 'bg-white/15 text-white/80'}`}>
+              <MenuIcon size={24} strokeWidth={2.5} />
+            </div>
+            <span className="text-xs font-semibold leading-none">More</span>
           </button>
-        </div>
       </div>
 
       {/* Mobile Settings Modal Menu */}
