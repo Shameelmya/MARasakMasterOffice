@@ -335,7 +335,7 @@ export function TaskDetailsModal({
                   <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Follow-up:</span>
                   <select
                     value={task.followUpFrequency || ''}
-                    onChange={(e) => updateTask(task.id, { followUpFrequency: e.target.value })}
+                    onChange={(e) => { const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: currentUser.name, text: `Follow-up frequency changed to ${e.target.value || 'None'}.` }; updateTask(task.id, { followUpFrequency: e.target.value, timeline: [...(task.timeline || []), ev] }); }}
                     className="bg-slate-800 text-white text-xs font-bold rounded px-1.5 py-0.5 border border-slate-700 outline-none cursor-pointer transition-all duration-300 hover:bg-slate-50"
                   >
                     <option value="">None</option>
@@ -383,7 +383,7 @@ export function TaskDetailsModal({
                      triggerConfirm(
                        "Restore Task",
                        "Are you sure you want to restore this task from the trash?",
-                       () => updateTask(task.id, { isTrashed: false }),
+                       () => { const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: currentUser.name, text: 'Task restored from trash.' }; updateTask(task.id, { isTrashed: false, timeline: [...(task.timeline || []), ev] }); },
                        false,
                        "Yes, Restore"
                      );
@@ -442,7 +442,7 @@ export function TaskDetailsModal({
                            triggerConfirm(
                              "Remove MLA Signature?",
                              "This will remove the verification signature from the completion letter. Are you sure?",
-                             () => updateTask(task.id, { isSignedByMLA: false }),
+                             () => { const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: currentUser.name, text: 'MLA Signature removed.' }; updateTask(task.id, { isSignedByMLA: false, timeline: [...(task.timeline || []), ev] }); },
                              true,
                              "Yes, Remove Signature"
                            );
@@ -450,7 +450,7 @@ export function TaskDetailsModal({
                            triggerConfirm(
                              "Verify Completion Letter?",
                              "This will officially add the MLA signature to the completion letter. Proceed?",
-                             () => updateTask(task.id, { isSignedByMLA: true }),
+                             () => { const ev = { id: generateUid(), type: 'completed' as const, time: getNow(), by: currentUser.name, text: 'MLA Signature added for verification.' }; updateTask(task.id, { isSignedByMLA: true, timeline: [...(task.timeline || []), ev] }); },
                              false,
                              "Yes, Sign Letter"
                            );
@@ -795,7 +795,8 @@ export function TaskDetailsModal({
                      onDeleteSuccess={() => {
                        if (task.attachments) {
                          const newAtts = task.attachments.filter((_, i) => i !== idx);
-                         updateTask(task.id, { attachments: newAtts });
+                         const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: currentUser.name, text: 'Attachment removed.' };
+                         updateTask(task.id, { attachments: newAtts, timeline: [...(task.timeline || []), ev] });
                        }
                      }}
                    />

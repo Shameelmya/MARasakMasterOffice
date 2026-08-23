@@ -79,7 +79,9 @@ export function AdminGlobalView({
   const displayed = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount]);
   
   const toggleUnsolved = useCallback((task: Task) => {
-    updateTask(task.id, { status: task.status === 'Unsolved' ? 'Pending' : 'Unsolved' });
+    const nextStatus = task.status === 'Unsolved' ? 'Pending' : 'Unsolved';
+    const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: 'M. A. Razak Master (Admin)', text: `Task marked as ${nextStatus} directly by Admin.` };
+    updateTask(task.id, { status: nextStatus, timeline: [...(task.timeline || []), ev] });
   }, [updateTask]);
 
   const quickCompleteTask = useCallback((task: Task) => {
@@ -107,7 +109,9 @@ export function AdminGlobalView({
 
   const togglePriority = useCallback((task: Task) => {
     const p = ['Low', 'Medium', 'High'];
-    updateTask(task.id, { priority: p[(p.indexOf(task.priority || 'Medium') + 1) % 3] });
+    const nextP = p[(p.indexOf(task.priority || 'Medium') + 1) % 3];
+    const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: 'M. A. Razak Master (Admin)', text: `Priority changed to ${nextP} directly by Admin.` };
+    updateTask(task.id, { priority: nextP, timeline: [...(task.timeline || []), ev] });
   }, [updateTask]);
 
   const sortedCategories = useMemo(() => {
@@ -122,8 +126,9 @@ export function AdminGlobalView({
       alert('No valid mobile number found for this citizen.');
       return;
     }
-    const waMessage = `പ്രിയപ്പെട്ട ${t.personalDetails.name},\n\nതാങ്കൾ പി.കെ നവാസ് എം.എൽ.എ യുടെ ഓഫീസുമായി ബന്ധപ്പെട്ടതിന് നന്ദി. നിങ്ങളുടെ അപേക്ഷ/പരാതി ഔദ്യോഗികമായി രേഖപ്പെടുത്തിയിട്ടുണ്ട്.\n\n*വിഷയം:* ${t.subject}\n*റഫറൻസ് ഐഡി:* ${t.id}\n\n\nസ്നേഹത്തോടെ,\nഎം.എൽ.എ ഓഫീസ്, താനൂർ.ഫോൺ: 9037032002`;
-    updateTask(t.id, { isWASent: true });
+    const waMessage = `പ്രിയപ്പെട്ട ${t.personalDetails.name},\n\nതാങ്കൾ എം.എ. റസാഖ് മാസ്റ്റർ എം.എൽ.എ യുടെ ഓഫീസുമായി ബന്ധപ്പെട്ടതിന് നന്ദി. നിങ്ങളുടെ അപേക്ഷ/പരാതി ഔദ്യോഗികമായി രേഖപ്പെടുത്തിയിട്ടുണ്ട്.\n\n*വിഷയം:* ${t.subject}\n*റഫറൻസ് ഐഡി:* ${t.id}\n\n\nസ്നേഹത്തോടെ,\nഎം.എൽ.എ ഓഫീസ്, കുന്ദമംഗലം.ഫോൺ: 9037032002`;
+    const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: 'System', text: 'Auto-Acknowledgment sent via WhatsApp.' };
+    updateTask(t.id, { isWASent: true, timeline: [...(t.timeline || []), ev] });
     window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(waMessage)}`, '_blank');
   };
 
@@ -275,7 +280,8 @@ export function AdminGlobalView({
                         onMouseDown={() => {
                           if (t.isWASent) {
                             waPressTimer.current = setTimeout(() => {
-                              updateTask(t.id, { isWASent: false });
+                              const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: 'System', text: 'WhatsApp acknowledgment status reset.' };
+                              updateTask(t.id, { isWASent: false, timeline: [...(t.timeline || []), ev] });
                             }, 500);
                           }
                         }}
@@ -284,7 +290,8 @@ export function AdminGlobalView({
                         onTouchStart={() => {
                           if (t.isWASent) {
                             waPressTimer.current = setTimeout(() => {
-                              updateTask(t.id, { isWASent: false });
+                              const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: 'System', text: 'WhatsApp acknowledgment status reset.' };
+                              updateTask(t.id, { isWASent: false, timeline: [...(t.timeline || []), ev] });
                             }, 500);
                           }
                         }}
@@ -434,29 +441,24 @@ const AdminTaskCard = React.memo(({
           <div className="flex flex-wrap justify-end items-center gap-2 lg:gap-1">
             <div className="flex gap-3 lg:gap-1 items-center">
               {t.status !== 'Draft' && (
-                <button onClick={(e) => { e.stopPropagation(); triggerConfirm('Confirm Action', 'Change status to Draft?', () => { const newOffStat = {...t.officerStatuses}; (t.assignedTo || []).forEach(id => newOffStat[id] = 'Draft'); updateTask(t.id, { status: 'Draft', officerStatuses: newOffStat }); }, false, 'Yes, Change'); }} title="Mark as Draft" className="group flex items-center justify-center transition-colors">
+                <button onClick={(e) => { e.stopPropagation(); triggerConfirm('Confirm Action', 'Change status to Draft?', () => { const newOffStat = {...t.officerStatuses}; (t.assignedTo || []).forEach(id => newOffStat[id] = 'Draft'); const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: 'M. A. Razak Master (Admin)', text: 'Task marked as Draft directly by Admin.' }; updateTask(t.id, { status: 'Draft', officerStatuses: newOffStat, timeline: [...(t.timeline || []), ev] }); }, false, 'Yes, Change'); }} title="Mark as Draft" className="group flex items-center justify-center transition-colors">
                   <span className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-purple-300 text-purple-600 text-[9px] sm:text-[10px] font-bold lg:hidden group-hover:bg-purple-50">DR</span>
                   <span className="hidden lg:flex text-purple-400 group-hover:text-purple-600 group-hover:bg-purple-50 p-1 rounded"><FileEdit size={12}/></span>
                 </button>
               )}
               {t.status !== 'Local Work' && (
-                <button onClick={(e) => { e.stopPropagation(); triggerConfirm('Confirm Action', 'Change status to Local Work?', () => updateTask(t.id, { status: 'Local Work', assignedTo: [], officerStatuses: {} }), false, 'Yes, Change'); }} title="Mark as Local Work" className="group flex items-center justify-center transition-colors">
+                <button onClick={(e) => { e.stopPropagation(); triggerConfirm('Confirm Action', 'Change status to Local Work?', () => { const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: 'M. A. Razak Master (Admin)', text: 'Task marked as Local Work directly by Admin.' }; updateTask(t.id, { status: 'Local Work', assignedTo: [], officerStatuses: {}, timeline: [...(t.timeline || []), ev] }); }, false, 'Yes, Change'); }} title="Mark as Local Work" className="group flex items-center justify-center transition-colors">
                   <span className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-slate-300 text-slate-600 text-[9px] sm:text-[10px] font-bold lg:hidden group-hover:bg-[#F4F7FB]">LW</span>
                   <span className="hidden lg:flex text-slate-400 group-hover:text-slate-600 group-hover:bg-slate-100 p-1 rounded"><MapPin size={12}/></span>
                 </button>
               )}
               {t.status !== 'Pending' && (
-                <button onClick={(e) => { e.stopPropagation(); triggerConfirm('Confirm Action', 'Change status to Pending?', () => { const newOffStat = {...t.officerStatuses}; (t.assignedTo || []).forEach(id => newOffStat[id] = 'Pending'); updateTask(t.id, { status: 'Pending', officerStatuses: newOffStat }); }, false, 'Yes, Change'); }} title="Mark as Pending" className="group flex items-center justify-center transition-colors">
+                <button onClick={(e) => { e.stopPropagation(); triggerConfirm('Confirm Action', 'Change status to Pending?', () => { const newOffStat = {...t.officerStatuses}; (t.assignedTo || []).forEach(id => newOffStat[id] = 'Pending'); const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: 'M. A. Razak Master (Admin)', text: 'Task marked as Pending directly by Admin.' }; updateTask(t.id, { status: 'Pending', officerStatuses: newOffStat, timeline: [...(t.timeline || []), ev] }); }, false, 'Yes, Change'); }} title="Mark as Pending" className="group flex items-center justify-center transition-colors">
                   <span className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-red-300 text-red-600 text-[9px] sm:text-[10px] font-bold lg:hidden group-hover:bg-red-50">PD</span>
                   <span className="hidden lg:flex text-red-400 group-hover:text-red-600 group-hover:bg-red-50 p-1 rounded"><Clock size={12}/></span>
                 </button>
               )}
-              {t.status !== 'D Finished' && (
-                <button onClick={(e) => { e.stopPropagation(); triggerConfirm('Confirm Action', 'Change status to D Finished?', () => { const newOffStat = {...t.officerStatuses}; (t.assignedTo || []).forEach(id => newOffStat[id] = 'D Finished'); updateTask(t.id, { status: 'D Finished', officerStatuses: newOffStat }); }, false, 'Yes, Change'); }} title="Mark D Finished" className="group flex items-center justify-center transition-colors">
-                  <span className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-emerald-300 text-emerald-600 text-[9px] sm:text-[10px] font-bold lg:hidden group-hover:bg-emerald-50">DF</span>
-                  <span className="hidden lg:flex text-emerald-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 p-1 rounded"><CheckCircle2 size={12}/></span>
-                </button>
-              )}
+
               {t.status !== 'Completed' && t.status !== 'Unsolved' && (
                 <button 
                   onClick={(e) => { e.stopPropagation(); quickCompleteTask(t); }} 
@@ -479,7 +481,7 @@ const AdminTaskCard = React.memo(({
               return (
                 <button 
                   key={f}
-                  onClick={(e) => { e.stopPropagation(); triggerConfirm('Confirm Action', `Change Follow-up to ${f}?`, () => updateTask(t.id, { followUpFrequency: f === 'None' ? '' : f }), false, 'Yes, Change'); }}
+                  onClick={(e) => { e.stopPropagation(); triggerConfirm('Confirm Action', `Change Follow-up to ${f}?`, () => { const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: 'M. A. Razak Master (Admin)', text: `Follow-up frequency changed to ${f} directly by Admin.` }; updateTask(t.id, { followUpFrequency: f === 'None' ? '' : f, timeline: [...(t.timeline || []), ev] }); }, false, 'Yes, Change'); }}
                   className={`px-3 py-1.5 lg:px-1 lg:py-0.5 rounded text-[10px] lg:text-[7px] font-bold transition-colors ${isSelected ? 'text-indigo-600 bg-indigo-50 border border-indigo-200' : 'text-slate-400 hover:text-slate-600 hover:bg-[#F4F7FB] border border-transparent'}`}
                 >
                   {f}
@@ -511,7 +513,8 @@ const AdminTaskCard = React.memo(({
                 e.stopPropagation();
                 if (t.isWASent) {
                   pressTimer.current = setTimeout(() => {
-                    updateTask(t.id, { isWASent: false });
+                    const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: 'System', text: 'WhatsApp acknowledgment status reset.' };
+                    updateTask(t.id, { isWASent: false, timeline: [...(t.timeline || []), ev] });
                   }, 500);
                 }
               }}
@@ -521,7 +524,8 @@ const AdminTaskCard = React.memo(({
                 e.stopPropagation();
                 if (t.isWASent) {
                   pressTimer.current = setTimeout(() => {
-                    updateTask(t.id, { isWASent: false });
+                    const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: 'System', text: 'WhatsApp acknowledgment status reset.' };
+                    updateTask(t.id, { isWASent: false, timeline: [...(t.timeline || []), ev] });
                   }, 500);
                 }
               }}
