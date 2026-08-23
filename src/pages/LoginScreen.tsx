@@ -55,11 +55,6 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
               <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
 
-            {/* Copyright badge at bottom */}
-            <div className="relative z-20 w-full text-center text-[9px] sm:text-[10px] font-bold uppercase text-white/80 tracking-[0.2em] pb-4 pt-8 bg-gradient-to-t from-black/80 to-transparent">
-              <span>© {new Date().getFullYear()} SECURE SYSTEM</span>
-            </div>
-
           </div>
 
           {/* Right Column */}
