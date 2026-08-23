@@ -244,11 +244,7 @@ const WorkerTaskCard = React.memo(({
     let globStat = task.status;
     
     if (newStatus === 'Completed') {
-      globStat = allAssigned.every(s => s === 'Completed') 
-        ? newStatus 
-        : allAssigned.some(s => s === 'Draft') 
-          ? 'Draft' 
-          : 'In Progress';
+      globStat = 'Completed';
     } else if (newStatus === 'Draft') {
       globStat = allAssigned.every(s => s === 'Completed' || s === 'Draft') 
         ? 'Draft' 

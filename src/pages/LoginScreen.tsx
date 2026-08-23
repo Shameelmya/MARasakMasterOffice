@@ -49,21 +49,14 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
         <div className="bg-white/90 backdrop-blur-2xl rounded-[32px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.08)] border border-white max-w-5xl w-full overflow-hidden grid grid-cols-1 md:grid-cols-12 min-h-[450px] transition-all">
           
           {/* Left Column: Premium Corporate Purple Gradient */}
-          <div className="md:col-span-5 col-span-1 bg-gradient-to-br from-[#3B0764] via-[#581C87] to-[#2E1065] text-white p-6 md:p-10 flex flex-col justify-center items-center relative overflow-hidden backdrop-blur-3xl">
+          <div className="md:col-span-5 col-span-1 bg-[#3B0764] text-white flex flex-col justify-end items-center relative overflow-hidden">
             
-            {/* Geometric wireframe layout graphics */}
-            <div className="absolute inset-0 opacity-15 pointer-events-none">
-              <div className="absolute -top-10 -right-10 w-44 h-44 rounded-full border border-white/20"></div>
-              <div className="absolute -top-16 -right-16 w-60 h-60 rounded-full border border-white/10"></div>
-              <div className="absolute -bottom-12 -left-12 w-36 h-36 rounded-full border border-white/10"></div>
-            </div>
-
-            <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-center">
-              <img src="/logo.png" alt="Logo" className="w-full max-w-[220px] sm:max-w-[280px] object-contain drop-shadow-2xl" />
+            <div className="absolute inset-0 z-10 w-full h-full">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
 
             {/* Copyright badge at bottom */}
-            <div className="relative z-10 w-full text-center text-[9px] sm:text-[10px] font-bold uppercase text-slate-400 tracking-[0.2em] border-t border-white/10 pt-3 sm:pt-5 mt-4">
+            <div className="relative z-20 w-full text-center text-[9px] sm:text-[10px] font-bold uppercase text-white/80 tracking-[0.2em] pb-4 pt-8 bg-gradient-to-t from-black/80 to-transparent">
               <span>© {new Date().getFullYear()} SECURE SYSTEM</span>
             </div>
 

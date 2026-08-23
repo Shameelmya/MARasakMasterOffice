@@ -11,6 +11,11 @@ export const useFilteredTasks = (
   return useMemo(() => {
     let result = allTasks;
     
+    if (searchStr) {
+      const exactMatch = result.find(t => t.id.toLowerCase() === searchStr.trim().toLowerCase());
+      if (exactMatch) return [exactMatch];
+    }
+    
     if (globalFilters.status === 'Trash') {
       result = result.filter(t => t.isTrashed);
     } else {
