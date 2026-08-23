@@ -114,7 +114,7 @@ export function RecentUpdationsTab({ tasks, users, triggerRecentUpdationsDownloa
     else if (num.startsWith('91') && num.length === 12) num = num.substring(2);
     const waNum = `91${num.replace(/\D/g, '')}`;
 
-    const waMessage = `പ്രിയപ്പെട്ട ${u.personName},\n\nതാങ്കൾ നൽകിയ അപേക്ഷ/പരാതിയിലെ പുതിയ വിവരങ്ങൾ താഴെ നൽകുന്നു:\n\n*വിഷയം:* ${u.taskSubject}\n*റഫറൻസ് ഐഡി:* ${u.taskId}\n*അപ്ഡേറ്റ്:* ${u.updation.text}\n\nസ്നേഹത്തോടെ,\nഎം.എൽ.എ ഓഫീസ്, താനൂർ.ഫോൺ: 9037032002`;
+    const waMessage = `പ്രിയപ്പെട്ട ${u.personName},\n\nതാങ്കൾ നൽകിയ അപേക്ഷ/പരാതിയിലെ പുതിയ വിവരങ്ങൾ താഴെ നൽകുന്നു:\n\n*വിഷയം:* ${u.taskSubject}\n*റഫറൻസ് ഐഡി:* ${u.taskId}\n*അപ്ഡേറ്റ്:* ${u.updation.text}\n\nസ്നേഹത്തോടെ,\nഎം.എൽ.എ ഓഫീസ്, കുന്ദമംഗലം.ഫോൺ: 9037032002`;
     
     // Open WA
     window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(waMessage)}`, '_blank');

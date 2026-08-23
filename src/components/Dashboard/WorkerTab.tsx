@@ -366,7 +366,8 @@ const WorkerTaskCard = React.memo(({
                 onDeleteSuccess={() => {
                   if (task.attachments) {
                     const newAtts = task.attachments.filter((_, i) => i !== idx);
-                    updateTask(task.id, { attachments: newAtts });
+                    const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: user.name, text: 'Attachment removed.' };
+                    updateTask(task.id, { attachments: newAtts, timeline: [...(task.timeline || []), ev] });
                   }
                 }}
               />
