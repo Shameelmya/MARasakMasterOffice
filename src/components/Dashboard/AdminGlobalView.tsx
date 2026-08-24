@@ -393,7 +393,7 @@ const AdminTaskCard = React.memo(({
     if (t.isReadByAdmin) {
       pressTimer.current = setTimeout(() => {
         updateTask(t.id, { isReadByAdmin: false });
-      }, 500);
+      }, 3000);
     }
   };
 
@@ -407,8 +407,8 @@ const AdminTaskCard = React.memo(({
   const cardBg = t.isSelfMode 
     ? 'bg-yellow-50/70 border-yellow-300' 
     : t.isReadByAdmin 
-      ? 'bg-blue-100 border-blue-300' 
-      : 'bg-white border-slate-200';
+      ? 'bg-white border-slate-200'
+      : 'bg-[#E8F2FF] border-blue-200';
 
   return (
     <div 

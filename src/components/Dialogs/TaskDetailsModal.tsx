@@ -336,14 +336,14 @@ export function TaskDetailsModal({
                   <select
                     value={task.followUpFrequency || ''}
                     onChange={(e) => { const ev = { id: generateUid(), type: 'update' as const, time: getNow(), by: currentUser.name, text: `Follow-up frequency changed to ${e.target.value || 'None'}.` }; updateTask(task.id, { followUpFrequency: e.target.value, timeline: [...(task.timeline || []), ev] }); }}
-                    className="bg-slate-800 text-white text-xs font-bold rounded px-1.5 py-0.5 border border-slate-700 outline-none cursor-pointer transition-all duration-300 hover:bg-slate-50"
+                    className="bg-slate-800 text-white text-xs font-bold rounded px-1.5 py-0.5 border border-slate-700 outline-none cursor-pointer transition-all duration-300 hover:bg-slate-700"
                   >
-                    <option value="">None</option>
-                    <option value="1W">1W</option>
-                    <option value="2W">2W</option>
-                    <option value="1M">1M</option>
-                    <option value="2M">2M</option>
-                    <option value="3M">3M</option>
+                    <option className="bg-slate-800 text-white" value="">None</option>
+                    <option className="bg-slate-800 text-white" value="1W">1W</option>
+                    <option className="bg-slate-800 text-white" value="2W">2W</option>
+                    <option className="bg-slate-800 text-white" value="1M">1M</option>
+                    <option className="bg-slate-800 text-white" value="2M">2M</option>
+                    <option className="bg-slate-800 text-white" value="3M">3M</option>
                   </select>
                 </div>
               )}
