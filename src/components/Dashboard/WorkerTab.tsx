@@ -240,17 +240,27 @@ const WorkerTaskCard = React.memo(({
 
   const changeStatus = (newStatus: string, customTimelineEvent: any = null) => {
     const newOffStat = { ...task.officerStatuses, [user.id]: newStatus };
-    const allAssigned = task.assignedTo.map(id => newOffStat[id] || 'Pending');
+    
+    if (newStatus === 'Completed' || newStatus === 'Draft') {
+      task.assignedTo.forEach(id => {
+        newOffStat[id] = newStatus;
+      });
+    }
+    
+    if (newStatus === 'In Progress' && (task.status === 'Completed' || task.status === 'Draft')) {
+      task.assignedTo.forEach(id => {
+        newOffStat[id] = newStatus;
+      });
+    }
+
     let globStat = task.status;
     
     if (newStatus === 'Completed') {
       globStat = 'Completed';
     } else if (newStatus === 'Draft') {
-      globStat = allAssigned.every(s => s === 'Completed' || s === 'Draft') 
-        ? 'Draft' 
-        : 'In Progress';
+      globStat = 'Draft';
     } else if (newStatus === 'In Progress' || newStatus === 'Received') {
-      if (globStat === 'Pending' || globStat === 'Draft') globStat = 'In Progress';
+      if (globStat === 'Pending' || globStat === 'Draft' || globStat === 'Completed') globStat = 'In Progress';
     }
 
     const evs = [];
@@ -266,7 +276,7 @@ const WorkerTaskCard = React.memo(({
         text: `Marked as ${newStatus}`
       });
     }
-    updateTask(task.id, { officerStatuses: newOffStat, status: globStat, timeline: [...task.timeline, ...evs] });
+    updateTask(task.id, { officerStatuses: newOffStat, status: globStat, timeline: [...(task.timeline || []), ...evs] });
   };
 
   const handleSaveUpdate = () => {
@@ -282,7 +292,7 @@ const WorkerTaskCard = React.memo(({
     if (status !== 'In Progress' && status !== 'Draft') {
       changeStatus('In Progress', ev);
     } else {
-      updateTask(task.id, { timeline: [...task.timeline, ev] });
+      updateTask(task.id, { timeline: [...(task.timeline || []), ev] });
     }
     setUpdateText('');
     setUpdateAttachment(null);
