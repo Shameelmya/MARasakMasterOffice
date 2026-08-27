@@ -5,9 +5,10 @@ import {
 } from 'lucide-react';
 
 // Firebase Integration
-import { signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut, getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { onSnapshot, writeBatch, setDoc, deleteDoc, getDocs } from "firebase/firestore";
-import { auth, getColRef, getDocRef, db } from './services/firebase';
+import { initializeApp } from "firebase/app";
+import { auth, getColRef, getDocRef, db, firebaseConfig } from './services/firebase';
 
 // Helper Utilities & Formatting
 import { formatDate, formatTime } from './utils/formatters';
@@ -141,19 +142,16 @@ export default function App() {
   const [recentUpdationsReportToDownload, setRecentUpdationsReportToDownload] = useState<any>(null);
 
   useEffect(() => { 
-    const initAuth = async () => { 
-      try { 
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token); 
-        } else {
-          await signInAnonymously(auth); 
-        }
-      } catch (err) { 
-        console.error("Firebase Auth Error:", err); 
-      } 
-    }; 
-    initAuth(); 
-    return onAuthStateChanged(auth, setFbUser); 
+    return onAuthStateChanged(auth, (user) => {
+      setFbUser(user);
+      if (!user) {
+        setCurrentUser(null);
+        localStorage.removeItem('mla_currentUser');
+      } else {
+        const savedUser = localStorage.getItem('mla_currentUser'); 
+        if (savedUser) setCurrentUser(JSON.parse(savedUser));
+      }
+    }); 
   }, []);
 
   const loadArchive = useCallback(async () => { 
@@ -176,23 +174,26 @@ export default function App() {
   }, [globalFilters.status, globalFilters.dateRange, loadArchive]);
 
   useEffect(() => {
+    const usersUnsub = onSnapshot(getColRef('users'), (snapshot) => { 
+      if (snapshot.empty) {
+        const batch = writeBatch(db); 
+        DEFAULT_USERS.forEach(u => batch.set(getDocRef('users', u.id), u)); 
+        batch.commit().catch(e => console.error("Batch init error", e)); 
+      } else {
+        const loadedUsers = snapshot.docs.map(doc => doc.data() as UserType);
+        setUsers(loadedUsers);
+      }
+    }); 
+    return usersUnsub;
+  }, []);
+
+  useEffect(() => {
     if (!fbUser) return;
     const savedUser = localStorage.getItem('mla_currentUser'); 
     if (savedUser) setCurrentUser(JSON.parse(savedUser));
     
     const unsubTasks = onSnapshot(getColRef('tasks'), (snap) => {
       setActiveTasks(snap.docs.map(docSnapshot => sanitizeTask(docSnapshot.data())));
-    }, (err) => console.error(err));
-    
-    const unsubUsers = onSnapshot(getColRef('users'), (snap) => { 
-      if (snap.empty) { 
-        const batch = writeBatch(db); 
-        DEFAULT_USERS.forEach(u => batch.set(getDocRef('users', u.id), u)); 
-        batch.commit().catch(e => console.error("Batch init error", e)); 
-      } else {
-        const docUsers = snap.docs.map(docSnapshot => docSnapshot.data() as UserType);
-        setUsers(docUsers);
-      }
     }, (err) => console.error(err));
     
     const unsubSettings = onSnapshot(getDocRef('settings', 'globals'), (snap) => { 
@@ -216,7 +217,6 @@ export default function App() {
     
     return () => { 
       unsubTasks(); 
-      unsubUsers(); 
       unSettings(); 
       unsubBackupMeta(); 
     };
@@ -376,10 +376,11 @@ export default function App() {
     localStorage.setItem('mla_currentUser', JSON.stringify(user)); 
   };
 
-  const handleLogout = () => { 
-    setCurrentUser(null); 
-    setImpersonatedUser(null); 
-    localStorage.removeItem('mla_currentUser'); 
+  const handleLogout = async () => { 
+    setImpersonatedUser(null);
+    setCurrentUser(null);
+    localStorage.removeItem('mla_currentUser');
+    await signOut(auth);
   };
 
   const addTask = useCallback(async (newTask: Task) => { 
@@ -504,7 +505,25 @@ export default function App() {
   };
 
   const addUser = async (newUser: UserType) => {
-    await setDoc(getDocRef('users', newUser.id), newUser);
+    try {
+      const secondaryApp = initializeApp(firebaseConfig, 'SecondaryCreateApp' + Date.now());
+      const secondaryAuth = getAuth(secondaryApp);
+      
+      const email = `${newUser.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`;
+      const basePass = newUser.pass || '123456';
+      const password = basePass.length < 6 ? basePass.padEnd(6, '0') : basePass;
+
+      const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+      
+      const userToSave = { ...newUser, email, authUid: cred.user.uid };
+      delete (userToSave as any).pass;
+
+      await setDoc(getDocRef('users', newUser.id), userToSave);
+      await signOut(secondaryAuth);
+    } catch (e: any) {
+      console.error(e);
+      alert("Failed to create user auth: " + e.message);
+    }
   };
 
   const deleteUserAcct = (userId: string) => { 

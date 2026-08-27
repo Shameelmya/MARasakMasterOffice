@@ -1,9 +1,12 @@
 import { useState, ChangeEvent } from 'react';
 import { Download, Upload, AlertOctagon, Trash2, AlertTriangle, List } from 'lucide-react';
 import { deleteDoc, setDoc } from 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
+import { getAuth, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { Task, User, BackupMeta } from '../../types';
-import { getDocRef } from '../../services/firebase';
+import { getDocRef, firebaseConfig } from '../../services/firebase';
 import { formatDate, getNow } from '../../utils/formatters';
+import { ShieldAlert } from 'lucide-react';
 
 interface AdminDatabaseProps {
   tasks: Task[];
@@ -35,6 +38,7 @@ export function AdminDatabase({
   const [backupTarget, setBackupTarget] = useState('all');
   const [resetTarget, setResetTarget] = useState('all');
   const [resetText, setResetText] = useState('');
+  const [migrateText, setMigrateText] = useState('');
   const [listType, setListType] = useState<'categories' | 'designations' | 'inputTypes'>('categories');
   const [deleteItemText, setDeleteItemText] = useState('');
 
@@ -145,6 +149,55 @@ export function AdminDatabase({
       },
       true,
       "Remove Item"
+    );
+  };
+
+  const handleMigration = async () => {
+    if (migrateText !== 'MIGRATE NOW') {
+      alert("You must type exactly 'MIGRATE NOW' to confirm.");
+      return;
+    }
+    triggerConfirm(
+      "Start Security Migration",
+      "This will create secure Firebase Auth accounts for all users and remove their plaintext passwords. Make sure the app is in maintenance mode.",
+      async () => {
+        try {
+          const secondaryApp = initializeApp(firebaseConfig, 'SecondaryMigrationApp' + Date.now());
+          const secondaryAuth = getAuth(secondaryApp);
+          let count = 0;
+
+          for (const u of users) {
+            if (!u.email) {
+              const email = `${u.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`;
+              const basePass = u.pass || '123456';
+              const password = basePass.length < 6 ? basePass.padEnd(6, '0') : basePass;
+
+              try {
+                const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+                const updatedUser = { ...u, email, authUid: cred.user.uid };
+                delete (updatedUser as any).pass;
+                await setDoc(getDocRef('users', u.id), updatedUser);
+                count++;
+                await signOut(secondaryAuth);
+              } catch (err: any) {
+                console.error(`Failed to migrate user ${u.name}:`, err);
+                if (err.code === 'auth/email-already-in-use') {
+                   const updatedUser = { ...u, email };
+                   delete (updatedUser as any).pass;
+                   await setDoc(getDocRef('users', u.id), updatedUser);
+                }
+              }
+            }
+          }
+          alert(`Successfully migrated ${count} users to secure authentication!`);
+          setMigrateText('');
+        } catch (e) {
+          console.error("Migration Error", e);
+          alert("Migration failed. See console.");
+        }
+      },
+      true,
+      "Begin Migration"
     );
   };
 
@@ -276,7 +329,33 @@ export function AdminDatabase({
         <div className="absolute -right-10 -top-10 opacity-5 scale-150 text-red-600 pointer-events-none">
           <AlertOctagon size={200}/>
         </div>
+        
         <h2 className="text-2xl font-bold text-red-700 flex items-center gap-2 mb-6 relative z-10">
+          <ShieldAlert className="text-red-600"/> Security Migration (One-Time)
+        </h2>
+        <div className="bg-red-50 p-8 rounded-[20px] border border-red-100 relative z-10 mb-8">
+          <p className="text-sm font-medium text-red-800 mb-4">
+            Convert all plaintext passwords to secure Firebase Auth accounts. Generates internal emails and enforces 6-character passwords.
+          </p>
+          <label className="text-[10px] font-bold text-red-500 uppercase tracking-widest block mb-2">
+            Type <span className="font-mono bg-red-200 px-1 text-red-800">MIGRATE NOW</span> to confirm:
+          </label>
+          <input 
+            type="text" 
+            value={migrateText} 
+            onChange={e => setMigrateText(e.target.value)} 
+            placeholder="Type 'MIGRATE NOW' here..." 
+            className="w-full px-4 py-3 bg-white border border-red-200 rounded-2xl font-bold text-red-900 outline-none focus:ring-2 focus:ring-red-500 mb-4 text-red-800 bg-white" 
+          />
+          <button 
+            onClick={handleMigration} 
+            className="w-full bg-red-600 text-white font-bold py-3 px-6 rounded-2xl hover:bg-red-700 flex items-center justify-center gap-2 shadow transition-colors"
+          >
+            <ShieldAlert size={18}/> MIGRATE SYSTEM SECURITY
+          </button>
+        </div>
+
+        <h2 className="text-2xl font-bold text-red-700 flex items-center gap-2 mb-6 relative z-10 border-t border-red-200 pt-8">
           <AlertOctagon className="text-red-600"/> Danger Zone: System Erase
         </h2>
         <div className="bg-red-50 p-8 rounded-[20px] border border-red-100 relative z-10">

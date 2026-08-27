@@ -2,7 +2,9 @@ export interface User {
   id: string;
   name: string;
   role: string;
-  pass: string;
+  pass?: string;
+  email?: string;
+  authUid?: string;
   enabled: boolean;
   canInput: boolean;
   canSeeReports: boolean;

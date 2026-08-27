@@ -3,6 +3,8 @@ import { Shield, ChevronRight, User as UserIcon, Key } from 'lucide-react';
 import { User as UserType } from '../types';
 import { ISLAMIC_QUOTES } from '../utils/constants';
 import { LiveClock } from '../components/Shared/LiveClock';
+import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from 'firebase/auth';
+import { auth } from '../services/firebase';
 
 interface LoginScreenProps {
   onLogin: (user: UserType) => void;
@@ -14,9 +16,11 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPass, setShowPass] = useState(false);
+  const [keepSignedIn, setKeepSignedIn] = useState(true);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const activeUsers = users.filter(u => u.enabled);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     
@@ -25,10 +29,21 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
       return;
     }
 
-    if (selectedUser.pass === password) {
+    if (!selectedUser.email) {
+      setError('This user account has not been migrated to secure authentication yet.');
+      return;
+    }
+
+    setIsLoggingIn(true);
+    try {
+      await setPersistence(auth, keepSignedIn ? browserLocalPersistence : browserSessionPersistence);
+      await signInWithEmailAndPassword(auth, selectedUser.email, password);
       onLogin(selectedUser);
-    } else {
-      setError('Incorrect Password. Please check and try again.');
+    } catch (err: any) {
+      console.error(err);
+      setError('Incorrect Password or Login Failed. Please check and try again.');
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -179,17 +194,30 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
                           onClick={() => setShowPass(!showPass)} 
                           className="absolute right-5 top-1/2 -translate-y-1/2 text-sm font-bold text-purple-600 hover:text-purple-700 outline-none cursor-pointer px-3 py-1 bg-purple-50 rounded-lg"
                         >
-                          {showPass ? 'Hide' : 'Show'}
+                          {showPass ? 'HIDE' : 'SHOW'}
                         </button>
                       )}
+                    </div>
+                    
+                    <div className="flex items-center gap-2 px-1">
+                      <input 
+                        type="checkbox" 
+                        id="keepSignedIn" 
+                        checked={keepSignedIn}
+                        onChange={(e) => setKeepSignedIn(e.target.checked)}
+                        className="w-4 h-4 text-purple-600 rounded border-slate-300 focus:ring-purple-500"
+                      />
+                      <label htmlFor="keepSignedIn" className="text-sm font-medium text-slate-600 cursor-pointer">
+                        Keep me signed in
+                      </label>
                     </div>
 
                     <button 
                       type="submit" 
-                      className="w-full bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 active:scale-[0.98] text-white font-bold py-5 px-6 rounded-[24px] transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-[0.15em] cursor-pointer shadow-[0_8px_20px_rgba(147,51,234,0.25)] mt-8"
+                      disabled={isLoggingIn}
+                      className="w-full bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-4 px-8 rounded-[20px] transition-all transform hover:-translate-y-0.5 shadow-[0_12px_24px_rgba(147,51,234,0.25)] flex items-center justify-center gap-3 text-lg disabled:opacity-70 disabled:hover:translate-y-0"
                     >
-                      <span>Secure Login</span>
-                      <ChevronRight size={18} className="text-purple-100" />
+                      {isLoggingIn ? 'Verifying...' : 'Sign In Securely'} <ChevronRight size={20} />
                     </button>
                   </form>
 
