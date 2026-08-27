@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { Task, User as UserType, GlobalFilters, Attachment } from '../../types';
 import { SearchableCategorySelect } from '../Forms/SearchableCategorySelect';
+import { SearchableSelect } from '../Forms/SearchableSelect';
 import { FileUploadButton } from '../Shared/FileUploadButton';
 import { deleteFromGoogleDrive } from '../../utils/fileUpload';
 import { 
@@ -51,6 +52,7 @@ interface FormState {
     localBody: string;
     otherLocalBody: string;
     wardNumber: string;
+    otherWard: string;
   };
   description: string;
   assignedTo: string[];
@@ -93,7 +95,8 @@ export function InputFormTab({
       pinCode: '',
       localBody: '',
       otherLocalBody: '',
-      wardNumber: ''
+      wardNumber: '',
+      otherWard: ''
     },
     description: '',
     assignedTo: []
@@ -102,6 +105,8 @@ export function InputFormTab({
   const [form, setForm] = useState<FormState>(initForm);
   const [showNewCat, setShowNewCat] = useState(false);
   const [showNewDesig, setShowNewDesig] = useState(false);
+  const [showNewLocalBody, setShowNewLocalBody] = useState(false);
+  const [showNewWard, setShowNewWard] = useState(false);
   const [sendWaMsg, setSendWaMsg] = useState(true);
   const [sendWaMsgSame, setSendWaMsgSame] = useState(false);
   const [lastTask, setLastTask] = useState<Task | null>(null);
@@ -123,8 +128,7 @@ export function InputFormTab({
     setTimeout(() => setFormError({ field: '', msg: '' }), 5000);
   };
 
-  const handleWardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
+  const handleWardChange = (val: string) => {
     const updates: any = { wardNumber: val };
     if (WARD_TO_LOCAL_BODY[val]) {
       updates.localBody = WARD_TO_LOCAL_BODY[val];
@@ -221,7 +225,8 @@ export function InputFormTab({
       return scrollToField('field-attachments', 'Please attach a document or link, or check the box to add it later.');
     }
 
-    const finalLocalBody = form.personal.localBody;
+    const finalLocalBody = showNewLocalBody ? form.personal.otherLocalBody : form.personal.localBody;
+    const finalWard = showNewWard ? form.personal.otherWard : form.personal.wardNumber;
     
     let finalAssignedTo = form.assignedTo;
     if(isInvitation) {
@@ -246,10 +251,13 @@ export function InputFormTab({
     const finalPersonalDetails = { 
       ...form.personal, 
       designation: finalDesig, 
-      localBody: finalLocalBody 
+      localBody: finalLocalBody,
+      wardNumber: finalWard
     };
     
     delete (finalPersonalDetails as any).newDesignation;
+    delete (finalPersonalDetails as any).otherLocalBody;
+    delete (finalPersonalDetails as any).otherWard;
 
     if (form.isSelfMode) {
       finalPersonalDetails.name = 'Self Application';
@@ -622,35 +630,74 @@ export function InputFormTab({
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Local Body</label>
-            <input 
-              name="localBody" 
-              list="localBodiesList"
-              value={form.personal.localBody} 
-              onChange={handlePersChange} 
-              className="w-full px-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl text-sm font-semibold focus:bg-white focus:border-purple-500 outline-none transition-all text-slate-850"
-              placeholder="Select or type local body..."
-            />
-            <datalist id="localBodiesList">
-              {WARD_LOCAL_BODIES.map(lb => <option key={lb} value={lb} />)}
-            </datalist>
+            <label className="flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+              <span>Local Body</span>
+            </label>
+            {!showNewLocalBody ? (
+              <SearchableSelect 
+                options={WARD_LOCAL_BODIES}
+                value={form.personal.localBody}
+                onChange={(val) => setForm(f => ({ ...f, personal: { ...f.personal, localBody: val } }))}
+                placeholder="Select Local Body..."
+                onAddNewClick={() => setShowNewLocalBody(true)}
+              />
+            ) : (
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  name="otherLocalBody" 
+                  placeholder="Enter Custom Local Body" 
+                  value={form.personal.otherLocalBody} 
+                  onChange={handlePersChange} 
+                  className="w-full px-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl text-sm font-semibold focus:bg-white focus:border-purple-500 outline-none text-slate-800" 
+                />
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setShowNewLocalBody(false);
+                    setForm(f => ({ ...f, personal: { ...f.personal, otherLocalBody: '' } }));
+                  }} 
+                  className="px-3 bg-red-50 text-red-600 rounded-2xl hover:bg-red-100 transition-colors"
+                >
+                  <X size={16}/>
+                </button>
+              </div>
+            )}
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Ward Number / Name</label>
-            <input 
-              name="wardNumber" 
-              list="wardsList"
-              value={form.personal.wardNumber} 
-              onChange={handleWardChange} 
-              className="w-full px-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl text-sm font-semibold focus:bg-white focus:border-purple-500 outline-none transition-all text-slate-800" 
-              placeholder="Select or type ward..."
-            />
-            <datalist id="wardsList">
-              {(form.personal.localBody && WARD_DATA[form.personal.localBody] 
-                ? WARD_DATA[form.personal.localBody] 
-                : Object.values(WARD_DATA).flat()
-              ).map(w => <option key={w} value={w} />)}
-            </datalist>
+            <label className="flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+              <span>Ward Number / Name</span>
+            </label>
+            {!showNewWard ? (
+              <SearchableSelect 
+                options={form.personal.localBody && WARD_DATA[form.personal.localBody] ? WARD_DATA[form.personal.localBody] : Object.values(WARD_DATA).flat()}
+                value={form.personal.wardNumber}
+                onChange={handleWardChange}
+                placeholder="Select Ward..."
+                onAddNewClick={() => setShowNewWard(true)}
+              />
+            ) : (
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  name="otherWard" 
+                  placeholder="Enter Custom Ward" 
+                  value={form.personal.otherWard} 
+                  onChange={handlePersChange} 
+                  className="w-full px-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl text-sm font-semibold focus:bg-white focus:border-purple-500 outline-none text-slate-800" 
+                />
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setShowNewWard(false);
+                    setForm(f => ({ ...f, personal: { ...f.personal, otherWard: '' } }));
+                  }} 
+                  className="px-3 bg-red-50 text-red-600 rounded-2xl hover:bg-red-100 transition-colors"
+                >
+                  <X size={16}/>
+                </button>
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Post Office (Optional)</label>
