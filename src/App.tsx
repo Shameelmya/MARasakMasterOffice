@@ -509,7 +509,7 @@ export default function App() {
       const secondaryApp = initializeApp(firebaseConfig, 'SecondaryCreateApp' + Date.now());
       const secondaryAuth = getAuth(secondaryApp);
       
-      const email = `${newUser.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`;
+      const email = newUser.email || `${newUser.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`;
       const basePass = newUser.pass || '123456';
       const password = basePass.length < 6 ? basePass.padEnd(6, '0') : basePass;
 

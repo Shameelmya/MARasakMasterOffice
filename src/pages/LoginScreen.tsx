@@ -3,7 +3,7 @@ import { Shield, ChevronRight, User as UserIcon, Key } from 'lucide-react';
 import { User as UserType } from '../types';
 import { ISLAMIC_QUOTES } from '../utils/constants';
 import { LiveClock } from '../components/Shared/LiveClock';
-import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from 'firebase/auth';
+import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../services/firebase';
 
 interface LoginScreenProps {
@@ -18,6 +18,8 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
   const [showPass, setShowPass] = useState(false);
   const [keepSignedIn, setKeepSignedIn] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const activeUsers = users.filter(u => u.enabled);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -144,6 +146,7 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
                         setSelectedUser(null);
                         setPassword('');
                         setError('');
+                        setResetSent(false);
                       }}
                       className="bg-slate-50 hover:bg-slate-100 text-slate-600 transition-all px-4 py-2 rounded-xl text-xs font-bold cursor-pointer tracking-wide border border-slate-200 shadow-sm"
                     >
@@ -199,17 +202,40 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
                       )}
                     </div>
                     
-                    <div className="flex items-center gap-2 px-1">
-                      <input 
-                        type="checkbox" 
-                        id="keepSignedIn" 
-                        checked={keepSignedIn}
-                        onChange={(e) => setKeepSignedIn(e.target.checked)}
-                        className="w-4 h-4 text-purple-600 rounded border-slate-300 focus:ring-purple-500"
-                      />
-                      <label htmlFor="keepSignedIn" className="text-sm font-medium text-slate-600 cursor-pointer">
-                        Keep me signed in
-                      </label>
+                    <div className="flex justify-between items-center px-2">
+                      <div className="flex items-center gap-2">
+                        <input 
+                          type="checkbox" 
+                          id="keepSignedIn" 
+                          checked={keepSignedIn} 
+                          onChange={(e) => setKeepSignedIn(e.target.checked)}
+                          className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                        />
+                        <label htmlFor="keepSignedIn" className="text-sm font-bold text-slate-500 cursor-pointer select-none">
+                          Keep me signed in
+                        </label>
+                      </div>
+                      
+                      <button
+                        type="button"
+                        disabled={isResetting || resetSent}
+                        onClick={async () => {
+                          if (!selectedUser?.email) return;
+                          setIsResetting(true);
+                          setError('');
+                          try {
+                            await sendPasswordResetEmail(auth, selectedUser.email);
+                            setResetSent(true);
+                          } catch (err: any) {
+                            setError('Failed to send reset email. Please contact Admin.');
+                          } finally {
+                            setIsResetting(false);
+                          }
+                        }}
+                        className="text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors cursor-pointer"
+                      >
+                        {resetSent ? 'Email Sent!' : isResetting ? 'Sending...' : 'Forgot Password?'}
+                      </button>
                     </div>
 
                     <button 
