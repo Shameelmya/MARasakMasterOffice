@@ -204,12 +204,14 @@ export function AdminDashboard({
         >
           <Zap size={13}/> Direct Desk
         </button>
-        <button 
-          onClick={() => { setActiveTab('users'); setGlobalSearch(''); }} 
-          className={`flex-1 justify-center px-3 py-1.5 md:px-4 md:py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 whitespace-nowrap ${activeTab === 'users' ? 'bg-purple-600 text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
-        >
-          <Eye size={13}/> Manage Officers
-        </button>
+        {currentUser.role === 'admin' && (
+          <button 
+            onClick={() => { setActiveTab('users'); setGlobalSearch(''); }} 
+            className={`flex-1 justify-center px-3 py-1.5 md:px-4 md:py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 whitespace-nowrap ${activeTab === 'users' ? 'bg-purple-600 text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
+          >
+            <Eye size={13}/> Manage Officers
+          </button>
+        )}
         {currentUser.role === 'admin' && (
           <button 
             onClick={() => { setActiveTab('database'); setGlobalSearch(''); loadArchive(); }} 
@@ -569,12 +571,14 @@ export function AdminDashboard({
             >
               <Zap size={20} className="text-amber-500" /> Updations
             </button>
-            <button 
-              onClick={() => { setActiveTab('users'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-              className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-colors"
-            >
-              <Users size={20} className="text-indigo-600" /> Manage Officers
-            </button>
+            {currentUser.role === 'admin' && (
+              <button 
+                onClick={() => { setActiveTab('users'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+                className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-colors"
+              >
+                <Users size={20} className="text-indigo-600" /> Manage Officers
+              </button>
+            )}
             {currentUser.role === 'admin' && (
               <button 
                 onClick={() => { setActiveTab('database'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
