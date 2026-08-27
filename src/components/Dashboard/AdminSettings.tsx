@@ -24,6 +24,7 @@ export function AdminSettings({
 }: AdminSettingsProps) {
   const [newOffForm, setNewOffForm] = useState({
     name: '',
+    email: '',
     pass: '',
     phone: '',
     whatsapp: '',
@@ -52,8 +53,8 @@ export function AdminSettings({
 
   const handleAddOfficer = async (e: FormEvent) => {
     e.preventDefault();
-    if (!newOffForm.name || !newOffForm.pass || newOffForm.pass.length < 6) {
-      alert("Name and password (min 6 characters) are required.");
+    if (!newOffForm.name || !newOffForm.pass || newOffForm.pass.length < 6 || !newOffForm.email) {
+      alert("Name, valid email, and password (min 6 characters) are required.");
       return;
     }
     const newId = 'off_' + generateUid();
@@ -62,6 +63,7 @@ export function AdminSettings({
       role: 'officer',
       enabled: true,
       name: newOffForm.name,
+      email: newOffForm.email,
       pass: newOffForm.pass,
       phone: newOffForm.phone,
       whatsapp: newOffForm.whatsapp,
@@ -79,6 +81,7 @@ export function AdminSettings({
     await addUser(newUser);
     setNewOffForm({
       name: '',
+      email: '',
       pass: '',
       phone: '',
       whatsapp: '',
@@ -282,7 +285,7 @@ export function AdminSettings({
       </div>
       <div className="bg-indigo-50 border border-indigo-200 p-8 rounded-[20px]">
         <h3 className="text-lg font-bold text-indigo-900 mb-4 flex items-center gap-2"><Plus size={18}/> Create New Officer</h3>
-        <form onSubmit={handleAddOfficer} className="grid grid-cols-1 md:grid-cols-5 gap-5 items-end">
+        <form onSubmit={handleAddOfficer} className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
           <div className="col-span-1 md:col-span-1">
             <label className="text-[10px] font-bold text-indigo-700 uppercase block mb-1">Display Name</label>
             <input 
@@ -292,6 +295,17 @@ export function AdminSettings({
               onChange={e => setNewOffForm({...newOffForm, name: e.target.value})} 
               className="w-full px-3 py-2 rounded-lg border border-indigo-200 outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-slate-800" 
               placeholder="e.g. Officer 6" 
+            />
+          </div>
+          <div className="col-span-1 md:col-span-1">
+            <label className="text-[10px] font-bold text-indigo-700 uppercase block mb-1">Email</label>
+            <input 
+              required 
+              type="email" 
+              value={newOffForm.email} 
+              onChange={e => setNewOffForm({...newOffForm, email: e.target.value})} 
+              className="w-full px-3 py-2 rounded-lg border border-indigo-200 outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-slate-800" 
+              placeholder="officer@marazak.local" 
             />
           </div>
           <div className="col-span-1 md:col-span-1">
