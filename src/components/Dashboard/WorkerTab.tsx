@@ -287,8 +287,10 @@ const WorkerTaskCard = React.memo(({
       time: getNow(),
       by: user.name,
       text: updateText,
-      attachment: updateAttachment || undefined
     };
+    if (updateAttachment) {
+      ev.attachment = updateAttachment;
+    }
     if (status !== 'In Progress' && status !== 'Draft') {
       changeStatus('In Progress', ev);
     } else {
