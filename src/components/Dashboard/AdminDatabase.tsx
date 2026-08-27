@@ -162,13 +162,19 @@ export function AdminDatabase({
       "This will create secure Firebase Auth accounts for all users and remove their plaintext passwords. Make sure the app is in maintenance mode.",
       async () => {
         try {
+          const adminEmailInput = prompt("SECURITY CHECK: Please enter a REAL email address for the Super Admin (M. A. Razak Master). This is required so you can reset or change your password in the future:");
+          if (!adminEmailInput || !adminEmailInput.includes('@')) {
+            alert("Migration cancelled. A valid real email address for the Super Admin is required for your safety.");
+            return;
+          }
+
           const secondaryApp = initializeApp(firebaseConfig, 'SecondaryMigrationApp' + Date.now());
           const secondaryAuth = getAuth(secondaryApp);
           let count = 0;
 
           for (const u of users) {
             if (!u.email) {
-              const email = `${u.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`;
+              const email = u.role === 'admin' ? adminEmailInput : `${u.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`;
               const basePass = u.pass || '123456';
               const password = basePass.length < 6 ? basePass.padEnd(6, '0') : basePass;
 
