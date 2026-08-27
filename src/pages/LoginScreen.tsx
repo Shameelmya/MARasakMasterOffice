@@ -220,14 +220,23 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
                         type="button"
                         disabled={isResetting || resetSent}
                         onClick={async () => {
-                          if (!selectedUser?.email) return;
+                          if (!selectedUser?.email) {
+                            setError('No email address registered for this account. Please ask the Admin to update your profile.');
+                            return;
+                          }
                           setIsResetting(true);
                           setError('');
                           try {
                             await sendPasswordResetEmail(auth, selectedUser.email);
                             setResetSent(true);
+                            alert(`A password reset link has been sent to ${selectedUser.email}. Please check your inbox (and spam folder).`);
                           } catch (err: any) {
-                            setError('Failed to send reset email. Please contact Admin.');
+                            console.error("Reset Password Error:", err);
+                            if (err.code === 'auth/user-not-found') {
+                              setError('This account does not exist in the authentication system.');
+                            } else {
+                              setError(`Failed: ${err.message}`);
+                            }
                           } finally {
                             setIsResetting(false);
                           }
