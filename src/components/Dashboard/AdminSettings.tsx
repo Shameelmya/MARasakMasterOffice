@@ -22,13 +22,13 @@ export function AdminSettings({
   setOfficerModalOpen,
   loadArchive
 }: AdminSettingsProps) {
-  const [newOffForm, setNewOffForm] = useState({
+  const [newOffForm, setNewOffForm] = useState<Partial<User>>({
     name: '',
     email: '',
     pass: '',
     phone: '',
     whatsapp: '',
-    canInput: false,
+    canInput: true,
     canSeeReports: false,
     canSeeGlobal: false,
     canSeeGlobalOverview: false,
@@ -62,21 +62,21 @@ export function AdminSettings({
       id: newId,
       role: 'officer',
       enabled: true,
-      name: newOffForm.name,
-      email: newOffForm.email,
-      pass: newOffForm.pass,
-      phone: newOffForm.phone,
-      whatsapp: newOffForm.whatsapp,
-      canInput: newOffForm.canInput,
-      canSeeReports: newOffForm.canSeeReports,
-      canSeeGlobal: newOffForm.canSeeGlobal,
-      canSeeGlobalOverview: newOffForm.canSeeGlobalOverview,
-      canSeeDraftsView: newOffForm.canSeeDraftsView,
-      canEditGlobalOverview: newOffForm.canEditGlobalOverview,
-      canEditOwnInputs: newOffForm.canEditOwnInputs,
-      canReassign: newOffForm.canReassign,
-      canGenerateUpdationReport: newOffForm.canGenerateUpdationReport,
-      canSeeRecentUpdations: newOffForm.canSeeRecentUpdations
+      name: newOffForm.name || '',
+      email: newOffForm.email || '',
+      pass: newOffForm.pass || '',
+      phone: newOffForm.phone || '',
+      whatsapp: newOffForm.whatsapp || '',
+      canInput: !!newOffForm.canInput,
+      canSeeReports: !!newOffForm.canSeeReports,
+      canSeeGlobal: !!newOffForm.canSeeGlobal,
+      canSeeGlobalOverview: !!newOffForm.canSeeGlobalOverview,
+      canSeeDraftsView: !!newOffForm.canSeeDraftsView,
+      canEditGlobalOverview: !!newOffForm.canEditGlobalOverview,
+      canEditOwnInputs: !!newOffForm.canEditOwnInputs,
+      canReassign: !!newOffForm.canReassign,
+      canGenerateUpdationReport: !!newOffForm.canGenerateUpdationReport,
+      canSeeRecentUpdations: !!newOffForm.canSeeRecentUpdations
     };
     await addUser(newUser);
     setNewOffForm({
@@ -85,7 +85,7 @@ export function AdminSettings({
       pass: '',
       phone: '',
       whatsapp: '',
-      canInput: false,
+      canInput: true,
       canSeeReports: false,
       canSeeGlobal: false,
       canSeeGlobalOverview: false,
@@ -115,6 +115,11 @@ export function AdminSettings({
             {u.role === 'admin' && (
               <div className="absolute top-5 right-4 bg-indigo-100 text-indigo-800 text-[10px] font-bold px-2 py-1 rounded uppercase">
                 ADMIN
+              </div>
+            )}
+            {u.role === 'subadmin' && (
+              <div className="absolute top-5 right-4 bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-1 rounded uppercase">
+                SUB-ADMIN
               </div>
             )}
             <div className="flex flex-col lg:flex-row gap-8 justify-between items-start">
@@ -228,6 +233,14 @@ export function AdminSettings({
                    >
                      <FileOutput size={12}/> Report
                    </button>
+                   {u.role !== 'admin' && (
+                     <button 
+                       onClick={() => updateUserDoc(u.id, 'role', u.role === 'subadmin' ? 'officer' : 'subadmin')} 
+                       className={`flex-1 text-[10px] font-bold uppercase tracking-widest py-2 border rounded-lg transition-colors ${u.role === 'subadmin' ? 'text-amber-600 bg-amber-50 border-amber-200 hover:bg-amber-100' : 'text-purple-600 bg-purple-50 border-purple-200 hover:bg-purple-100'}`}
+                     >
+                       <Shield size={12} className="inline mr-1"/> {u.role === 'subadmin' ? 'Remove Sub-Admin' : 'Make Sub-Admin'}
+                     </button>
+                   )}
                    {u.role !== 'admin' && (
                      <button 
                        onClick={() => deleteUser(u.id)} 

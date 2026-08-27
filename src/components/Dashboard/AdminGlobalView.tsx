@@ -292,16 +292,16 @@ export function AdminGlobalView({
                         <Send size={16}/>
                       </button>
                     )}
-                    {currentUser?.role === 'admin' && t.status !== 'Completed' && t.status !== 'Unsolved' && (
+                    {['admin', 'subadmin'].includes(currentUser?.role || '') && t.status === 'Unsolved' && (
                       <button 
-                        onClick={() => quickCompleteTask(t)} 
-                        title="Quick Complete" 
-                        className="touch-target flex items-center justify-center text-purple-600 hover:bg-blue-100 p-2 rounded-lg transition-colors bg-blue-50"
+                        onClick={() => updateTask(t.id, { status: 'Completed', timeline: [...(t.timeline || []), { id: Date.now().toString(), type: 'status_change', time: new Date().toISOString(), by: currentUser?.name || 'Admin', text: 'Marked as completed from global view' }] })}
+                        title="Mark Completed" 
+                        className="touch-target flex items-center justify-center text-green-600 hover:bg-green-100 p-2 rounded-lg transition-colors bg-green-50"
                       >
                         <CheckSquare size={16}/>
                       </button>
                     )}
-                    {(currentUser?.role === 'admin' || (t.status === 'Pending' && t.createdByUid === currentUser?.id)) && (
+                    {(['admin', 'subadmin'].includes(currentUser?.role || '') || (t.status === 'Pending' && t.createdByUid === currentUser?.id)) && (
                       <button 
                         onClick={() => deleteTask(t.id)} 
                         title="Delete Input" 
@@ -451,7 +451,7 @@ const AdminTaskCard = React.memo(({
                 </button>
               )}
 
-              {currentUser?.role === 'admin' && t.status !== 'Completed' && t.status !== 'Unsolved' && (
+              {['admin', 'subadmin'].includes(currentUser?.role || '') && t.status !== 'Completed' && t.status !== 'Unsolved' && (
                 <button 
                   onClick={(e) => { e.stopPropagation(); quickCompleteTask(t); }} 
                   title="Quick Mark as Completed" 
@@ -599,7 +599,7 @@ const AdminTaskCard = React.memo(({
         >
           <Eye size={14}/> Details
         </button>
-        {(currentUser?.role === 'admin' || (t.status === 'Pending' && t.createdByUid === currentUser?.id)) && (
+        {['admin', 'subadmin'].includes(currentUser?.role || '') && (
           <button 
             onClick={() => deleteTask(t.id)} 
             className="px-3 rounded-2xl border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition-colors" 

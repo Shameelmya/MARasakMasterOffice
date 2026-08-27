@@ -834,7 +834,7 @@ const isImpersonating = !!impersonatedUser;
         </div>
 
         <main className="flex-grow max-w-7xl mx-auto w-full px-2 sm:px-4 lg:px-8 py-2 sm:py-4 safe-pb">
-          {activeUser.role === 'admin' ? (
+          {['admin', 'subadmin'].includes(activeUser.role) ? (
             <AdminDashboard 
               currentUser={activeUser}
               tasks={allTasks} 

@@ -210,12 +210,14 @@ export function AdminDashboard({
         >
           <Eye size={13}/> Manage Officers
         </button>
-        <button 
-          onClick={() => { setActiveTab('database'); setGlobalSearch(''); loadArchive(); }} 
-          className={`flex-1 justify-center px-3 py-1.5 md:px-4 md:py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 whitespace-nowrap ${activeTab === 'database' ? 'bg-red-600 hover:bg-red-700 text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
-        >
-          <Database size={13}/> DB & Backup
-        </button>
+        {currentUser.role === 'admin' && (
+          <button 
+            onClick={() => { setActiveTab('database'); setGlobalSearch(''); loadArchive(); }} 
+            className={`flex-1 justify-center px-3 py-1.5 md:px-4 md:py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 whitespace-nowrap ${activeTab === 'database' ? 'bg-red-600 hover:bg-red-700 text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
+          >
+            <Database size={13}/> DB & Backup
+          </button>
+        )}
         {adminRejectedTasks.length > 0 && (
           <button 
             onClick={() => { setActiveTab('rejected'); setGlobalSearch(''); }} 
@@ -573,12 +575,14 @@ export function AdminDashboard({
             >
               <Users size={20} className="text-indigo-600" /> Manage Officers
             </button>
-            <button 
-              onClick={() => { setActiveTab('database'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
-              className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-colors"
-            >
-              <Database size={20} className="text-red-600" /> DB & Backup
-            </button>
+            {currentUser.role === 'admin' && (
+              <button 
+                onClick={() => { setActiveTab('database'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
+                className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-colors"
+              >
+                <Database size={20} className="text-red-600" /> DB & Backup
+              </button>
+            )}
           </div>
         </div>
       )}

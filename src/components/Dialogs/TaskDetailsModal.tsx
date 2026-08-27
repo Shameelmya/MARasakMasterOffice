@@ -62,7 +62,7 @@ export function TaskDetailsModal({
   const [reassignAssignedTo, setReassignAssignedTo] = useState<string[]>([]);
 
   const canUserEdit = useMemo(() => {
-    if (currentUser.role === 'admin') return true;
+    if (['admin', 'subadmin'].includes(currentUser.role)) return true;
     if (currentUser.canSeeGlobalOverview && currentUser.canEditGlobalOverview) return true;
     if (currentUser.canEditOwnInputs && task.createdByUid === currentUser.id) {
       if (task.status === 'Pending' || task.status === 'Rejected' || task.status === 'Unsolved') {
@@ -310,7 +310,7 @@ export function TaskDetailsModal({
   };
 
   const isAssigned = task.assignedTo.includes(currentUser.id);
-  const isAdmin = currentUser.role === 'admin';
+  const isAdmin = ['admin', 'subadmin'].includes(currentUser.role);
   const reassignedFromUser = task.reassignedFrom?.[currentUser.id];
   
   const sortedCategories = useMemo(() => {
@@ -380,7 +380,7 @@ export function TaskDetailsModal({
                )
              )}
              
-             {task.isTrashed && canUserEdit && (
+             {task.isTrashed && ['admin', 'subadmin'].includes(currentUser.role) && (
                <>
                  <button 
                    onClick={() => {
