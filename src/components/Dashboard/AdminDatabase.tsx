@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from 'react';
-import { Download, Upload, AlertOctagon, Trash2, AlertTriangle } from 'lucide-react';
+import { Download, Upload, AlertOctagon, Trash2, AlertTriangle, List } from 'lucide-react';
 import { deleteDoc, setDoc } from 'firebase/firestore';
 import { Task, User, BackupMeta } from '../../types';
 import { getDocRef } from '../../services/firebase';
@@ -17,6 +17,9 @@ interface AdminDatabaseProps {
     isDanger?: boolean,
     confirmText?: string
   ) => void;
+  categories: string[];
+  designations: string[];
+  inputTypes: string[];
 }
 
 export function AdminDatabase({
@@ -24,11 +27,16 @@ export function AdminDatabase({
   users,
   backupMeta,
   updateBackupMeta,
-  triggerConfirm
+  triggerConfirm,
+  categories,
+  designations,
+  inputTypes
 }: AdminDatabaseProps) {
   const [backupTarget, setBackupTarget] = useState('all');
   const [resetTarget, setResetTarget] = useState('all');
   const [resetText, setResetText] = useState('');
+  const [listType, setListType] = useState<'categories' | 'designations' | 'inputTypes'>('categories');
+  const [deleteItemText, setDeleteItemText] = useState('');
 
   const handleBackup = async () => {
     const exportData = backupTarget === 'all' 
@@ -118,6 +126,28 @@ export function AdminDatabase({
     );
   };
 
+  const currentList = listType === 'categories' ? categories : listType === 'designations' ? designations : inputTypes;
+
+  const handleDeleteListItem = (item: string) => {
+    if (deleteItemText.toLowerCase() !== 'delete') {
+      alert("You must type exactly 'Delete' to confirm removal.");
+      return;
+    }
+    triggerConfirm(
+      "Confirm Removal",
+      `Are you sure you want to completely remove '${item}' from the global list?`,
+      async () => {
+        const docRef = getDocRef('settings', 'globals');
+        const newList = currentList.filter(i => i !== item);
+        await setDoc(docRef, { [listType]: newList }, { merge: true });
+        setDeleteItemText('');
+        alert(`Successfully removed '${item}'.`);
+      },
+      true,
+      "Remove Item"
+    );
+  };
+
   return (
     <div id="admin-database" className="space-y-6 animate-in fade-in">
       <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
@@ -182,6 +212,63 @@ export function AdminDatabase({
             ) : (
               <p className="font-bold text-indigo-900">No previous imports recorded.</p>
             )}
+          </div>
+        </div>
+      </div>
+      
+      <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
+        <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2 mb-6">
+          <List className="text-pink-600"/> Manage Dropdown Lists
+        </h2>
+        <div className="grid md:grid-cols-2 gap-8 items-start">
+          <div>
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Select List to Manage</label>
+            <select 
+              value={listType} 
+              onChange={e => {
+                setListType(e.target.value as any);
+                setDeleteItemText('');
+              }} 
+              className="w-full px-4 py-3 bg-[#F4F7FB] border border-slate-200 rounded-2xl font-bold text-slate-700 outline-none focus:ring-2 focus:ring-pink-500 mb-6 bg-white"
+            >
+              <option value="categories">Categories</option>
+              <option value="designations">Designations</option>
+              <option value="inputTypes">Input Types</option>
+            </select>
+            
+            <label className="text-[10px] font-bold text-pink-500 uppercase tracking-widest block mb-2">
+              Type <span className="font-mono bg-pink-100 px-1 text-pink-700">Delete</span> below to enable item removal:
+            </label>
+            <input 
+              type="text" 
+              value={deleteItemText} 
+              onChange={e => setDeleteItemText(e.target.value)} 
+              placeholder="Type 'Delete' here..." 
+              className="w-full px-4 py-3 bg-white border border-pink-200 rounded-2xl font-bold text-pink-900 outline-none focus:ring-2 focus:ring-pink-500 text-pink-800 bg-white" 
+            />
+          </div>
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 max-h-[300px] overflow-y-auto">
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-200 pb-2">
+              Current {listType} ({currentList.length})
+            </h3>
+            <ul className="space-y-2">
+              {currentList.map(item => (
+                <li key={item} className="flex justify-between items-center bg-white border border-slate-200 p-2.5 rounded-xl shadow-sm hover:shadow transition-shadow">
+                  <span className="text-sm font-semibold text-slate-700">{item}</span>
+                  <button 
+                    onClick={() => handleDeleteListItem(item)}
+                    disabled={deleteItemText.toLowerCase() !== 'delete'}
+                    className="p-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white disabled:opacity-30 disabled:hover:bg-red-50 disabled:hover:text-red-500 transition-colors"
+                    title={deleteItemText.toLowerCase() === 'delete' ? 'Remove Item' : "Type 'Delete' to enable"}
+                  >
+                    <Trash2 size={16}/>
+                  </button>
+                </li>
+              ))}
+              {currentList.length === 0 && (
+                <li className="text-sm font-semibold text-slate-400 text-center py-4">No items found.</li>
+              )}
+            </ul>
           </div>
         </div>
       </div>

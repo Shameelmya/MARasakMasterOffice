@@ -22,10 +22,12 @@ interface OfficerDashboardProps {
   deleteTask: (taskId: string) => void;
   categories: string[];
   designations: string[];
+  inputTypes: string[];
   users: User[];
   addTask: (newTask: Task) => Promise<void>;
   addCategory: (newCat: string) => Promise<void>;
   addDesignation: (newDesig: string) => Promise<void>;
+  addInputType: (newType: string) => Promise<void>;
   triggerPrint: (task: Task) => void;
   triggerDownloadPDF: (task: Task) => void;
   triggerDetailsPrint: (task: Task) => void;
@@ -76,10 +78,12 @@ export function OfficerDashboard({
   deleteTask,
   categories,
   designations,
+  inputTypes,
   users,
   addTask,
   addCategory,
   addDesignation,
+  addInputType,
   triggerPrint,
   triggerDownloadPDF,
   triggerDetailsPrint,
@@ -302,8 +306,10 @@ export function OfficerDashboard({
           addTask={addTask} 
           categories={categories} 
           designations={designations} 
+          inputTypes={inputTypes}
           addCategory={addCategory} 
           addDesignation={addDesignation} 
+          addInputType={addInputType}
           users={users} 
           triggerPrint={triggerPrint} 
           triggerDownloadPDF={triggerDownloadPDF} 

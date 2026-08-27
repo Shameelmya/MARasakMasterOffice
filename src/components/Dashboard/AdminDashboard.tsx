@@ -24,6 +24,7 @@ interface AdminDashboardProps {
   deleteTask: (taskId: string) => void;
   categories: string[];
   designations: string[];
+  inputTypes: string[];
   users: User[];
   updateUserDoc: (userId: string, field: string, value: any) => Promise<void>;
   addUser: (newUser: User) => Promise<void>;
@@ -37,6 +38,7 @@ interface AdminDashboardProps {
   addTask: (newTask: Task) => Promise<void>;
   addCategory: (newCat: string) => Promise<void>;
   addDesignation: (newDesig: string) => Promise<void>;
+  addInputType: (newType: string) => Promise<void>;
   triggerMasterReport: (config: ReportConfig) => void;
   triggerMasterDownload: (config: ReportConfig) => void;
   triggerOfficerReport: (config: ReportConfig) => void;
@@ -90,6 +92,7 @@ export function AdminDashboard({
   deleteTask,
   categories,
   designations,
+  inputTypes,
   users,
   updateUserDoc,
   addUser,
@@ -103,6 +106,7 @@ export function AdminDashboard({
   addTask,
   addCategory,
   addDesignation,
+  addInputType,
   triggerMasterReport,
   triggerMasterDownload,
   triggerOfficerReport,
@@ -335,8 +339,10 @@ export function AdminDashboard({
           addTask={addTask} 
           categories={categories} 
           designations={designations} 
+          inputTypes={inputTypes}
           addCategory={addCategory} 
           addDesignation={addDesignation} 
+          addInputType={addInputType}
           users={users} 
           triggerPrint={triggerPrint} 
           triggerDownloadPDF={triggerDownloadPDF} 
@@ -395,6 +401,9 @@ export function AdminDashboard({
           backupMeta={backupMeta} 
           updateBackupMeta={updateBackupMeta} 
           triggerConfirm={triggerConfirm as any} 
+          categories={categories}
+          designations={designations}
+          inputTypes={inputTypes}
         />
       )}
 

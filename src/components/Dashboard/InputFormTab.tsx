@@ -20,8 +20,10 @@ interface InputFormTabProps {
   addTask: (newTask: Task) => Promise<void>;
   categories: string[];
   designations: string[];
-  addCategory: (newCat: string) => Promise<void>;
-  addDesignation: (newDesig: string) => Promise<void>;
+  inputTypes: string[];
+  addCategory: (cat: string) => void;
+  addDesignation: (desig: string) => void;
+  addInputType: (type: string) => void;
   users: UserType[];
   triggerPrint: (task: Task) => void;
   triggerDownloadPDF: (task: Task) => void;
@@ -53,10 +55,12 @@ interface FormState {
     otherLocalBody: string;
     wardNumber: string;
     otherWard: string;
+    otherGender: string;
   };
   description: string;
   assignedTo: string[];
   isLocalWork?: boolean;
+  newInputType: string;
 }
 
 export function InputFormTab({
@@ -64,8 +68,10 @@ export function InputFormTab({
   addTask,
   categories,
   designations,
+  inputTypes,
   addCategory,
   addDesignation,
+  addInputType,
   users,
   triggerPrint,
   triggerDownloadPDF,
@@ -74,7 +80,7 @@ export function InputFormTab({
   const initForm: FormState = {
     isSelfMode: false,
     isLocalWork: false,
-    types: [],
+    types: ['Letter'],
     category: '',
     newCategory: '',
     programDate: '',
@@ -96,10 +102,12 @@ export function InputFormTab({
       localBody: '',
       otherLocalBody: '',
       wardNumber: '',
-      otherWard: ''
+      otherWard: '',
+      otherGender: ''
     },
     description: '',
-    assignedTo: []
+    assignedTo: [],
+    newInputType: ''
   };
 
   const [form, setForm] = useState<FormState>(initForm);
@@ -107,6 +115,8 @@ export function InputFormTab({
   const [showNewDesig, setShowNewDesig] = useState(false);
   const [showNewLocalBody, setShowNewLocalBody] = useState(false);
   const [showNewWard, setShowNewWard] = useState(false);
+  const [showNewGender, setShowNewGender] = useState(false);
+  const [showNewInputType, setShowNewInputType] = useState(false);
   const [sendWaMsg, setSendWaMsg] = useState(true);
   const [sendWaMsgSame, setSendWaMsgSame] = useState(false);
   const [lastTask, setLastTask] = useState<Task | null>(null);
@@ -157,27 +167,32 @@ export function InputFormTab({
     if (form.isSelfMode) return;
     const clean = form.personal.mobileNumber.replace(/\D/g, '');
     if (clean.length >= 10) {
-      const match = [...tasks]
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .find(t => t.personalDetails?.mobileNumber?.replace(/\D/g, '') === clean);
+      const matchingTasks = [...tasks]
+        .filter(t => t.personalDetails?.mobileNumber?.replace(/\D/g, '') === clean)
+        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
       
-      if (match) {
-        setForm(f => ({
-          ...f,
-          personal: {
-            ...f.personal,
-            name: match.personalDetails.name || f.personal.name,
-            designation: match.personalDetails.designation || f.personal.designation,
-            gender: match.personalDetails.gender || f.personal.gender,
-            houseName: match.personalDetails.houseName || f.personal.houseName,
-            place: match.personalDetails.place || f.personal.place,
-            postOffice: match.personalDetails.postOffice || f.personal.postOffice,
-            pinCode: match.personalDetails.pinCode || f.personal.pinCode,
-            localBody: match.personalDetails.localBody || f.personal.localBody,
-            wardNumber: match.personalDetails.wardNumber || f.personal.wardNumber,
-            whatsappNumber: match.personalDetails.whatsappNumber || f.personal.whatsappNumber
+      if (matchingTasks.length > 0) {
+        const match = matchingTasks[matchingTasks.length - 1];
+        
+        setForm(f => {
+          const aggregated = { ...f.personal };
+          for (const t of matchingTasks) {
+            if (t.personalDetails.name) aggregated.name = t.personalDetails.name;
+            if (t.personalDetails.designation) aggregated.designation = t.personalDetails.designation;
+            if (t.personalDetails.gender) aggregated.gender = t.personalDetails.gender;
+            if (t.personalDetails.houseName) aggregated.houseName = t.personalDetails.houseName;
+            if (t.personalDetails.place) aggregated.place = t.personalDetails.place;
+            if (t.personalDetails.postOffice) aggregated.postOffice = t.personalDetails.postOffice;
+            if (t.personalDetails.pinCode) aggregated.pinCode = t.personalDetails.pinCode;
+            if (t.personalDetails.localBody) aggregated.localBody = t.personalDetails.localBody;
+            if (t.personalDetails.wardNumber) aggregated.wardNumber = t.personalDetails.wardNumber;
+            if (t.personalDetails.whatsappNumber) aggregated.whatsappNumber = t.personalDetails.whatsappNumber;
           }
-        }));
+          return {
+            ...f,
+            personal: aggregated
+          };
+        });
         setAutoFilledMessage(`✓ Data loaded from previous visit on ${formatDate(match.createdAt)}`);
         setTimeout(() => setAutoFilledMessage(''), 5000);
       }
@@ -227,6 +242,8 @@ export function InputFormTab({
 
     const finalLocalBody = showNewLocalBody ? form.personal.otherLocalBody : form.personal.localBody;
     const finalWard = showNewWard ? form.personal.otherWard : form.personal.wardNumber;
+    const finalGender = showNewGender ? form.personal.otherGender : form.personal.gender;
+    const finalTypes = showNewInputType ? [form.newInputType] : form.types;
     
     let finalAssignedTo = form.assignedTo;
     if(isInvitation) {
@@ -258,6 +275,7 @@ export function InputFormTab({
     delete (finalPersonalDetails as any).newDesignation;
     delete (finalPersonalDetails as any).otherLocalBody;
     delete (finalPersonalDetails as any).otherWard;
+    delete (finalPersonalDetails as any).otherGender;
 
     if (form.isSelfMode) {
       finalPersonalDetails.name = 'Self Application';
@@ -280,13 +298,12 @@ export function InputFormTab({
       }
       return att;
     });
-    const taskTypes = form.isSelfMode ? ['Self Application'] : form.types;
 
     const newTask: Task = {
       id: taskId,
-      types: taskTypes,
+      types: finalTypes,
       category: finalCat,
-      personalDetails: finalPersonalDetails,
+      personalDetails: { ...finalPersonalDetails, gender: finalGender },
       taskType: 'input',
       isSelfMode: form.isSelfMode,
       subject: form.subject,
@@ -390,23 +407,50 @@ export function InputFormTab({
                 </span>
               )}
             </h3>
-            <div className="grid grid-cols-2 gap-3">
-              {INPUT_TYPES.map(type => (
-                <label 
-                  key={type} 
-                  className={`flex items-center gap-3 cursor-pointer transition-all duration-300 hover:bg-slate-50 px-4 py-3 rounded-2xl border transition-all font-bold text-sm ${form.types.includes(type) ? 'bg-blue-50 border-blue-400 text-blue-800 shadow-sm' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'}`}
+            {!showNewInputType ? (
+              <SearchableSelect 
+                options={inputTypes}
+                value={form.types[0] || ''}
+                onChange={(val) => setForm(f => ({ ...f, types: [val] }))}
+                placeholder="Select Input Type..."
+                onAddNewClick={() => setShowNewInputType(true)}
+              />
+            ) : (
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  name="newInputType" 
+                  placeholder="Enter Custom Input Type" 
+                  value={form.newInputType} 
+                  onChange={(e) => setForm(f => ({ ...f, newInputType: e.target.value }))} 
+                  className="w-full px-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl text-sm font-semibold focus:bg-white focus:border-purple-500 outline-none text-slate-800" 
+                />
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    if (form.newInputType.trim()) {
+                      addInputType(form.newInputType.trim());
+                      setForm(f => ({ ...f, types: [form.newInputType.trim()] }));
+                    }
+                    setShowNewInputType(false);
+                    setForm(f => ({ ...f, newInputType: '' }));
+                  }} 
+                  className="px-3 bg-purple-50 text-purple-600 rounded-2xl hover:bg-purple-100 transition-colors flex items-center justify-center"
                 >
-                  <input 
-                    type="radio" 
-                    name="inputTypeRadio" 
-                    checked={form.types.includes(type)} 
-                    onChange={() => setForm(f => ({ ...f, types: [type] }))} 
-                    className="w-4 h-4 text-purple-600 focus:ring-blue-500 bg-white" 
-                  />
-                  <span>{type}</span>
-                </label>
-              ))}
-            </div>
+                  <Plus size={16}/>
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setShowNewInputType(false);
+                    setForm(f => ({ ...f, newInputType: '' }));
+                  }} 
+                  className="px-3 bg-red-50 text-red-600 rounded-2xl hover:bg-red-100 transition-colors flex items-center justify-center"
+                >
+                  <X size={16}/>
+                </button>
+              </div>
+            )}
           </div>
         )}
         <div id="field-category" className="p-2 -m-2">
@@ -538,17 +582,36 @@ export function InputFormTab({
                 <label className="flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
                   <span>Gender</span>
                 </label>
-                <select 
-                  name="gender" 
-                  value={form.personal.gender} 
-                  onChange={handlePersChange} 
-                  className="w-full px-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl text-sm font-semibold focus:bg-white focus:border-purple-500 outline-none transition-all text-slate-850"
-                >
-                  <option value="">Select Gender...</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
+                {!showNewGender ? (
+                  <SearchableSelect 
+                    options={['Male', 'Female', 'Other']}
+                    value={form.personal.gender}
+                    onChange={(val) => setForm(f => ({ ...f, personal: { ...f.personal, gender: val } }))}
+                    placeholder="Select Gender..."
+                    onAddNewClick={() => setShowNewGender(true)}
+                  />
+                ) : (
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      name="otherGender" 
+                      placeholder="Enter Custom Gender" 
+                      value={form.personal.otherGender} 
+                      onChange={handlePersChange} 
+                      className="w-full px-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl text-sm font-semibold focus:bg-white focus:border-purple-500 outline-none text-slate-800" 
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setShowNewGender(false);
+                        setForm(f => ({ ...f, personal: { ...f.personal, otherGender: '' } }));
+                      }} 
+                      className="px-3 bg-red-50 text-red-600 rounded-2xl hover:bg-red-100 transition-colors"
+                    >
+                      <X size={16}/>
+                    </button>
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">House Name</label>
@@ -567,30 +630,19 @@ export function InputFormTab({
                 <span>Designation</span>
               </label>
               {!showNewDesig ? (
-                <div className="flex gap-2">
-                  <select 
-                    name="designation" 
-                    value={form.personal.designation} 
-                    onChange={handlePersChange} 
-                    className="w-full px-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl text-sm font-semibold focus:bg-white focus:border-purple-500 outline-none transition-all text-slate-850"
-                  >
-                    <option value="">Select Designation...</option>
-                    {designations.map(d => <option key={d} value={d}>{d}</option>)}
-                  </select>
-                  <button 
-                    type="button" 
-                    onClick={() => setShowNewDesig(true)} 
-                    className="bg-blue-50 text-purple-600 px-3 rounded-2xl hover:bg-blue-100 transition-colors"
-                  >
-                    <Plus size={16}/>
-                  </button>
-                </div>
+                <SearchableSelect 
+                  options={designations}
+                  value={form.personal.designation}
+                  onChange={(val) => setForm(f => ({ ...f, personal: { ...f.personal, designation: val } }))}
+                  placeholder="Select Designation..."
+                  onAddNewClick={() => setShowNewDesig(true)}
+                />
               ) : (
                 <div className="flex gap-2">
                   <input 
                     type="text" 
                     name="newDesignation" 
-                    placeholder="New Designation" 
+                    placeholder="Enter Custom Designation" 
                     value={form.personal.newDesignation} 
                     onChange={handlePersChange} 
                     className="w-full px-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl text-sm font-semibold focus:bg-white focus:border-purple-500 outline-none text-slate-800" 

@@ -12,7 +12,7 @@ import { auth, getColRef, getDocRef, db } from './services/firebase';
 // Helper Utilities & Formatting
 import { formatDate, formatTime } from './utils/formatters';
 import { 
-  DEFAULT_CATEGORIES, DEFAULT_DESIGNATIONS, DEFAULT_USERS, ISLAMIC_QUOTES 
+  DEFAULT_CATEGORIES, DEFAULT_DESIGNATIONS, DEFAULT_USERS, ISLAMIC_QUOTES, INPUT_TYPES 
 } from './utils/constants';
 import { 
   Task, User as UserType, BackupMeta, GlobalFilters, ConfirmModalState, UpdationReportConfig
@@ -76,6 +76,7 @@ export default function App() {
   const [isFetchingArchive, setIsFetchingArchive] = useState(false);
   const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES);
   const [designations, setDesignations] = useState<string[]>(DEFAULT_DESIGNATIONS);
+  const [inputTypes, setInputTypes] = useState<string[]>(INPUT_TYPES);
   const [templates, setTemplates] = useState<string[]>([]);
   
   const [backupMeta, setBackupMeta] = useState<BackupMeta>({ 
@@ -204,6 +205,7 @@ export default function App() {
         const data = snap.data();
         if(data.categories) setCategories(data.categories); 
         if(data.designations) setDesignations(data.designations); 
+        if(data.inputTypes) setInputTypes(data.inputTypes);
         if(data.templates) setTemplates(data.templates);
       } 
     });
@@ -481,6 +483,13 @@ export default function App() {
     const newDesignations = [...designations, newDesig]; 
     setDesignations(newDesignations); 
     await setDoc(getDocRef('settings', 'globals'), { designations: newDesignations }, { merge: true }); 
+  };
+
+  const addInputType = async (newType: string) => { 
+    if (inputTypes.includes(newType)) return;
+    const newInputTypes = [...inputTypes, newType]; 
+    setInputTypes(newInputTypes); 
+    await setDoc(getDocRef('settings', 'globals'), { inputTypes: newInputTypes }, { merge: true }); 
   };
 
   const addTemplate = async (newTemplate: string) => { 
@@ -814,6 +823,7 @@ const isImpersonating = !!impersonatedUser;
               deleteTask={deleteTask} 
               categories={categories} 
               designations={designations} 
+              inputTypes={inputTypes}
               users={users} 
               updateUserDoc={updateUserDoc} 
               addUser={addUser} 
@@ -827,6 +837,7 @@ const isImpersonating = !!impersonatedUser;
               addTask={addTask} 
               addCategory={addCategory} 
               addDesignation={addDesignation} 
+              addInputType={addInputType}
               triggerMasterReport={(config) => setMasterReportConfigToDownload(config)} 
               triggerMasterDownload={setMasterReportConfigToDownload} 
               triggerOfficerReport={setOfficerReportToDownload} 
@@ -850,10 +861,12 @@ const isImpersonating = !!impersonatedUser;
               deleteTask={deleteTask} 
               categories={categories} 
               designations={designations} 
+              inputTypes={inputTypes}
               users={users} 
               addTask={addTask} 
               addCategory={addCategory} 
               addDesignation={addDesignation} 
+              addInputType={addInputType}
               triggerPrint={setTaskToPrint} 
               triggerDownloadPDF={setTaskToDownload} 
               triggerDetailsPrint={(task) => setTaskDetailsToDownload(task)} 
