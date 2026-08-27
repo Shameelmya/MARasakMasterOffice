@@ -39,9 +39,28 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
     setIsLoggingIn(true);
     try {
       await setPersistence(auth, keepSignedIn ? browserLocalPersistence : browserSessionPersistence);
-      await signInWithEmailAndPassword(auth, selectedUser.email, password);
-      onLogin(selectedUser);
+      // Try to login with whatever email is in the Firestore document
+      if (selectedUser.email) {
+        await signInWithEmailAndPassword(auth, selectedUser.email, password);
+        onLogin(selectedUser);
+        return; // Success
+      } else {
+        throw new Error("No email in profile"); // Fall down to the catch block to try the fallback
+      }
     } catch (err: any) {
+      console.log("Primary login failed, trying fallback...", err);
+      // Fallback: If they changed their email in Firestore but Auth still uses the fake email, or if email is missing
+      try {
+        const fallbackEmail = `${selectedUser.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`;
+        if (selectedUser.email !== fallbackEmail) {
+          await signInWithEmailAndPassword(auth, fallbackEmail, password);
+          onLogin(selectedUser);
+          return; // Success on fallback
+        }
+      } catch (fallbackErr: any) {
+        console.error("Fallback login also failed", fallbackErr);
+      }
+      
       console.error(err);
       setError('Incorrect Password or Login Failed. Please check and try again.');
     } finally {
