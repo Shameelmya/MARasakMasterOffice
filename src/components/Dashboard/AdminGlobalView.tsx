@@ -301,13 +301,15 @@ export function AdminGlobalView({
                         <CheckSquare size={16}/>
                       </button>
                     )}
-                    <button 
-                      onClick={() => deleteTask(t.id)} 
-                      title="Delete Input" 
-                      className="touch-target flex items-center justify-center text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors bg-red-50"
-                    >
-                      <Trash2 size={16}/>
-                    </button>
+                    {(currentUser?.role === 'admin' || (t.status === 'Pending' && t.createdByUid === currentUser?.id)) && (
+                      <button 
+                        onClick={() => deleteTask(t.id)} 
+                        title="Delete Input" 
+                        className="touch-target flex items-center justify-center text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors bg-red-50"
+                      >
+                        <Trash2 size={16}/>
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -597,13 +599,15 @@ const AdminTaskCard = React.memo(({
         >
           <Eye size={14}/> Details
         </button>
-        <button 
-          onClick={() => deleteTask(t.id)} 
-          className="px-3 rounded-2xl border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition-colors" 
-          title="Delete Permanent"
-        >
-          <Trash2 size={14}/>
-        </button>
+        {(currentUser?.role === 'admin' || (t.status === 'Pending' && t.createdByUid === currentUser?.id)) && (
+          <button 
+            onClick={() => deleteTask(t.id)} 
+            className="px-3 rounded-2xl border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition-colors" 
+            title="Delete Permanent"
+          >
+            <Trash2 size={14}/>
+          </button>
+        )}
       </div>
     </div>
   );

@@ -63,8 +63,12 @@ export function TaskDetailsModal({
 
   const canUserEdit = useMemo(() => {
     if (currentUser.role === 'admin') return true;
-    if (currentUser.canEditOwnInputs && task.createdByUid === currentUser.id) return true;
     if (currentUser.canSeeGlobalOverview && currentUser.canEditGlobalOverview) return true;
+    if (currentUser.canEditOwnInputs && task.createdByUid === currentUser.id) {
+      if (task.status === 'Pending' || task.status === 'Rejected' || task.status === 'Unsolved') {
+        return true;
+      }
+    }
     return false;
   }, [currentUser, task]);
 

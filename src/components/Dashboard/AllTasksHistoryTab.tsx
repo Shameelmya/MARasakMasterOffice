@@ -154,7 +154,7 @@ export function AllTasksHistoryTab({
                   >
                     <Download size={16}/>
                   </button>
-                  {(currentUser.role === 'admin' || t.status === 'Pending') && (
+                  {(currentUser.role === 'admin' || (t.status === 'Pending' && t.createdByUid === currentUser.id)) && (
                     <button 
                       onClick={() => deleteTask(t.id)} 
                       title="Delete Input" 
@@ -228,7 +228,7 @@ export function AllTasksHistoryTab({
               >
                 <Download size={16}/>
               </button>
-              {(currentUser.role === 'admin' || t.status === 'Pending') && (
+              {(currentUser.role === 'admin' || (t.status === 'Pending' && t.createdByUid === currentUser.id)) && (
                 <button 
                   onClick={() => deleteTask(t.id)} 
                   title="Delete Input" 
