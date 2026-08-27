@@ -87,16 +87,16 @@ export function RecentAlertsTab({ user, tasks, jumpToTask, users, setImpersonate
       </div>
 
       {user.role === 'admin' && users && setImpersonatedUser ? (
-        <div className="flex flex-row gap-2 sm:gap-8 mb-4 sm:mb-8 w-full justify-center items-stretch">
+        <div className="flex flex-row gap-2 sm:gap-4 mb-4 sm:mb-6 w-full justify-center items-stretch">
           {/* Big Active Box */}
-          <div className="bg-[#EF4444] border border-red-600 rounded-[16px] sm:rounded-[24px] py-3 px-2 sm:py-6 sm:px-8 shadow-md flex flex-col items-center justify-center shrink-0 w-[35%] sm:w-auto sm:max-w-[280px]">
-            <div className="text-3xl sm:text-6xl font-bold text-yellow-300 tracking-tight leading-none mb-1 sm:mb-2 drop-shadow-sm">
+          <div className="bg-[#EF4444] border border-red-600 rounded-[16px] sm:rounded-[20px] py-3 px-2 sm:py-4 sm:px-6 shadow-md flex flex-col items-center justify-center shrink-0 w-[35%] sm:w-auto sm:max-w-[240px]">
+            <div className="text-3xl sm:text-5xl font-extrabold text-yellow-300 tracking-tight leading-none mb-1 sm:mb-1 drop-shadow-sm">
               {activeTasks.length}
             </div>
-            <div className="text-[8px] sm:text-xs font-bold text-white/90 uppercase tracking-widest mb-1 sm:mb-3 text-center leading-tight">
+            <div className="text-[8px] sm:text-[10px] font-bold text-white/90 uppercase tracking-widest mb-1 sm:mb-2 text-center leading-tight">
               ACTIVE ACTIONS
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-5 text-[9px] sm:text-sm font-bold mt-1">
+            <div className="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-3 text-[9px] sm:text-xs font-bold mt-1">
               <span className="text-white whitespace-nowrap">{pendingCount} Pend</span>
               <span className="text-white/90 whitespace-nowrap">{inProgressCount} Prog</span>
             </div>
@@ -108,7 +108,7 @@ export function RecentAlertsTab({ user, tasks, jumpToTask, users, setImpersonate
           </div>
 
           {/* Officer Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-3 w-[65%] sm:max-w-[500px]">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2 w-[65%] sm:max-w-[500px]">
             {users.filter(u => u.enabled).map(u => {
               const uPending = tasks.filter(t => 
                 t.assignedTo.includes(u.id) && 
@@ -130,15 +130,15 @@ export function RecentAlertsTab({ user, tasks, jumpToTask, users, setImpersonate
                       setImpersonatedUser(u);
                     }
                   }}
-                  className="bg-white border border-slate-200 rounded-[16px] sm:rounded-[24px] py-3 px-1 sm:py-6 sm:px-4 shadow-sm flex flex-col items-center justify-center hover:border-indigo-300 hover:bg-indigo-50 transition-all cursor-pointer duration-300 w-full overflow-hidden"
+                  className="bg-white border border-slate-200 rounded-[16px] sm:rounded-[20px] py-2 px-1 sm:py-3 sm:px-3 shadow-sm flex flex-col items-center justify-center hover:border-indigo-300 hover:bg-indigo-50 transition-all cursor-pointer duration-300 w-full overflow-hidden"
                 >
-                  <div className="text-3xl sm:text-6xl font-bold text-[#EF4444] tracking-tight leading-none mb-1 sm:mb-2">
+                  <div className="text-3xl sm:text-4xl font-extrabold text-[#EF4444] tracking-tight leading-none mb-1 sm:mb-1">
                     {uActive}
                   </div>
-                  <div className="text-[7.5px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1 sm:mb-3 text-center leading-tight truncate w-full px-1">
+                  <div className="text-[7.5px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 sm:mb-1.5 text-center leading-tight truncate w-full px-1">
                     {u.name}
                   </div>
-                  <div className="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-5 text-[9px] sm:text-sm font-bold mt-1">
+                  <div className="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 text-[9px] sm:text-[11px] font-bold mt-1">
                     <span className="text-red-500 whitespace-nowrap">{uPending} Pend</span>
                     <span className="text-orange-500 whitespace-nowrap">{uInProgress} Prog</span>
                   </div>
