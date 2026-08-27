@@ -130,7 +130,7 @@ export function AdminSettings({
                     </button>
                   )}
                 </div>
-                <div className="grid md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Display Name</label>
                     <input 
@@ -138,13 +138,15 @@ export function AdminSettings({
                       value={u.name} 
                       onChange={e => handleChange(u.id, 'name', e.target.value)} 
                       disabled={!u.enabled} 
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold outline-none focus:border-indigo-500 disabled:bg-slate-100 bg-white text-slate-800"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold outline-none focus:border-indigo-500 disabled:bg-slate-100 bg-white text-slate-800 text-sm"
                     />
                   </div>
+                  <div>
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Authentication</label>
-                    <div className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-600 bg-slate-50 text-xs">
+                    <div className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-600 bg-slate-50 text-xs h-[38px] flex items-center">
                       {u.email ? "Secured via Google" : "Pending Migration"}
                     </div>
+                  </div>
                   <div>
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Phone Number</label>
                     <input 
@@ -152,7 +154,7 @@ export function AdminSettings({
                       value={u.phone} 
                       onChange={e => handleChange(u.id, 'phone', e.target.value)} 
                       disabled={!u.enabled} 
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold outline-none focus:border-indigo-500 disabled:bg-slate-100 bg-white text-slate-800"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold outline-none focus:border-indigo-500 disabled:bg-slate-100 bg-white text-slate-800 text-sm"
                     />
                   </div>
                   <div>
@@ -162,97 +164,54 @@ export function AdminSettings({
                       value={u.whatsapp} 
                       onChange={e => handleChange(u.id, 'whatsapp', e.target.value)} 
                       disabled={!u.enabled} 
-                      className="w-full px-3 py-2 border border-slate-305 rounded-lg font-bold outline-none focus:border-indigo-500 disabled:bg-slate-100 bg-white text-slate-800"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold outline-none focus:border-indigo-500 disabled:bg-slate-100 bg-white text-slate-800 text-sm"
                     />
                   </div>
                 </div>
               </div>
-              <div className="flex-1 w-full lg:w-auto flex flex-col gap-5">
-                <div className="bg-[#F4F7FB] p-5 rounded-2xl border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="col-span-1 md:col-span-2 border-b border-slate-200 pb-2">
-                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Capabilities & Permissions</h4>
+              <div className="flex-1 w-full lg:w-auto flex flex-col gap-4">
+                <div className="bg-[#F4F7FB] p-4 rounded-2xl border border-slate-200">
+                  <div className="border-b border-slate-200 pb-2 mb-3">
+                    <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Capabilities & Permissions</h4>
                   </div>
-                  <label className="flex items-center justify-between cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1">
-                    <span className="text-xs font-bold text-slate-700">Can Register input</span>
-                    <input 
-                      type="checkbox" 
-                      checked={!!u.canInput} 
-                      onChange={() => handleToggle(u.id, 'canInput')} 
-                      className="w-4 h-4 disabled:opacity-50"
-                    />
-                  </label>
-                  <label className="flex items-center justify-between cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1">
-                    <span className="text-xs font-bold text-slate-700">Detailed Reports</span>
-                    <input 
-                      type="checkbox" 
-                      checked={!!u.canSeeReports} 
-                      onChange={() => handleToggle(u.id, 'canSeeReports')} 
-                      className="w-4 h-4 disabled:opacity-50"
-                    />
-                  </label>
-                  <label className="flex items-center justify-between cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1">
-                    <span className="text-xs font-bold text-slate-700">Global Overview Tab</span>
-                    <input 
-                      type="checkbox" 
-                      checked={!!u.canSeeGlobalOverview} 
-                      onChange={() => handleToggle(u.id, 'canSeeGlobalOverview')} 
-                      className="w-4 h-4 disabled:opacity-50"
-                    />
-                  </label>
-                  <label className="flex items-center justify-between cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1">
-                    <span className="text-xs font-bold text-slate-700">Drafts View / Worker</span>
-                    <input 
-                      type="checkbox" 
-                      checked={!!u.canSeeDraftsView} 
-                      onChange={() => handleToggle(u.id, 'canSeeDraftsView')} 
-                      className="w-4 h-4 disabled:opacity-50"
-                    />
-                  </label>
-                  <label className="flex items-center justify-between cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1">
-                    <span className="text-xs font-bold text-slate-700">Edit Global Overview</span>
-                    <input 
-                      type="checkbox" 
-                      checked={!!u.canEditGlobalOverview} 
-                      onChange={() => handleToggle(u.id, 'canEditGlobalOverview')} 
-                      className="w-4 h-4 disabled:opacity-50"
-                    />
-                  </label>
-                  <label className="flex items-center justify-between cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1">
-                    <span className="text-xs font-bold text-slate-700">Edit Own Inputs (Staff)</span>
-                    <input 
-                      type="checkbox" 
-                      checked={!!u.canEditOwnInputs} 
-                      onChange={() => handleToggle(u.id, 'canEditOwnInputs')} 
-                      className="w-4 h-4 disabled:opacity-50"
-                    />
-                  </label>
-                  <label className="flex items-center justify-between cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1">
-                    <span className="text-xs font-bold text-slate-700">Can Re-assign Tasks</span>
-                    <input 
-                      type="checkbox" 
-                      checked={u.canReassign !== false} 
-                      onChange={() => handleToggle(u.id, 'canReassign')} 
-                      className="w-4 h-4 disabled:opacity-50"
-                    />
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 bg-[#F4F7FB] p-2 rounded-lg border border-slate-200">
-                    <input 
-                      type="checkbox" 
-                      checked={!!u.canGenerateUpdationReport} 
-                      onChange={() => handleToggle(u.id, 'canGenerateUpdationReport')} 
-                      className="w-4 h-4 disabled:opacity-50"
-                    />
-                    <span className="text-xs font-bold text-slate-700">Updation Report Access</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 bg-[#F4F7FB] p-2 rounded-lg border border-slate-200">
-                    <input 
-                      type="checkbox" 
-                      checked={!!u.canSeeRecentUpdations} 
-                      onChange={() => handleToggle(u.id, 'canSeeRecentUpdations')} 
-                      className="w-4 h-4 disabled:opacity-50"
-                    />
-                    <span className="text-xs font-bold text-slate-700">Recent Updations Tab</span>
-                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
+                    <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
+                      <input type="checkbox" checked={!!u.canInput} onChange={() => handleToggle(u.id, 'canInput')} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
+                      Can Register Input
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
+                      <input type="checkbox" checked={!!u.canSeeReports} onChange={() => handleToggle(u.id, 'canSeeReports')} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
+                      Detailed Reports
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
+                      <input type="checkbox" checked={!!u.canSeeGlobalOverview} onChange={() => handleToggle(u.id, 'canSeeGlobalOverview')} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
+                      Global Overview Tab
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
+                      <input type="checkbox" checked={!!u.canSeeDraftsView} onChange={() => handleToggle(u.id, 'canSeeDraftsView')} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
+                      Drafts View / Worker
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
+                      <input type="checkbox" checked={!!u.canEditGlobalOverview} onChange={() => handleToggle(u.id, 'canEditGlobalOverview')} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
+                      Edit Global Overview
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
+                      <input type="checkbox" checked={!!u.canEditOwnInputs} onChange={() => handleToggle(u.id, 'canEditOwnInputs')} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
+                      Edit Own Inputs (Staff)
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
+                      <input type="checkbox" checked={u.canReassign !== false} onChange={() => handleToggle(u.id, 'canReassign')} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
+                      Can Re-assign Tasks
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
+                      <input type="checkbox" checked={!!u.canGenerateUpdationReport} onChange={() => handleToggle(u.id, 'canGenerateUpdationReport')} className="w-3.5 h-3.5 disabled:opacity-50 text-emerald-600 rounded-sm focus:ring-0"/>
+                      Updation Report Access
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
+                      <input type="checkbox" checked={!!u.canSeeRecentUpdations} onChange={() => handleToggle(u.id, 'canSeeRecentUpdations')} className="w-3.5 h-3.5 disabled:opacity-50 text-emerald-600 rounded-sm focus:ring-0"/>
+                      Recent Updations Tab
+                    </label>
+                  </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
                    {u.role !== 'admin' && (
