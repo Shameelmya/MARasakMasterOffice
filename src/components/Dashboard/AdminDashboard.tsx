@@ -352,6 +352,8 @@ export function AdminDashboard({
       
       {activeTab === 'citizens' && (
         <AdminCitizenDirectory 
+          currentUser={currentUser}
+          updateTask={updateTask}
           tasks={tasks} 
           triggerCitizenPrint={triggerCitizenPrint} 
           triggerDownloadPDF={triggerCitizenDownload} 

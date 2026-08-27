@@ -1,10 +1,13 @@
 import { useState, useMemo } from 'react';
-import { Users, List, Printer, Download, Search, Phone, MessageSquare, Filter } from 'lucide-react';
-import { Task, PersonalDetails } from '../../types';
+import { Users, List, Printer, Download, Search, Phone, MessageSquare, Filter, Edit, Eye, X, Save } from 'lucide-react';
+import { Task, PersonalDetails, User } from '../../types';
 import { formatDate } from '../../utils/formatters';
 
 interface AdminCitizenDirectoryProps {
+  currentUser?: User;
+  updateTask?: (taskId: string, updates: Partial<Task>) => Promise<void>;
   tasks: Task[];
+  triggerCitizenPrint: (citizens: any[]) => void;
   triggerDownloadPDF: (citizens: any[]) => void;
   onCitizenClick?: (phone: string) => void;
 }
@@ -15,6 +18,8 @@ interface CitizenEntry extends PersonalDetails {
 }
 
 export function AdminCitizenDirectory({
+  currentUser,
+  updateTask,
   tasks,
   triggerCitizenPrint,
   triggerDownloadPDF,
@@ -23,6 +28,8 @@ export function AdminCitizenDirectory({
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('visits');
   const [visibleCount, setVisibleCount] = useState(50);
+  const [editingCitizen, setEditingCitizen] = useState<CitizenEntry | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   
   const citizensData = useMemo(() => {
     const map = new Map<string, CitizenEntry>();
@@ -161,8 +168,9 @@ export function AdminCitizenDirectory({
               <th className="px-4 py-3">Citizen Name & Desig.</th>
               <th className="px-4 py-3">Contact Info</th>
               <th className="px-4 py-3">Location / Address</th>
-              <th className="px-4 py-3 text-center">Total Visits</th>
-              <th className="px-4 py-3">Last Visit Date</th>
+              <th className="px-4 py-3 text-center">Visits</th>
+              <th className="px-4 py-3">Last Visit</th>
+              <th className="px-4 py-3 text-center">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -191,15 +199,29 @@ export function AdminCitizenDirectory({
                   {c.wardNumber && <span>(Ward: {c.wardNumber})</span>}
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <button 
-                    onClick={() => onCitizenClick?.(c.mobileNumber)}
-                    className="bg-purple-600 hover:bg-purple-700 hover:-translate-y-0.5 transition-all duration-300 text-white shadow-sm hover:scale-105 active:scale-95 transition-all text-white font-bold px-3 py-1 rounded-full cursor-pointer transition-all duration-300 hover:bg-slate-50 shadow-sm"
-                    title="View inputs by this citizen"
-                  >
-                    {c.visits}
-                  </button>
+                  <span className="bg-slate-100 px-2 py-0.5 rounded font-bold">{c.visits}</span>
                 </td>
                 <td className="px-4 py-3 text-xs font-bold text-slate-500">{formatDate(c.lastVisit)}</td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center justify-center gap-2">
+                    <button 
+                      onClick={() => onCitizenClick?.(c.mobileNumber)}
+                      className="bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"
+                      title="Full Data View"
+                    >
+                      <Eye size={14}/> View
+                    </button>
+                    {currentUser?.role === 'admin' && (
+                      <button 
+                        onClick={() => setEditingCitizen({...c})}
+                        className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"
+                        title="Edit Citizen Data"
+                      >
+                        <Edit size={14}/> Edit
+                      </button>
+                    )}
+                  </div>
+                </td>
               </tr>
             ))}
             {displayed.length === 0 && (
@@ -222,6 +244,139 @@ export function AdminCitizenDirectory({
           </div>
         )}
       </div>
+
+      {/* Edit Modal */}
+      {editingCitizen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="flex justify-between items-center p-4 sm:p-6 border-b border-slate-100 bg-slate-50 shrink-0">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
+                <Edit className="text-teal-600" /> Edit Citizen Data
+              </h2>
+              <button 
+                onClick={() => setEditingCitizen(null)} 
+                className="text-slate-400 hover:text-slate-600 p-2 hover:bg-slate-200 rounded-full transition-colors"
+              >
+                <X size={20}/>
+              </button>
+            </div>
+            
+            <div className="p-4 sm:p-6 overflow-y-auto flex-1 text-sm font-medium">
+              <p className="text-xs text-red-500 font-bold mb-4 bg-red-50 p-2 rounded">
+                Warning: Editing this citizen's details will update the information across ALL {editingCitizen.visits} tasks associated with this mobile number.
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="col-span-1 sm:col-span-2">
+                  <label className="block text-xs font-bold text-slate-500 mb-1">Name</label>
+                  <input 
+                    type="text" 
+                    value={editingCitizen.name}
+                    onChange={e => setEditingCitizen({...editingCitizen, name: e.target.value})}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-teal-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1">Mobile Number (Unique ID)</label>
+                  <input 
+                    type="text" 
+                    value={editingCitizen.mobileNumber}
+                    disabled
+                    className="w-full px-3 py-2 border border-slate-200 bg-slate-50 rounded-lg text-slate-500 cursor-not-allowed"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1">WhatsApp Number</label>
+                  <input 
+                    type="text" 
+                    value={editingCitizen.whatsappNumber || ''}
+                    onChange={e => setEditingCitizen({...editingCitizen, whatsappNumber: e.target.value})}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-teal-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1">House Name</label>
+                  <input 
+                    type="text" 
+                    value={editingCitizen.houseName || ''}
+                    onChange={e => setEditingCitizen({...editingCitizen, houseName: e.target.value})}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-teal-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1">Place</label>
+                  <input 
+                    type="text" 
+                    value={editingCitizen.place || ''}
+                    onChange={e => setEditingCitizen({...editingCitizen, place: e.target.value})}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-teal-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1">Local Body (Panchayat)</label>
+                  <input 
+                    type="text" 
+                    value={editingCitizen.localBody || ''}
+                    onChange={e => setEditingCitizen({...editingCitizen, localBody: e.target.value})}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-teal-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1">Ward Number</label>
+                  <input 
+                    type="text" 
+                    value={editingCitizen.wardNumber || ''}
+                    onChange={e => setEditingCitizen({...editingCitizen, wardNumber: e.target.value})}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-teal-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 sm:p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 shrink-0">
+              <button 
+                onClick={() => setEditingCitizen(null)}
+                className="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition-colors"
+                disabled={isSaving}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={async () => {
+                  if (!updateTask || !editingCitizen) return;
+                  setIsSaving(true);
+                  try {
+                    // Update all tasks containing this mobile number
+                    const relatedTasks = tasks.filter(t => t.personalDetails?.mobileNumber === editingCitizen.mobileNumber);
+                    for (const task of relatedTasks) {
+                      await updateTask(task.id, {
+                        personalDetails: {
+                          ...task.personalDetails,
+                          name: editingCitizen.name,
+                          whatsappNumber: editingCitizen.whatsappNumber,
+                          houseName: editingCitizen.houseName,
+                          place: editingCitizen.place,
+                          localBody: editingCitizen.localBody,
+                          wardNumber: editingCitizen.wardNumber,
+                        }
+                      });
+                    }
+                    setEditingCitizen(null);
+                  } catch (err) {
+                    console.error("Error updating citizen data:", err);
+                    alert("Failed to update citizen data. Please try again.");
+                  }
+                  setIsSaving(false);
+                }}
+                disabled={isSaving || !editingCitizen.name}
+                className="px-5 py-2.5 rounded-xl font-bold bg-teal-600 hover:bg-teal-700 text-white shadow-sm flex items-center gap-2 transition-colors disabled:opacity-50"
+              >
+                {isSaving ? 'Saving...' : <><Save size={18}/> Save Changes</>}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
