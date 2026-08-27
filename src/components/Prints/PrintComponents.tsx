@@ -27,12 +27,12 @@ export function PrintAcknowledgeSlip({ task }: PrintAcknowledgeSlipProps) {
     >
       <div className="relative z-10 flex-1 flex flex-col">
         <div className="flex justify-between items-start mb-8 text-sm font-medium">
-          <div className="uppercase">
+          <div className="uppercase flex flex-col gap-0.5">
             <p className="font-bold text-black mb-1">To,</p>
-            <p className="text-black">{task.personalDetails.name}</p>
-            {task.personalDetails.houseName && <p>{task.personalDetails.houseName}</p>}
-            <p>{[task.personalDetails.place, task.personalDetails.localBody].filter(Boolean).join(', ')}</p>
-            {!task.isSelfMode && <p>Phone: {task.personalDetails.mobileNumber}</p>}
+            <p className="text-black font-bold">{task.personalDetails.name}</p>
+            {task.personalDetails.houseName && <p className="text-black leading-normal">{task.personalDetails.houseName}</p>}
+            <p className="text-black leading-normal max-w-[250px] whitespace-normal break-words">{[task.personalDetails.place, task.personalDetails.localBody].filter(Boolean).join(', ')}</p>
+            {!task.isSelfMode && <p className="text-black mt-1 font-bold">Phone: {task.personalDetails.mobileNumber}</p>}
           </div>
           <div className="text-right">
             <p><span className="font-bold text-gray-600">Date:</span> {formatLetterSendingDate()}</p>
@@ -94,12 +94,12 @@ export function PrintCompletionLetter({ task }: PrintCompletionLetterProps) {
       )}
       <div className="relative z-10 flex-1 flex flex-col">
         <div className="flex justify-between items-start mb-8 text-sm font-medium">
-          <div className="uppercase">
+          <div className="uppercase flex flex-col gap-0.5">
             <p className="font-bold text-black mb-1">To,</p>
-            <p className="text-black">{task.personalDetails.name}</p>
-            {task.personalDetails.houseName && <p>{task.personalDetails.houseName}</p>}
-            <p>{[task.personalDetails.place, task.personalDetails.localBody].filter(Boolean).join(', ')}</p>
-            {!task.isSelfMode && <p>Phone: {task.personalDetails.mobileNumber}</p>}
+            <p className="text-black font-bold">{task.personalDetails.name}</p>
+            {task.personalDetails.houseName && <p className="text-black leading-normal">{task.personalDetails.houseName}</p>}
+            <p className="text-black leading-normal max-w-[250px] whitespace-normal break-words">{[task.personalDetails.place, task.personalDetails.localBody].filter(Boolean).join(', ')}</p>
+            {!task.isSelfMode && <p className="text-black mt-1 font-bold">Phone: {task.personalDetails.mobileNumber}</p>}
           </div>
           <div className="text-right">
             <p><span className="font-bold text-gray-600">Date:</span> {formatLetterSendingDate()}</p>

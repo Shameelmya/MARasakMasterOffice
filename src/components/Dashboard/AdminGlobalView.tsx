@@ -302,7 +302,7 @@ export function AdminGlobalView({
                         <Send size={16}/>
                       </button>
                     )}
-                    {t.status !== 'Completed' && t.status !== 'Unsolved' && (
+                    {currentUser?.role === 'admin' && t.status !== 'Completed' && t.status !== 'Unsolved' && (
                       <button 
                         onClick={() => quickCompleteTask(t)} 
                         title="Quick Complete" 
@@ -459,7 +459,7 @@ const AdminTaskCard = React.memo(({
                 </button>
               )}
 
-              {t.status !== 'Completed' && t.status !== 'Unsolved' && (
+              {currentUser?.role === 'admin' && t.status !== 'Completed' && t.status !== 'Unsolved' && (
                 <button 
                   onClick={(e) => { e.stopPropagation(); quickCompleteTask(t); }} 
                   title="Quick Mark as Completed" 
