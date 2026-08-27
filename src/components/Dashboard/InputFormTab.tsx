@@ -11,7 +11,8 @@ import {
   generateId, generateUid, getNow, getNextDayISO, 
   formatDate, formatTime, formatWhatsAppNumber 
 } from '../../utils/formatters';
-import { EXT_LINKS, LOCAL_BODIES, INPUT_TYPES } from '../../utils/constants';
+import { EXT_LINKS, INPUT_TYPES } from '../../utils/constants';
+import { WARD_DATA, LOCAL_BODIES as WARD_LOCAL_BODIES, WARD_TO_LOCAL_BODY } from '../../data/wardsData';
 
 interface InputFormTabProps {
   tasks: Task[];
@@ -122,7 +123,19 @@ export function InputFormTab({
     setTimeout(() => setFormError({ field: '', msg: '' }), 5000);
   };
 
-  const handlePersChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleWardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    const updates: any = { wardNumber: val };
+    if (WARD_TO_LOCAL_BODY[val]) {
+      updates.localBody = WARD_TO_LOCAL_BODY[val];
+    }
+    setForm(f => ({
+      ...f,
+      personal: { ...f.personal, ...updates }
+    }));
+  };
+
+  const handlePersChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm(prev => {
       const updated = {
@@ -208,7 +221,7 @@ export function InputFormTab({
       return scrollToField('field-attachments', 'Please attach a document or link, or check the box to add it later.');
     }
 
-    const finalLocalBody = form.personal.localBody === 'Other' ? form.personal.otherLocalBody : form.personal.localBody;
+    const finalLocalBody = form.personal.localBody;
     
     let finalAssignedTo = form.assignedTo;
     if(isInvitation) {
@@ -237,7 +250,6 @@ export function InputFormTab({
     };
     
     delete (finalPersonalDetails as any).newDesignation;
-    delete (finalPersonalDetails as any).otherLocalBody;
 
     if (form.isSelfMode) {
       finalPersonalDetails.name = 'Self Application';
@@ -611,34 +623,34 @@ export function InputFormTab({
           </div>
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Local Body</label>
-            <select 
+            <input 
               name="localBody" 
+              list="localBodiesList"
               value={form.personal.localBody} 
               onChange={handlePersChange} 
               className="w-full px-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl text-sm font-semibold focus:bg-white focus:border-purple-500 outline-none transition-all text-slate-850"
-            >
-              <option value="">Select Local Body...</option>
-              {LOCAL_BODIES.map(lb => <option key={lb} value={lb}>{lb}</option>)}
-            </select>
-            {form.personal.localBody === 'Other' && (
-              <input 
-                type="text" 
-                name="otherLocalBody" 
-                placeholder="Specify local body..." 
-                value={form.personal.otherLocalBody} 
-                onChange={handlePersChange} 
-                className="w-full mt-2 px-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl text-sm font-semibold focus:bg-white focus:border-purple-500 outline-none transition-all text-slate-800" 
-              />
-            )}
+              placeholder="Select or type local body..."
+            />
+            <datalist id="localBodiesList">
+              {WARD_LOCAL_BODIES.map(lb => <option key={lb} value={lb} />)}
+            </datalist>
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Ward Number</label>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Ward Number / Name</label>
             <input 
               name="wardNumber" 
+              list="wardsList"
               value={form.personal.wardNumber} 
-              onChange={handlePersChange} 
+              onChange={handleWardChange} 
               className="w-full px-4 py-2.5 bg-[#F4F7FB] border border-slate-200 rounded-2xl text-sm font-semibold focus:bg-white focus:border-purple-500 outline-none transition-all text-slate-800" 
+              placeholder="Select or type ward..."
             />
+            <datalist id="wardsList">
+              {(form.personal.localBody && WARD_DATA[form.personal.localBody] 
+                ? WARD_DATA[form.personal.localBody] 
+                : Object.values(WARD_DATA).flat()
+              ).map(w => <option key={w} value={w} />)}
+            </datalist>
           </div>
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Post Office (Optional)</label>
