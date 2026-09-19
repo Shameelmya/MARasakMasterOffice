@@ -210,11 +210,15 @@ export default function App() {
         const dedupedUsers: UserType[] = [];
         
         rawUsers.forEach(user => {
+          // Ignore corrupted or empty ghost documents
+          if (!user || !user.id || !user.name) return;
+          
           // Clean up old admin duplicate silently if it exists
           if (user.role === 'admin' && user.email === 'admin@marazak.local') {
              deleteDoc(getDocRef('users', user._docId as string)).catch(() => {});
              return; // Skip adding this to UI
           }
+          
           if (!dedupedUsers.find(u => u.id === user.id)) {
             delete (user as any)._docId;
             dedupedUsers.push(user);
