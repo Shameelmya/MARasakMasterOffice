@@ -14,8 +14,6 @@ interface LoginScreenProps {
 export function LoginScreen({ onLogin, users }: LoginScreenProps) {
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [password, setPassword] = useState('');
-  const [customEmail, setCustomEmail] = useState('');
-  const [needsCustomEmail, setNeedsCustomEmail] = useState(false);
   const [error, setError] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [keepSignedIn, setKeepSignedIn] = useState(true);
@@ -37,19 +35,14 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
     try {
       await setPersistence(auth, keepSignedIn ? browserLocalPersistence : browserSessionPersistence);
       
-      let emailToTry = customEmail || `${selectedUser.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`;
+      let emailToTry = `${selectedUser.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`;
 
       await signInWithEmailAndPassword(auth, emailToTry, password);
       onLogin(selectedUser);
     } catch (err: any) {
       console.error(err);
       if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') {
-        if (!needsCustomEmail && !customEmail) {
-          setNeedsCustomEmail(true);
-          setError('If you use a custom email address, please enter it below.');
-        } else {
-          setError('Incorrect Email or Password. Please try again.');
-        }
+        setError('Incorrect Password. Please try again.');
       } else {
         setError('Login Failed: ' + err.message);
       }
@@ -187,20 +180,6 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
 
                   {/* Password Entry Area */}
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    {needsCustomEmail && (
-                      <div className="relative group">
-                        <input 
-                          type="email" 
-                          placeholder="Your email address" 
-                          value={customEmail} 
-                          onChange={e => {
-                            setCustomEmail(e.target.value);
-                            setError('');
-                          }}
-                          className="w-full px-6 py-5 bg-slate-50 border border-slate-200 rounded-[24px] font-bold text-slate-800 outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-lg tracking-widest text-center sm:text-left shadow-inner placeholder:text-slate-300" 
-                        />
-                      </div>
-                    )}
                     <div className="relative group">
                       <input 
                         type={showPass ? 'text' : 'password'} 
