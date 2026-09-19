@@ -14,13 +14,15 @@ interface LoginScreenProps {
 export function LoginScreen({ onLogin, users }: LoginScreenProps) {
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [password, setPassword] = useState('');
+  const [customEmail, setCustomEmail] = useState('');
+  const [needsCustomEmail, setNeedsCustomEmail] = useState(false);
   const [error, setError] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [keepSignedIn, setKeepSignedIn] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
-  const activeUsers = users.filter(u => u.enabled);
+  const activeUsers = users.filter(u => u.enabled !== false); // fallback to true if undefined
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -31,38 +33,26 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
       return;
     }
 
-    if (!selectedUser.email) {
-      setError('This user account has not been migrated to secure authentication yet.');
-      return;
-    }
-
     setIsLoggingIn(true);
     try {
       await setPersistence(auth, keepSignedIn ? browserLocalPersistence : browserSessionPersistence);
-      // Try to login with whatever email is in the Firestore document
-      if (selectedUser.email) {
-        await signInWithEmailAndPassword(auth, selectedUser.email, password);
-        onLogin(selectedUser);
-        return; // Success
-      } else {
-        throw new Error("No email in profile"); // Fall down to the catch block to try the fallback
-      }
-    } catch (err: any) {
-      console.log("Primary login failed, trying fallback...", err);
-      // Fallback: If they changed their email in Firestore but Auth still uses the fake email, or if email is missing
-      try {
-        const fallbackEmail = `${selectedUser.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`;
-        if (selectedUser.email !== fallbackEmail) {
-          await signInWithEmailAndPassword(auth, fallbackEmail, password);
-          onLogin(selectedUser);
-          return; // Success on fallback
-        }
-      } catch (fallbackErr: any) {
-        console.error("Fallback login also failed", fallbackErr);
-      }
       
+      let emailToTry = customEmail || `${selectedUser.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`;
+
+      await signInWithEmailAndPassword(auth, emailToTry, password);
+      onLogin(selectedUser);
+    } catch (err: any) {
       console.error(err);
-      setError('Incorrect Password or Login Failed. Please check and try again.');
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') {
+        if (!needsCustomEmail && !customEmail) {
+          setNeedsCustomEmail(true);
+          setError('If you use a custom email address, please enter it below.');
+        } else {
+          setError('Incorrect Email or Password. Please try again.');
+        }
+      } else {
+        setError('Login Failed: ' + err.message);
+      }
     } finally {
       setIsLoggingIn(false);
     }
@@ -197,6 +187,20 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
 
                   {/* Password Entry Area */}
                   <form onSubmit={handleSubmit} className="space-y-4">
+                    {needsCustomEmail && (
+                      <div className="relative group">
+                        <input 
+                          type="email" 
+                          placeholder="Your email address" 
+                          value={customEmail} 
+                          onChange={e => {
+                            setCustomEmail(e.target.value);
+                            setError('');
+                          }}
+                          className="w-full px-6 py-5 bg-slate-50 border border-slate-200 rounded-[24px] font-bold text-slate-800 outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-lg tracking-widest text-center sm:text-left shadow-inner placeholder:text-slate-300" 
+                        />
+                      </div>
+                    )}
                     <div className="relative group">
                       <input 
                         type={showPass ? 'text' : 'password'} 
@@ -206,7 +210,7 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
                           setPassword(e.target.value);
                           setError('');
                         }}
-                        autoFocus
+                        autoFocus={!needsCustomEmail}
                         className="w-full px-6 py-5 bg-slate-50 border border-slate-200 rounded-[24px] font-bold text-slate-800 outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-lg tracking-widest text-center sm:text-left shadow-inner placeholder:text-slate-300" 
                       />
                       

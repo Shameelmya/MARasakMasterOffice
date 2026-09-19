@@ -1,0 +1,23 @@
+[
+  {
+    "docId": "admin",
+    "name": "M. A. Razak Master (MLA)",
+    "canReassign": true,
+    "email": "marazakmasterclt@gmail.com",
+    "whatsapp": "",
+    "enabled": true,
+    "canEditGlobalOverview": true,
+    "canInput": true,
+    "canSeeGlobalOverview": true,
+    "canSeeRecentUpdations": true,
+    "canEditOwnInputs": true,
+    "canSeeDraftsView": true,
+    "authUid": "htMqGEBM1fNmO6kdeabxyVRQ03o2",
+    "canGenerateUpdationReport": true,
+    "phone": "",
+    "canSeeGlobal": true,
+    "role": "admin",
+    "canSeeReports": true,
+    "id": "admin"
+  }
+]

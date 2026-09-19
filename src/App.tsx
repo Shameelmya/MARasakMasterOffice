@@ -6,7 +6,7 @@ import {
 
 // Firebase Integration
 import { onAuthStateChanged, signOut, getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { onSnapshot, writeBatch, setDoc, deleteDoc, getDocs } from "firebase/firestore";
+import { onSnapshot, writeBatch, setDoc, deleteDoc, getDocs, getDoc, query, or, where, deleteField } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { auth, getColRef, getDocRef, db, firebaseConfig } from './services/firebase';
 
@@ -142,14 +142,28 @@ export default function App() {
   const [recentUpdationsReportToDownload, setRecentUpdationsReportToDownload] = useState<any>(null);
 
   useEffect(() => { 
-    return onAuthStateChanged(auth, (user) => {
+    return onAuthStateChanged(auth, async (user) => {
       setFbUser(user);
       if (!user) {
         setCurrentUser(null);
         localStorage.removeItem('mla_currentUser');
       } else {
-        const savedUser = localStorage.getItem('mla_currentUser'); 
-        if (savedUser) setCurrentUser(JSON.parse(savedUser));
+        try {
+          const userDoc = await getDoc(getDocRef('users', user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data() as UserType;
+            setCurrentUser(userData);
+            localStorage.setItem('mla_currentUser', JSON.stringify(userData)); // Keeping for standard caching/display
+          } else {
+            console.error('User profile not found in Firestore.');
+            setCurrentUser(null);
+            signOut(auth);
+          }
+        } catch (err) {
+          console.error('Failed to fetch user profile:', err);
+          setCurrentUser(null);
+          signOut(auth);
+        }
       }
     }); 
   }, []);
@@ -157,7 +171,7 @@ export default function App() {
   const loadArchive = useCallback(async () => { 
     if (hasFetchedArchive.current || isFetchingArchive) return; 
     setIsFetchingArchive(true); 
-    try { 
+    try {
       const snap = await getDocs(getColRef('archived_tasks')); 
       setArchivedTasks(snap.docs.map(d => sanitizeTask(d.data()))); 
       hasFetchedArchive.current = true; 
@@ -174,23 +188,26 @@ export default function App() {
   }, [globalFilters.status, globalFilters.dateRange, loadArchive]);
 
   useEffect(() => {
-    const usersUnsub = onSnapshot(getColRef('users'), (snapshot) => { 
-      if (snapshot.empty) {
-        const batch = writeBatch(db); 
-        DEFAULT_USERS.forEach(u => batch.set(getDocRef('users', u.id), u)); 
-        batch.commit().catch(e => console.error("Batch init error", e)); 
-      } else {
-        const loadedUsers = snapshot.docs.map(doc => doc.data() as UserType);
-        setUsers(loadedUsers);
-      }
-    }); 
-    return usersUnsub;
-  }, []);
+    if (currentUser && ['admin', 'subadmin'].includes(currentUser.role)) {
+      const unsub = onSnapshot(getColRef('users'), (snapshot) => {
+        setUsers(snapshot.docs.map(doc => doc.data() as UserType));
+      }, (err) => console.error("Users fetch error:", err));
+      return unsub;
+    } else {
+      const unsub = onSnapshot(getColRef('meta'), (snapshot) => { 
+        const rosterDoc = snapshot.docs.find(d => d.id === 'login_roster');
+        if (rosterDoc && rosterDoc.exists()) {
+          const rosterData = rosterDoc.data();
+          const rosterUsers = Object.values(rosterData).filter((u: any) => u.id && u.name) as UserType[];
+          setUsers(rosterUsers);
+        }
+      }, (err) => console.error("Roster fetch error:", err)); 
+      return unsub;
+    }
+  }, [currentUser]);
 
   useEffect(() => {
-    if (!fbUser) return;
-    const savedUser = localStorage.getItem('mla_currentUser'); 
-    if (savedUser) setCurrentUser(JSON.parse(savedUser));
+    if (!fbUser || !currentUser) return;
     
     const unsubTasks = onSnapshot(getColRef('tasks'), (snap) => {
       setActiveTasks(snap.docs.map(docSnapshot => sanitizeTask(docSnapshot.data())));
@@ -472,7 +489,20 @@ export default function App() {
   }, [allTasks, archivedTasks, triggerConfirm]);
 
   const updateUserDoc = async (userId: string, field: string, value: any) => {
-    await setDoc(getDocRef('users', userId), { [field]: value }, { merge: true });
+    const user = users.find(u => u.id === userId);
+    if (!user || !user.authUid) {
+      console.error("Cannot update user: authUid missing");
+      return;
+    }
+    const batch = writeBatch(db);
+    batch.set(getDocRef('users', user.authUid), { [field]: value }, { merge: true });
+    
+    if (field === 'enabled' || field === 'name') {
+      batch.set(getDocRef('meta', 'login_roster'), {
+        [userId]: { [field]: value }
+      }, { merge: true });
+    }
+    await batch.commit();
   };
 
   const addCategory = async (newCat: string) => {
@@ -518,7 +548,13 @@ export default function App() {
       const userToSave = { ...newUser, email, authUid: cred.user.uid };
       delete (userToSave as any).pass;
 
-      await setDoc(getDocRef('users', newUser.id), userToSave);
+      const batch = writeBatch(db);
+      batch.set(getDocRef('users', cred.user.uid), userToSave);
+      batch.set(getDocRef('meta', 'login_roster'), {
+        [newUser.id]: { id: newUser.id, name: newUser.name, enabled: newUser.enabled }
+      }, { merge: true });
+      await batch.commit();
+
       await signOut(secondaryAuth);
     } catch (e: any) {
       console.error(e);
@@ -532,7 +568,16 @@ export default function App() {
       `Are you sure you want to permanently delete this profile?`, 
       async () => { 
         try { 
-          await deleteDoc(getDocRef('users', userId)); 
+          const user = users.find(u => u.id === userId);
+          if (user && user.authUid) {
+            const batch = writeBatch(db);
+            batch.delete(getDocRef('users', user.authUid));
+            batch.set(getDocRef('meta', 'login_roster'), {
+              [userId]: deleteField()
+            }, { merge: true });
+            
+            await batch.commit();
+          }
         } catch (err) { 
           console.error(err); 
         } 

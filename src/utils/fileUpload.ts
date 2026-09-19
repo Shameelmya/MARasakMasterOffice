@@ -1,9 +1,13 @@
 import imageCompression from 'browser-image-compression';
 
-// Replace this with the URL the user deployed
+// 1. Google Drive Fallback URL (Legacy)
 export const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxx-4DqUgj-AfOhN1alKAy3FplLiDbUJnGFR-DXiHjhFRpNk65cKEiyCcSn4O_35W9uKw/exec";
 
-export const MAX_FILE_SIZE_MB = 2;
+// 2. New Local Server URL (Configured via Vercel Environment Variables)
+// During local testing, this will be undefined, so we can also check for a hardcoded localhost if needed.
+const LOCAL_SERVER_URL = import.meta.env.VITE_UPLOAD_SERVER_URL;
+
+export const MAX_FILE_SIZE_MB = 10; // Increased to 10MB since we own the storage now
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 const convertBase64 = (file: File): Promise<string> => {
@@ -12,7 +16,6 @@ const convertBase64 = (file: File): Promise<string> => {
     reader.readAsDataURL(file);
     reader.onload = () => {
       const result = reader.result as string;
-      // Get only the base64 part
       const base64 = result.split(',')[1];
       resolve(base64);
     };
@@ -41,43 +44,53 @@ export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, id
     throw new Error(`File size must be less than ${MAX_FILE_SIZE_MB}MB. Current size: ${(fileToUpload.size / 1024 / 1024).toFixed(2)}MB`);
   }
 
-  const base64 = await convertBase64(fileToUpload);
+  // ============================================================================
+  // ROUTING LOGIC: Determine which server to use
+  // ============================================================================
+  
+  // If the Vercel environment variable is set (Cloudflare Tunnel), OR we are explicitly testing locally
+  // We use the new Node.js server. 
+  // If NOT set, we safely fall back to the old Google Drive script.
+  const isTestingLocally = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const targetServerUrl = LOCAL_SERVER_URL || (isTestingLocally ? 'http://localhost:4000' : null);
 
-  const payload = {
-    action: "upload",
-    filename: fileToUpload.name,
-    mimeType: fileToUpload.type,
-    base64: base64
-  };
+  if (targetServerUrl) {
+    // ---------------------------------------------------------
+    // NEW NODE.JS UPLOAD LOGIC
+    // ---------------------------------------------------------
+    const formData = new FormData();
+    formData.append('file', fileToUpload, fileToUpload.name);
 
-  // We use text/plain so we don't trigger CORS preflight OPTIONS request
-  const response = await fetch(GOOGLE_SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify(payload),
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8",
+    const response = await fetch(`${targetServerUrl}/upload`, {
+      method: "POST",
+      body: formData, // FormData automatically sets the correct multipart/form-data boundary
+    });
+
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.error || "Upload failed on local server");
     }
-  });
 
-  const data = await response.json();
-  if (!data.success) {
-    throw new Error(data.error || "Upload failed");
-  }
+    return {
+      url: data.url,
+      id: data.id,
+      name: data.name
+    };
 
-  return {
-    url: data.url,
-    id: data.id,
-    name: data.name
-  };
-};
+  } else {
+    // ---------------------------------------------------------
+    // LEGACY GOOGLE DRIVE UPLOAD LOGIC (FALLBACK)
+    // ---------------------------------------------------------
+    console.warn("VITE_UPLOAD_SERVER_URL is not set. Falling back to Google Drive storage.");
+    const base64 = await convertBase64(fileToUpload);
 
-export const deleteFromGoogleDrive = async (fileId: string): Promise<boolean> => {
-  const payload = {
-    action: "delete",
-    fileId: fileId
-  };
+    const payload = {
+      action: "upload",
+      filename: fileToUpload.name,
+      mimeType: fileToUpload.type,
+      base64: base64
+    };
 
-  try {
     const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify(payload),
@@ -87,9 +100,58 @@ export const deleteFromGoogleDrive = async (fileId: string): Promise<boolean> =>
     });
 
     const data = await response.json();
-    return data.success;
-  } catch (e) {
-    console.error("Delete failed", e);
-    return false;
+    if (!data.success) {
+      throw new Error(data.error || "Upload failed on Google Drive");
+    }
+
+    return {
+      url: data.url,
+      id: data.id,
+      name: data.name
+    };
+  }
+};
+
+export const deleteFromGoogleDrive = async (fileId: string, fileUrl?: string): Promise<boolean> => {
+  // If it's a URL pointing to Google Drive, use legacy delete.
+  // Otherwise, hit our local server delete endpoint.
+  const isGoogleDriveFile = fileUrl && fileUrl.includes("drive.google.com");
+  
+  const isTestingLocally = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const targetServerUrl = LOCAL_SERVER_URL || (isTestingLocally ? 'http://localhost:4000' : null);
+
+  if (!isGoogleDriveFile && targetServerUrl) {
+    try {
+      const response = await fetch(`${targetServerUrl}/delete/${fileId}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      return data.success;
+    } catch (e) {
+      console.error("Local delete failed", e);
+      return false;
+    }
+  } else {
+    // Legacy Google Drive Delete
+    const payload = {
+      action: "delete",
+      fileId: fileId
+    };
+
+    try {
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8",
+        }
+      });
+
+      const data = await response.json();
+      return data.success;
+    } catch (e) {
+      console.error("Google Drive delete failed", e);
+      return false;
+    }
   }
 };

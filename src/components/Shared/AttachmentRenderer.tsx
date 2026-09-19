@@ -37,7 +37,7 @@ export function AttachmentRenderer({ attachment, currentUser, onDeleteSuccess, i
   const handleDelete = async () => {
     if (confirm("Are you sure you want to permanently delete this file?")) {
       if (driveId) {
-        await deleteFromGoogleDrive(driveId);
+        await deleteFromGoogleDrive(driveId, url);
         if (onDeleteSuccess) onDeleteSuccess();
       }
     }

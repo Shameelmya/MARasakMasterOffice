@@ -1086,7 +1086,7 @@ export function TaskDetailsModal({
                               onClick={async () => {
                                 if (!isString && lnk.driveId) {
                                   if (!confirm("Are you sure you want to permanently delete this file?")) return;
-                                  await deleteFromGoogleDrive(lnk.driveId);
+                                  await deleteFromGoogleDrive(lnk.driveId, lnk.url);
                                 }
                                 setNewUpdateLinks(newUpdateLinks.filter((_, i) => i !== idx));
                               }}
