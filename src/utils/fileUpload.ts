@@ -28,24 +28,6 @@ const convertBase64 = (file: File): Promise<string> => {
 export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, id: string, name: string }> => {
   let fileToUpload = file;
 
-  // Compress images larger than 500KB
-  if (file.type.startsWith('image/') && file.size > 500 * 1024) {
-    const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true
-    };
-    try {
-      fileToUpload = await imageCompression(file, options);
-    } catch (e) {
-      console.error("Image compression failed, proceeding with original", e);
-    }
-  }
-
-  if (fileToUpload.size > MAX_FILE_SIZE_BYTES) {
-    throw new Error(`File size must be less than ${MAX_FILE_SIZE_MB}MB. Current size: ${(fileToUpload.size / 1024 / 1024).toFixed(2)}MB`);
-  }
-
   // ============================================================================
   // ROUTING LOGIC: Determine which server to use
   // ============================================================================

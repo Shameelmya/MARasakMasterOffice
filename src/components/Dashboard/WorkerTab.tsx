@@ -546,7 +546,7 @@ const WorkerTaskCard = React.memo(({
                      onManualLinkAdd={(url) => setUpdateAttachment({ name: 'External Document Link', url, type: 'link', id: generateUid() } as Attachment)}
                      uploaderId={user.id}
                    />
-                   <p className="text-[10px] text-slate-400 mt-1 text-center font-medium">Supports Images (JPEG/PNG) and PDFs. Max size: 2MB.</p>
+                   <p className="text-[10px] text-slate-400 mt-1 text-center font-medium">Supports Images (JPEG/PNG) and PDFs. Large files supported.</p>
                  </div>
                )}
                <button 

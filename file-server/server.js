@@ -21,7 +21,8 @@ const db = getFirestore(firebaseApp);
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const UPLOADS_DIR = path.join(__dirname, 'uploads');
+const basePath = process.pkg ? path.dirname(process.execPath) : __dirname;
+const UPLOADS_DIR = path.join(basePath, 'uploads');
 
 // Ensure uploads directory exists
 if (!fs.existsSync(UPLOADS_DIR)) {
@@ -48,8 +49,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit (adjustable)
+  storage: storage
 });
 
 // 1. UPLOAD ENDPOINT

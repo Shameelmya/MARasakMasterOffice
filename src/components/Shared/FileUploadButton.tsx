@@ -123,7 +123,7 @@ export function FileUploadButton({ onUploadSuccess, onManualLinkAdd, uploaderId 
         </button>
       </div>
       <p className="text-[10px] font-medium text-slate-500 px-1 leading-relaxed">
-        Supports Images (JPEG/PNG) and PDFs. <strong className="text-indigo-600 font-bold">Max size: 2MB</strong>. Images are automatically compressed.
+        Supports Images (JPEG/PNG) and PDFs. Large files are supported.
       </p>
     </div>
   );
