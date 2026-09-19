@@ -155,6 +155,22 @@ export default function App() {
             setCurrentUser(userData);
             localStorage.setItem('mla_currentUser', JSON.stringify(userData)); // Keeping for standard caching/display
           } else {
+            // Auto-heal admin account if document is missing
+            if (user.email === 'admin@marazak.local' || user.email === 'admin@marazak.local'.toLowerCase()) {
+              console.warn('Admin profile missing in Firestore. Auto-healing...');
+              const adminData = DEFAULT_USERS.find(u => u.id === 'admin');
+              if (adminData) {
+                const fullAdmin = { ...adminData, authUid: user.uid, email: user.email };
+                delete (fullAdmin as any).pass;
+                await setDoc(getDocRef('users', user.uid), fullAdmin);
+                await setDoc(getDocRef('meta', 'login_roster'), {
+                  admin: { id: 'admin', name: adminData.name, enabled: true }
+                }, { merge: true });
+                setCurrentUser(fullAdmin as UserType);
+                localStorage.setItem('mla_currentUser', JSON.stringify(fullAdmin));
+                return;
+              }
+            }
             console.error('User profile not found in Firestore.');
             setCurrentUser(null);
             signOut(auth);
