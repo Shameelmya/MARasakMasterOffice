@@ -1,4 +1,6 @@
 import imageCompression from 'browser-image-compression';
+import { getDoc } from 'firebase/firestore';
+import { getDocRef } from '../services/firebase';
 
 // 1. Google Drive Fallback URL (Legacy)
 export const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxx-4DqUgj-AfOhN1alKAy3FplLiDbUJnGFR-DXiHjhFRpNk65cKEiyCcSn4O_35W9uKw/exec";
@@ -48,11 +50,24 @@ export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, id
   // ROUTING LOGIC: Determine which server to use
   // ============================================================================
   
-  // If the Vercel environment variable is set (Cloudflare Tunnel), OR we are explicitly testing locally
-  // We use the new Node.js server. 
-  // If NOT set, we safely fall back to the old Google Drive script.
+  let targetServerUrl = LOCAL_SERVER_URL || null;
+
+  try {
+    const settingsDoc = await getDoc(getDocRef('globals', 'settings'));
+    if (settingsDoc.exists()) {
+      const data = settingsDoc.data();
+      if (data.localServerUrl) {
+        targetServerUrl = data.localServerUrl;
+      }
+    }
+  } catch (err) {
+    console.warn("Failed to fetch dynamic server URL from Firebase", err);
+  }
+
   const isTestingLocally = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  const targetServerUrl = LOCAL_SERVER_URL || (isTestingLocally ? 'http://localhost:4000' : null);
+  if (!targetServerUrl && isTestingLocally) {
+    targetServerUrl = 'http://localhost:4000';
+  }
 
   if (targetServerUrl) {
     // ---------------------------------------------------------

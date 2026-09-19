@@ -4,6 +4,20 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
+const { spawn } = require('child_process');
+const { initializeApp } = require("firebase/app");
+const { getFirestore, doc, setDoc } = require("firebase/firestore");
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDlWgaEm8v3k0tmapwa9Q4Fbx-D0_YXD_A",
+  authDomain: "ma-razak-master-office.firebaseapp.com",
+  projectId: "ma-razak-master-office",
+  storageBucket: "ma-razak-master-office.firebasestorage.app",
+  messagingSenderId: "743153965338",
+  appId: "1:743153965338:web:5212b3ab18dc57376a74a3"
+};
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -94,4 +108,47 @@ app.listen(PORT, () => {
   console.log(`📁 Saving files to: ${UPLOADS_DIR}`);
   console.log(`🌐 Local URL: http://localhost:${PORT}`);
   console.log(`=========================================`);
+  
+  startCloudflareAndSync();
 });
+
+function startCloudflareAndSync() {
+  // If running via pkg, the executable is process.cwd() not __dirname
+  const basePath = process.pkg ? path.dirname(process.execPath) : __dirname;
+  const cloudflaredPath = path.join(basePath, 'cloudflared.exe');
+  
+  if (!fs.existsSync(cloudflaredPath)) {
+    console.log("⚠️ cloudflared.exe not found! Please download it to the same folder.");
+    return;
+  }
+  
+  console.log("Starting Cloudflare Tunnel...");
+  const cf = spawn(cloudflaredPath, ['tunnel', '--url', `http://localhost:${PORT}`]);
+  
+  let urlFound = false;
+  
+  cf.stderr.on('data', (data) => {
+    const output = data.toString();
+    const match = output.match(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/);
+    
+    if (match && !urlFound) {
+      const url = match[0];
+      urlFound = true;
+      console.log(`✅ Cloudflare Tunnel URL established: ${url}`);
+      console.log(`🔄 Syncing URL to Firebase...`);
+      
+      setDoc(doc(db, "globals", "settings"), { localServerUrl: url }, { merge: true })
+        .then(() => {
+          console.log("🎉 Successfully synced URL to Firebase Database!");
+          console.log("✨ The system is now 100% automated and ready!");
+        })
+        .catch(err => {
+          console.error("❌ Failed to sync URL to Firebase:", err);
+        });
+    }
+  });
+  
+  cf.on('close', (code) => {
+    console.log(`Cloudflare tunnel closed with code ${code}`);
+  });
+}
