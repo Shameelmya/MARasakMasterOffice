@@ -189,7 +189,7 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
                           setPassword(e.target.value);
                           setError('');
                         }}
-                        autoFocus={!needsCustomEmail}
+                        autoFocus={true}
                         className="w-full px-6 py-5 bg-slate-50 border border-slate-200 rounded-[24px] font-bold text-slate-800 outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-lg tracking-widest text-center sm:text-left shadow-inner placeholder:text-slate-300" 
                       />
                       
