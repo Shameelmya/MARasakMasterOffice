@@ -23,6 +23,7 @@ interface AdminDatabaseProps {
   categories: string[];
   designations: string[];
   inputTypes: string[];
+  templates: string[];
 }
 
 export function AdminDatabase({
@@ -33,13 +34,14 @@ export function AdminDatabase({
   triggerConfirm,
   categories,
   designations,
-  inputTypes
+  inputTypes,
+  templates
 }: AdminDatabaseProps) {
   const [backupTarget, setBackupTarget] = useState('all');
   const [resetTarget, setResetTarget] = useState('all');
   const [resetText, setResetText] = useState('');
   const [migrateText, setMigrateText] = useState('');
-  const [listType, setListType] = useState<'categories' | 'designations' | 'inputTypes'>('categories');
+  const [listType, setListType] = useState<'categories' | 'designations' | 'inputTypes' | 'templates'>('categories');
   const [deleteItemText, setDeleteItemText] = useState('');
 
   const handleBackup = async () => {
@@ -174,7 +176,7 @@ export function AdminDatabase({
     );
   };
 
-  const currentList = listType === 'categories' ? categories : listType === 'designations' ? designations : inputTypes;
+  const currentList = listType === 'categories' ? categories : listType === 'designations' ? designations : listType === 'templates' ? templates : inputTypes;
 
   const handleDeleteListItem = (item: string) => {
     if (deleteItemText.toLowerCase() !== 'delete') {
@@ -354,6 +356,12 @@ export function AdminDatabase({
             <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-200 pb-2">
               Current {listType} ({currentList.length})
             </h3>
+            <div className="flex bg-slate-200 p-1 rounded-lg mb-3">
+              <button onClick={() => { setListType('categories'); setDeleteItemText(''); }} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${listType==='categories'?'bg-white text-blue-700 shadow-sm':'text-slate-600 hover:text-slate-900'}`}>Categories</button>
+              <button onClick={() => { setListType('designations'); setDeleteItemText(''); }} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${listType==='designations'?'bg-white text-blue-700 shadow-sm':'text-slate-600 hover:text-slate-900'}`}>Designations</button>
+              <button onClick={() => { setListType('inputTypes'); setDeleteItemText(''); }} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${listType==='inputTypes'?'bg-white text-blue-700 shadow-sm':'text-slate-600 hover:text-slate-900'}`}>Input Types</button>
+              <button onClick={() => { setListType('templates'); setDeleteItemText(''); }} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${listType==='templates'?'bg-white text-blue-700 shadow-sm':'text-slate-600 hover:text-slate-900'}`}>Templates</button>
+            </div>
             <ul className="space-y-2">
               {currentList.map(item => (
                 <li key={item} className="flex justify-between items-center bg-white border border-slate-200 p-2.5 rounded-xl shadow-sm hover:shadow transition-shadow">

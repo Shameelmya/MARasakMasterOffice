@@ -25,6 +25,7 @@ interface AdminDashboardProps {
   categories: string[];
   designations: string[];
   inputTypes: string[];
+  templates: string[];
   users: User[];
   updateUserDoc: (userId: string, field: string, value: any) => Promise<void>;
   addUser: (newUser: User) => Promise<void>;
@@ -93,6 +94,7 @@ export function AdminDashboard({
   categories,
   designations,
   inputTypes,
+  templates,
   users,
   updateUserDoc,
   addUser,
@@ -410,6 +412,7 @@ export function AdminDashboard({
           categories={categories}
           designations={designations}
           inputTypes={inputTypes}
+          templates={templates}
         />
       )}
 

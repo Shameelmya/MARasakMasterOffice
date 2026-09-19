@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { 
   FileText, Check, X, Edit, Printer, Download, PenTool, 
-  FileSignature, User, Activity, MessageSquare, ExternalLink, Trash2, CheckCircle, Plus 
+  FileSignature, User, Activity, MessageSquare, ExternalLink, Trash2, CheckCircle, Plus, AlertCircle 
 } from 'lucide-react';
 import { Task, User as UserType, TimelineItem, Attachment } from '../../types';
 import { formatDate, formatTime, generateUid, getNow, formatWhatsAppNumber } from '../../utils/formatters';
@@ -889,6 +889,36 @@ export function TaskDetailsModal({
                )
              )}
           </div>
+
+          {isPendingForCurrentUser && (
+            <div className="bg-amber-50 p-6 rounded-2xl border border-amber-200 mt-8">
+              <h3 className="font-bold text-amber-900 mb-2 flex items-center gap-2"><AlertCircle size={18}/> Action Required</h3>
+              <p className="text-sm text-amber-800 mb-4">You have been assigned this task. Please review the details and accept it to start working.</p>
+              <div className="flex gap-3">
+                <button onClick={() => {
+                  const ev = { id: generateUid(), type: 'received' as const, time: getNow(), by: currentUser.name, text: 'Task Received.' };
+                  updateTask(task.id, {
+                    officerStatuses: { ...task.officerStatuses, [currentUser.id]: 'Received' },
+                    status: 'In Progress',
+                    timeline: [...(task.timeline || []), ev]
+                  });
+                }} className="bg-amber-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-amber-700 shadow-sm transition-colors">
+                  Receive Task
+                </button>
+                <button onClick={() => {
+                  const reason = prompt("Enter reason for rejection:");
+                  if(!reason) return;
+                  const ev = { id: generateUid(), type: 'rejected' as const, time: getNow(), by: currentUser.name, text: `Task Rejected. Reason: ${reason}` };
+                  updateTask(task.id, {
+                    officerStatuses: { ...task.officerStatuses, [currentUser.id]: 'Rejected' },
+                    timeline: [...(task.timeline || []), ev]
+                  });
+                }} className="bg-white text-red-600 border border-red-200 px-4 py-2 rounded-lg font-bold hover:bg-red-50 shadow-sm transition-colors">
+                  Reject Task
+                </button>
+              </div>
+            </div>
+          )}
 
           {!isPendingForCurrentUser && (
             <div>

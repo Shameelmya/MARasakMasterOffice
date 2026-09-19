@@ -23,6 +23,7 @@ interface WorkerTabProps {
   taskTypeFilter: string;
   triggerViewDetails: (task: Task) => void;
   initialSearch?: string;
+  templates?: string[];
   triggerConfirm: (
     title: string,
     message: string,
@@ -43,6 +44,7 @@ export function WorkerTab({
   taskTypeFilter,
   triggerViewDetails,
   initialSearch,
+  templates,
   triggerConfirm
 }: WorkerTabProps) {
   const [search, setSearch] = useState('');
@@ -160,6 +162,7 @@ export function WorkerTab({
                   isAdminOverride={isAdminOverride} 
                   triggerViewDetails={triggerViewDetails} 
                   triggerConfirm={triggerConfirm} 
+                  templates={templates}
                 />
               ))}
             </div>
@@ -220,6 +223,7 @@ interface WorkerTaskCardProps {
     showInput?: boolean,
     inputPlaceholder?: string
   ) => void;
+  templates?: string[];
 }
 
 const WorkerTaskCard = React.memo(({
@@ -229,7 +233,8 @@ const WorkerTaskCard = React.memo(({
   isUnsolved,
   isAdminOverride,
   triggerViewDetails,
-  triggerConfirm
+  triggerConfirm,
+  templates
 }: WorkerTaskCardProps) => {
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [updateText, setUpdateText] = useState('');
@@ -292,7 +297,7 @@ const WorkerTaskCard = React.memo(({
       ev.attachment = updateAttachment;
     }
     if (status !== 'In Progress' && status !== 'Draft') {
-      changeStatus('In Progress', ev);
+      changeStatus('In Progress', [ev]);
     } else {
       updateTask(task.id, { timeline: [...(task.timeline || []), ev] });
     }
@@ -500,6 +505,24 @@ const WorkerTaskCard = React.memo(({
               <button onClick={() => setShowProgressModal(false)} className="text-white hover:text-blue-100 transition-colors"><X size={20}/></button>
             </div>
             <div className="p-8">
+               {templates && templates.length > 0 && (
+                 <div className="mb-3">
+                   <select 
+                     className="w-full text-sm bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-3 py-2 outline-none focus:border-purple-400 font-bold"
+                     onChange={(e) => {
+                       if (e.target.value) {
+                         setUpdateText(e.target.value);
+                       }
+                     }}
+                     defaultValue=""
+                   >
+                     <option value="" disabled>Load from template...</option>
+                     {templates.map((tpl, idx) => (
+                       <option key={idx} value={tpl}>{tpl.length > 50 ? tpl.substring(0, 50) + '...' : tpl}</option>
+                     ))}
+                   </select>
+                 </div>
+               )}
                <textarea 
                  autoFocus 
                  value={updateText} 

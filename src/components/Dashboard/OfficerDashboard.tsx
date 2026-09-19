@@ -22,6 +22,7 @@ interface OfficerDashboardProps {
   categories: string[];
   designations: string[];
   inputTypes: string[];
+  templates: string[];
   users: User[];
   addTask: (newTask: Task) => Promise<void>;
   addCategory: (newCat: string) => Promise<void>;
@@ -78,6 +79,7 @@ export function OfficerDashboard({
   categories,
   designations,
   inputTypes,
+  templates,
   users,
   addTask,
   addCategory,
@@ -220,6 +222,7 @@ export function OfficerDashboard({
           triggerViewDetails={triggerViewDetails} 
           triggerConfirm={triggerConfirm} 
           initialSearch={globalSearch}
+          templates={templates}
         />
       )}
 
@@ -235,6 +238,7 @@ export function OfficerDashboard({
           triggerViewDetails={triggerViewDetails} 
           triggerConfirm={triggerConfirm} 
           initialSearch={globalSearch}
+          templates={templates}
         />
       )}
 
