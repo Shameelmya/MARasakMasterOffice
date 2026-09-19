@@ -61,28 +61,35 @@ export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, id
     const formData = new FormData();
     formData.append('file', fileToUpload, fileToUpload.name);
 
-    const response = await fetch(`${targetServerUrl}/upload`, {
-      method: "POST",
-      body: formData, // FormData automatically sets the correct multipart/form-data boundary
-    });
+    try {
+      const response = await fetch(`${targetServerUrl}/upload`, {
+        method: "POST",
+        body: formData, // FormData automatically sets the correct multipart/form-data boundary
+      });
 
-    const data = await response.json();
-    if (!data.success) {
-      throw new Error(data.error || "Upload failed on local server");
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.error || "Upload failed on local server");
+      }
+
+      return {
+        url: data.url,
+        id: data.id,
+        name: data.name
+      };
+    } catch (e) {
+      console.warn("Local server upload failed, probably offline. Falling back to Google Drive storage.", e);
+      // Fallback to Google Drive will execute below
     }
+  }
 
-    return {
-      url: data.url,
-      id: data.id,
-      name: data.name
-    };
-
-  } else {
-    // ---------------------------------------------------------
-    // LEGACY GOOGLE DRIVE UPLOAD LOGIC (FALLBACK)
-    // ---------------------------------------------------------
+  // ---------------------------------------------------------
+  // LEGACY GOOGLE DRIVE UPLOAD LOGIC (FALLBACK)
+  // ---------------------------------------------------------
+  if (!targetServerUrl) {
     console.warn("VITE_UPLOAD_SERVER_URL is not set. Falling back to Google Drive storage.");
-    const base64 = await convertBase64(fileToUpload);
+  }
+  const base64 = await convertBase64(fileToUpload);
 
     const payload = {
       action: "upload",
@@ -109,7 +116,6 @@ export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, id
       id: data.id,
       name: data.name
     };
-  }
 };
 
 export const deleteFromGoogleDrive = async (fileId: string, fileUrl?: string): Promise<boolean> => {
