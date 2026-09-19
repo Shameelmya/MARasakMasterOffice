@@ -84,7 +84,7 @@ export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, id
 
       const data = await response.json();
       if (!data.success) {
-        throw new Error(data.error || "Upload failed on local server");
+        throw new Error(data.error || "Upload failed on local server.");
       }
 
       return {
@@ -93,44 +93,12 @@ export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, id
         name: data.name
       };
     } catch (e) {
-      console.warn("Local server upload failed, probably offline. Falling back to Google Drive storage.", e);
-      // Fallback to Google Drive will execute below
+      console.error("Local server upload failed, probably offline.", e);
+      throw new Error("File saving server is not connected. (Error Code: SERVER_OFFLINE)");
     }
+  } else {
+    throw new Error("File saving server is not connected. (Error Code: NO_SERVER_URL)");
   }
-
-  // ---------------------------------------------------------
-  // LEGACY GOOGLE DRIVE UPLOAD LOGIC (FALLBACK)
-  // ---------------------------------------------------------
-  if (!targetServerUrl) {
-    console.warn("VITE_UPLOAD_SERVER_URL is not set. Falling back to Google Drive storage.");
-  }
-  const base64 = await convertBase64(fileToUpload);
-
-    const payload = {
-      action: "upload",
-      filename: fileToUpload.name,
-      mimeType: fileToUpload.type,
-      base64: base64
-    };
-
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8",
-      }
-    });
-
-    const data = await response.json();
-    if (!data.success) {
-      throw new Error(data.error || "Upload failed on Google Drive");
-    }
-
-    return {
-      url: data.url,
-      id: data.id,
-      name: data.name
-    };
 };
 
 export const deleteFromGoogleDrive = async (fileId: string, fileUrl?: string): Promise<boolean> => {
