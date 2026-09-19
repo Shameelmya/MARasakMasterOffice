@@ -56,7 +56,7 @@ export const EXT_LINKS: Record<string, string> = {
 };
 
 export const DEFAULT_USERS: User[] = [
-  { id: 'admin', name: 'M. A. Razak Master (MLA)', role: 'admin', enabled: true, canInput: true, canSeeReports: true, canSeeGlobalOverview: true, canEditGlobalOverview: true, canEditOwnInputs: true, canReassign: true, canGenerateUpdationReport: true, canSeeRecentUpdations: true, phone: '', whatsapp: '' }
+  { id: 'admin', name: 'M. A. Razak Master (MLA)', role: 'admin', enabled: true, canInput: true, canSeeReports: true, canSeeGlobalOverview: true, canEditGlobalOverview: true, canEditOwnInputs: true, canReassign: true, canGenerateUpdationReport: true, canSeeRecentUpdations: true, canSignLetters: true, phone: '', whatsapp: '' }
 ];
 
 export const ISLAMIC_QUOTES = [

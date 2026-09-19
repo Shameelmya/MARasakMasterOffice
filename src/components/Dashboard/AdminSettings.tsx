@@ -82,7 +82,8 @@ export function AdminSettings({
       canEditOwnInputs: !!newOffForm.canEditOwnInputs,
       canReassign: !!newOffForm.canReassign,
       canGenerateUpdationReport: !!newOffForm.canGenerateUpdationReport,
-      canSeeRecentUpdations: !!newOffForm.canSeeRecentUpdations
+      canSeeRecentUpdations: !!newOffForm.canSeeRecentUpdations,
+      canSignLetters: !!newOffForm.canSignLetters
     };
     await addUser(newUser);
     setNewOffForm({
@@ -98,7 +99,8 @@ export function AdminSettings({
       canEditOwnInputs: false,
       canReassign: false,
       canGenerateUpdationReport: false,
-      canSeeRecentUpdations: false
+      canSeeRecentUpdations: false,
+      canSignLetters: false
     });
     alert("New officer successfully created.");
   };
@@ -215,6 +217,10 @@ export function AdminSettings({
                     <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
                       <input type="checkbox" checked={!!u.canSeeRecentUpdations} onChange={() => handleToggle(u.id, 'canSeeRecentUpdations')} className="w-3.5 h-3.5 disabled:opacity-50 text-emerald-600 rounded-sm focus:ring-0"/>
                       Recent Updations Tab
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
+                      <input type="checkbox" checked={!!u.canSignLetters} onChange={() => handleToggle(u.id, 'canSignLetters')} className="w-3.5 h-3.5 disabled:opacity-50 text-orange-600 rounded-sm focus:ring-0"/>
+                      Can Sign Letters
                     </label>
                   </div>
                 </div>
@@ -370,6 +376,17 @@ export function AdminSettings({
                 />
                 <span className="text-sm font-semibold">
                   Recent Updations Tab
+                </span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 text-slate-700">
+                <input 
+                  type="checkbox" 
+                  checked={newOffForm.canSignLetters} 
+                  onChange={e => setNewOffForm({...newOffForm, canSignLetters: e.target.checked})} 
+                  className="w-4 h-4 text-orange-600 rounded"
+                />
+                <span className="text-sm font-semibold">
+                  Can Sign Letters
                 </span>
               </label>
             </div> 

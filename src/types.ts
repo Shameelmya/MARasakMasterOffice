@@ -14,6 +14,7 @@ export interface User {
   canReassign?: boolean;
   canGenerateUpdationReport?: boolean;
   canSeeRecentUpdations?: boolean;
+  canSignLetters?: boolean;
   phone: string;
   whatsapp: string;
 }

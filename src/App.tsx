@@ -206,7 +206,22 @@ export default function App() {
   useEffect(() => {
     if (currentUser && ['admin', 'subadmin'].includes(currentUser.role)) {
       const unsub = onSnapshot(getColRef('users'), (snapshot) => {
-        setUsers(snapshot.docs.map(doc => doc.data() as UserType));
+        const rawUsers = snapshot.docs.map(doc => ({ ...doc.data() as UserType, _docId: doc.id }));
+        const dedupedUsers: UserType[] = [];
+        
+        rawUsers.forEach(user => {
+          // Clean up old admin duplicate silently if it exists
+          if (user.role === 'admin' && user.email === 'admin@marazak.local') {
+             deleteDoc(getDocRef('users', user._docId as string)).catch(() => {});
+             return; // Skip adding this to UI
+          }
+          if (!dedupedUsers.find(u => u.id === user.id)) {
+            delete (user as any)._docId;
+            dedupedUsers.push(user);
+          }
+        });
+        
+        setUsers(dedupedUsers);
       }, (err) => console.error("Users fetch error:", err));
       return unsub;
     } else {

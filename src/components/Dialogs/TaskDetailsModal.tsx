@@ -439,7 +439,7 @@ export function TaskDetailsModal({
                   <p className={`text-xs ${task.status === 'Completed' ? 'text-green-700' : 'text-emerald-700'} font-medium mt-1`}>This issue has been {task.status === 'Completed' ? 'successfully resolved.' : 'partially resolved.'}</p>
                 </div>
                 <div className="flex gap-2">
-                   {canUserEdit && (
+                   {canUserEdit && (currentUser.role === 'admin' || currentUser.canSignLetters) && (
                      <button 
                        onClick={() => {
                          if (task.isSignedByMLA) {
