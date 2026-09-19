@@ -1,6 +1,6 @@
 import { useState, ChangeEvent } from 'react';
 import { Download, Upload, AlertOctagon, Trash2, AlertTriangle, List } from 'lucide-react';
-import { deleteDoc, setDoc } from 'firebase/firestore';
+import { deleteDoc, setDoc, getDoc } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { Task, User, BackupMeta } from '../../types';
@@ -43,11 +43,30 @@ export function AdminDatabase({
   const [deleteItemText, setDeleteItemText] = useState('');
 
   const handleBackup = async () => {
-    const exportData = backupTarget === 'all' 
-      ? tasks 
-      : tasks.filter(t => t.assignedTo.includes(backupTarget));
+    let exportData: any;
     
-    if (exportData.length === 0) {
+    if (backupTarget === 'all') {
+      let settings = {};
+      try {
+        const globalsSnap = await getDoc(getDocRef('settings', 'globals'));
+        if (globalsSnap.exists()) {
+          settings = globalsSnap.data();
+        }
+      } catch (e) {
+        console.error("Failed to fetch globals for backup", e);
+      }
+      
+      exportData = {
+        version: "2.0",
+        tasks: tasks,
+        users: users,
+        settings: settings
+      };
+    } else {
+      exportData = tasks.filter(t => t.assignedTo.includes(backupTarget));
+    }
+    
+    if ((backupTarget === 'all' && exportData.tasks.length === 0 && exportData.users.length === 0) || (backupTarget !== 'all' && exportData.length === 0)) {
       alert("No data to backup for this selection.");
       return;
     }
@@ -71,24 +90,49 @@ export function AdminDatabase({
     reader.onload = (event) => {
       try {
         const data = JSON.parse(event.target?.result as string);
-        if (!Array.isArray(data)) {
+        const isV2 = data.version === "2.0";
+        const importedTasks = isV2 ? data.tasks : (Array.isArray(data) ? data : []);
+        
+        if (!importedTasks || !Array.isArray(importedTasks)) {
           alert("Invalid Backup File Format.");
           return;
         }
+        
         triggerConfirm(
           "Confirm File Import", 
-          `Are you sure you want to restore ${data.length} records into your database? Note that files with existing matching IDs will be rewritten.`, 
+          `Are you sure you want to restore ${importedTasks.length} tasks${isV2 ? ' and all system settings/officers' : ''} into your database? Note that files with existing matching IDs will be rewritten.`, 
           async () => {
             let count = 0;
-            for (const task of data) {
+            // Import tasks
+            for (const task of importedTasks) {
               if (task.id) {
                 const targetCol = (task.status === 'Completed' || task.status === 'Unsolved') ? 'archived_tasks' : 'tasks';
                 await setDoc(getDocRef(targetCol, task.id), task);
                 count++; 
               }
             }
+            
+            // Import V2 data (users and settings)
+            if (isV2) {
+              if (data.settings) {
+                await setDoc(getDocRef('settings', 'globals'), data.settings, { merge: true });
+              }
+              if (data.users && Array.isArray(data.users)) {
+                const roster: any = {};
+                for (const user of data.users) {
+                  if (user.id && user.authUid) {
+                     await setDoc(getDocRef('users', user.authUid), user);
+                     roster[user.id] = { id: user.id, name: user.name, enabled: user.enabled };
+                  }
+                }
+                if (Object.keys(roster).length > 0) {
+                   await setDoc(getDocRef('meta', 'login_roster'), roster, { merge: true });
+                }
+              }
+            }
+            
             await updateBackupMeta({ lastImport: getNow(), lastImportCount: count });
-            alert(`Successfully imported and updated ${count} records!`);
+            alert(`Successfully imported backup!`);
           }, 
           false, 
           "Import Data"
