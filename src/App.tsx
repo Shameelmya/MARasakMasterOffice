@@ -156,7 +156,7 @@ export default function App() {
             localStorage.setItem('mla_currentUser', JSON.stringify(userData)); // Keeping for standard caching/display
           } else {
             // Auto-heal admin account if document is missing
-            if (user.email === 'admin@marazak.local' || user.email === 'admin@marazak.local'.toLowerCase()) {
+            if (user.email === 'marazakmasterclt@gmail.com' || user.email === 'admin@marazak.local') {
               console.warn('Admin profile missing in Firestore. Auto-healing...');
               const adminData = DEFAULT_USERS.find(u => u.id === 'admin');
               if (adminData) {
