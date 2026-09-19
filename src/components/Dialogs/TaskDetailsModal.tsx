@@ -818,6 +818,7 @@ export function TaskDetailsModal({
                  <div className="bg-indigo-50/50 p-3 rounded-lg border border-indigo-100">
                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Add Document / Link (Edit Mode)</p>
                    <FileUploadButton 
+                     uploaderId={currentUser.id}
                      onUploadSuccess={(att) => {
                        const newAtts = [...(editData.attachments || []), att];
                        setEditData({...editData, attachments: newAtts});
@@ -831,8 +832,6 @@ export function TaskDetailsModal({
                        const newAtts = [...(editData.attachments || []), att];
                        setEditData({...editData, attachments: newAtts});
                      }}
-                     buttonText="Add Document / Link"
-                     className="w-full text-xs font-bold py-2 border-2 border-dashed border-indigo-200 rounded-2xl hover:border-indigo-400 hover:bg-indigo-100 text-indigo-600 transition-colors bg-white"
                    />
                    {editData.attachments && editData.attachments.length > 0 && (
                      <div className="mt-3 flex flex-col gap-2">

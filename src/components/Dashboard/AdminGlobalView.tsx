@@ -208,6 +208,7 @@ export function AdminGlobalView({
               deleteTask={deleteTask} 
               updateTask={updateTask}
               triggerConfirm={triggerConfirm}
+              handleSendWA={handleSendWA}
             />
           ))}
           {displayed.length === 0 && (
@@ -351,6 +352,7 @@ interface AdminTaskCardProps {
   deleteTask: (taskId: string) => void;
   updateTask: (taskId: string, updates: Partial<Task>) => Promise<void>;
   triggerConfirm: (title: string, message: string, onConfirm: (val: string) => void, isDanger?: boolean, confirmText?: string) => void;
+  handleSendWA: (task: Task) => void;
 }
 
 const AdminTaskCard = React.memo(({
@@ -363,7 +365,8 @@ const AdminTaskCard = React.memo(({
   triggerViewDetails,
   deleteTask,
   updateTask,
-  triggerConfirm
+  triggerConfirm,
+  handleSendWA
 }: AdminTaskCardProps) => {
   const getPriorityColor = (p?: string) => {
     if (p === 'High') return 'bg-red-100 text-red-700 border border-red-200 hover:bg-red-200';

@@ -30,9 +30,7 @@ export function AdminSettings({
     whatsapp: '',
     canInput: true,
     canSeeReports: false,
-    canSeeGlobal: false,
     canSeeGlobalOverview: false,
-    canSeeDraftsView: false,
     canEditGlobalOverview: false,
     canEditOwnInputs: false,
     canReassign: false,
@@ -40,10 +38,20 @@ export function AdminSettings({
     canSeeRecentUpdations: false
   });
 
-  const handleToggle = (id: string, field: keyof User) => {
+  const handleToggle = async (id: string, field: keyof User) => {
     const u = users.find(userObj => userObj.id === id);
-    if (u) {
-      updateUserDoc(id, field, !u[field]);
+    if (!u) return;
+    
+    const newValue = !u[field];
+    await updateUserDoc(id, field as string, newValue);
+
+    // Enforce Hierarchical Logic for Existing Officers
+    if (field === 'canSeeGlobalOverview' && newValue === false) {
+      if (u.canEditGlobalOverview) await updateUserDoc(id, 'canEditGlobalOverview', false);
+      if (u.canGenerateUpdationReport) await updateUserDoc(id, 'canGenerateUpdationReport', false);
+    }
+    if (field === 'canInput' && newValue === false) {
+      if (u.canEditOwnInputs) await updateUserDoc(id, 'canEditOwnInputs', false);
     }
   };
 
@@ -69,9 +77,7 @@ export function AdminSettings({
       whatsapp: newOffForm.whatsapp || '',
       canInput: !!newOffForm.canInput,
       canSeeReports: !!newOffForm.canSeeReports,
-      canSeeGlobal: !!newOffForm.canSeeGlobal,
       canSeeGlobalOverview: !!newOffForm.canSeeGlobalOverview,
-      canSeeDraftsView: !!newOffForm.canSeeDraftsView,
       canEditGlobalOverview: !!newOffForm.canEditGlobalOverview,
       canEditOwnInputs: !!newOffForm.canEditOwnInputs,
       canReassign: !!newOffForm.canReassign,
@@ -87,9 +93,7 @@ export function AdminSettings({
       whatsapp: '',
       canInput: true,
       canSeeReports: false,
-      canSeeGlobal: false,
       canSeeGlobalOverview: false,
-      canSeeDraftsView: false,
       canEditGlobalOverview: false,
       canEditOwnInputs: false,
       canReassign: false,
@@ -193,24 +197,20 @@ export function AdminSettings({
                       Global Overview Tab
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
-                      <input type="checkbox" checked={!!u.canSeeDraftsView} onChange={() => handleToggle(u.id, 'canSeeDraftsView')} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
-                      Drafts View / Worker
+                      <input type="checkbox" checked={!!u.canEditGlobalOverview} onChange={() => handleToggle(u.id, 'canEditGlobalOverview')} disabled={!u.canSeeGlobalOverview} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
+                      <span className={!u.canSeeGlobalOverview ? "text-slate-400" : ""}>Edit Global Overview</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
-                      <input type="checkbox" checked={!!u.canEditGlobalOverview} onChange={() => handleToggle(u.id, 'canEditGlobalOverview')} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
-                      Edit Global Overview
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
-                      <input type="checkbox" checked={!!u.canEditOwnInputs} onChange={() => handleToggle(u.id, 'canEditOwnInputs')} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
-                      Edit Own Inputs (Staff)
+                      <input type="checkbox" checked={!!u.canEditOwnInputs} onChange={() => handleToggle(u.id, 'canEditOwnInputs')} disabled={!u.canInput} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
+                      <span className={!u.canInput ? "text-slate-400" : ""}>Edit Own Inputs (Staff)</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
                       <input type="checkbox" checked={u.canReassign !== false} onChange={() => handleToggle(u.id, 'canReassign')} className="w-3.5 h-3.5 disabled:opacity-50 text-indigo-600 rounded-sm focus:ring-0"/>
                       Can Re-assign Tasks
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
-                      <input type="checkbox" checked={!!u.canGenerateUpdationReport} onChange={() => handleToggle(u.id, 'canGenerateUpdationReport')} className="w-3.5 h-3.5 disabled:opacity-50 text-emerald-600 rounded-sm focus:ring-0"/>
-                      Updation Report Access
+                      <input type="checkbox" checked={!!u.canGenerateUpdationReport} onChange={() => handleToggle(u.id, 'canGenerateUpdationReport')} disabled={!u.canSeeGlobalOverview} className="w-3.5 h-3.5 disabled:opacity-50 text-emerald-600 rounded-sm focus:ring-0"/>
+                      <span className={!u.canSeeGlobalOverview ? "text-slate-400" : ""}>Updation Report Access</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 p-1.5 rounded-lg text-xs font-semibold text-slate-700">
                       <input type="checkbox" checked={!!u.canSeeRecentUpdations} onChange={() => handleToggle(u.id, 'canSeeRecentUpdations')} className="w-3.5 h-3.5 disabled:opacity-50 text-emerald-600 rounded-sm focus:ring-0"/>
@@ -297,7 +297,7 @@ export function AdminSettings({
                 <input 
                   type="checkbox" 
                   checked={newOffForm.canInput} 
-                  onChange={e => setNewOffForm({...newOffForm, canInput: e.target.checked})} 
+                  onChange={e => setNewOffForm({...newOffForm, canInput: e.target.checked, canEditOwnInputs: e.target.checked ? newOffForm.canEditOwnInputs : false})} 
                   className="rounded text-indigo-600 bg-white"
                 /> 
                 Can Register Input
@@ -315,35 +315,28 @@ export function AdminSettings({
                 <input 
                   type="checkbox" 
                   checked={newOffForm.canSeeGlobalOverview} 
-                  onChange={e => setNewOffForm({...newOffForm, canSeeGlobalOverview: e.target.checked})} 
+                  onChange={e => setNewOffForm({...newOffForm, canSeeGlobalOverview: e.target.checked, canEditGlobalOverview: e.target.checked ? newOffForm.canEditGlobalOverview : false, canGenerateUpdationReport: e.target.checked ? newOffForm.canGenerateUpdationReport : false})} 
                   className="rounded text-indigo-600 bg-white"
                 /> 
                 Global Overview Tab
               </label>
-              <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 text-xs font-bold text-indigo-900">
-                <input 
-                  type="checkbox" 
-                  checked={newOffForm.canSeeDraftsView} 
-                  onChange={e => setNewOffForm({...newOffForm, canSeeDraftsView: e.target.checked})} 
-                  className="rounded text-indigo-600 bg-white"
-                /> 
-                Drafts View / Worker
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 text-xs font-bold text-indigo-900">
+              <label className={`flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 text-xs font-bold ${!newOffForm.canSeeGlobalOverview ? 'text-slate-400' : 'text-indigo-900'}`}>
                 <input 
                   type="checkbox" 
                   checked={newOffForm.canEditGlobalOverview} 
                   onChange={e => setNewOffForm({...newOffForm, canEditGlobalOverview: e.target.checked})} 
-                  className="rounded text-indigo-600 bg-white"
+                  disabled={!newOffForm.canSeeGlobalOverview}
+                  className="rounded text-indigo-600 bg-white disabled:opacity-50"
                 /> 
                 Edit Global Overview
               </label>
-              <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 text-xs font-bold text-indigo-900">
+              <label className={`flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 text-xs font-bold ${!newOffForm.canInput ? 'text-slate-400' : 'text-indigo-900'}`}>
                 <input 
                   type="checkbox" 
                   checked={newOffForm.canEditOwnInputs} 
                   onChange={e => setNewOffForm({...newOffForm, canEditOwnInputs: e.target.checked})} 
-                  className="rounded text-indigo-600 bg-white"
+                  disabled={!newOffForm.canInput}
+                  className="rounded text-indigo-600 bg-white disabled:opacity-50"
                 /> 
                 Edit Own Inputs
               </label>
@@ -356,25 +349,26 @@ export function AdminSettings({
                 /> 
                 Can Re-assign Tasks
               </label>
-              <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50">
+              <label className={`flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 ${!newOffForm.canSeeGlobalOverview ? 'text-slate-400' : 'text-slate-700'}`}>
                 <input 
                   type="checkbox" 
                   checked={newOffForm.canGenerateUpdationReport} 
                   onChange={e => setNewOffForm({...newOffForm, canGenerateUpdationReport: e.target.checked})} 
-                  className="w-4 h-4 text-emerald-600 rounded"
+                  disabled={!newOffForm.canSeeGlobalOverview}
+                  className="w-4 h-4 text-emerald-600 rounded disabled:opacity-50"
                 />
-                <span className="text-sm font-semibold text-slate-700">
+                <span className="text-sm font-semibold">
                   Updation Report Access
                 </span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50">
+              <label className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:bg-slate-50 text-slate-700">
                 <input 
                   type="checkbox" 
                   checked={newOffForm.canSeeRecentUpdations} 
                   onChange={e => setNewOffForm({...newOffForm, canSeeRecentUpdations: e.target.checked})} 
                   className="w-4 h-4 text-emerald-600 rounded"
                 />
-                <span className="text-sm font-semibold text-slate-700">
+                <span className="text-sm font-semibold">
                   Recent Updations Tab
                 </span>
               </label>

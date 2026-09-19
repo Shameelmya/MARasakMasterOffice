@@ -8,9 +8,7 @@ export interface User {
   enabled: boolean;
   canInput: boolean;
   canSeeReports: boolean;
-  canSeeGlobal: boolean;
   canSeeGlobalOverview?: boolean;
-  canSeeDraftsView?: boolean;
   canEditGlobalOverview?: boolean;
   canEditOwnInputs?: boolean;
   canReassign?: boolean;

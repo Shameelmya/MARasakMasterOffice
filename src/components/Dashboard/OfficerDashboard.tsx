@@ -7,7 +7,6 @@ import { Task, User, GlobalFilters } from '../../types';
 import { WorkerTab } from './WorkerTab';
 import { AllTasksHistoryTab } from './AllTasksHistoryTab';
 import { InputFormTab } from './InputFormTab';
-import { InputFormTab } from './InputFormTab';
 import { RecentAlertsTab } from './RecentAlertsTab';
 import { AdminGlobalView } from './AdminGlobalView';
 import { RecentUpdationsTab } from './RecentUpdationsTab';
@@ -98,8 +97,7 @@ export function OfficerDashboard({
   loadArchive
 }: OfficerDashboardProps) {
   // Extract permissions
-  const hasDraftsPermission = user.canSeeDraftsView || user.canSeeGlobal || false;
-  const hasGlobalOverviewPermission = user.canSeeGlobalOverview || user.canSeeGlobal || false;
+  const hasGlobalOverviewPermission = user.canSeeGlobalOverview || false;
   const hasReportsPermission = user.canSeeReports || false;
   const hasInputPermission = user.canInput || false;
 
@@ -173,18 +171,22 @@ export function OfficerDashboard({
             <Zap size={15} /> Updations
           </button>
         )}
-        <button 
-          onClick={() => { setActiveTab('input'); setGlobalSearch(''); }} 
-          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'input' ? 'bg-[#2563EB] text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
-        >
-          Register New Input
-        </button>
-        <button 
-          onClick={() => { setActiveTab('history'); setGlobalSearch(''); loadArchive(); }} 
-          className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'history' ? 'bg-slate-600 text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
-        >
-          History & Reports
-        </button>
+        {hasInputPermission && (
+          <button 
+            onClick={() => { setActiveTab('input'); setGlobalSearch(''); }} 
+            className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'input' ? 'bg-[#2563EB] text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
+          >
+            Register New Input
+          </button>
+        )}
+        {hasReportsPermission && (
+          <button 
+            onClick={() => { setActiveTab('history'); setGlobalSearch(''); loadArchive(); }} 
+            className={`flex-1 px-2 py-2 md:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'history' ? 'bg-slate-600 text-white shadow' : 'text-slate-600 hover:bg-[#F4F7FB]'}`}
+          >
+            History & Reports
+          </button>
+        )}
         {rejectedTasks.length > 0 && (
           <button 
             onClick={() => { setActiveTab('rejected'); setGlobalSearch(''); }} 
@@ -195,17 +197,7 @@ export function OfficerDashboard({
         )}
       </div>
 
-      {/* Standalone Updation Report Button for Officers without Global Overview Access */}
-      {!hasGlobalOverviewPermission && user.canGenerateUpdationReport && (
-        <div className="flex justify-end print-hidden -mt-2">
-          <button 
-            onClick={() => { setUpdationReportModalOpen(true); loadArchive(); }} 
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-2xl text-sm font-bold shadow-md flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
-          >
-            <FileOutput size={18}/> Generate Updation Report
-          </button>
-        </div>
-      )}
+
 
       {/* 1. Recent Assignments Tab */}
       {activeTab === 'recent' && (
@@ -300,7 +292,7 @@ export function OfficerDashboard({
       )}
 
       {/* 5. Register New Input Tab */}
-      {activeTab === 'input' && (
+      {activeTab === 'input' && hasInputPermission && (
         <InputFormTab 
           tasks={tasks} 
           addTask={addTask} 
@@ -318,7 +310,7 @@ export function OfficerDashboard({
       )}
 
       {/* 6. History & Reports Tab */}
-      {activeTab === 'history' && (
+      {activeTab === 'history' && hasReportsPermission && (
         <AllTasksHistoryTab 
           tasks={hasGlobalOverviewPermission ? tasks : tasks.filter(t => t.createdByUid === user.id)} 
           globalFilters={globalFilters} 
@@ -412,15 +404,17 @@ export function OfficerDashboard({
             <span className="text-xs font-semibold leading-none">Recent</span>
           </button>
           
-          <button 
-            onClick={() => { setActiveTab('input'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center justify-center gap-1 w-[58px] transition-colors ${activeTab === 'input' && !mobileSettingsOpen ? 'text-white' : 'text-white/60 hover:text-white/80'}`}
-          >
-            <div className={`flex items-center justify-center w-[48px] h-[48px] rounded-[16px] transition-all ${activeTab === 'input' && !mobileSettingsOpen ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-purple-600' : 'bg-white/15 text-white/80'}`}>
-              <Plus size={24} strokeWidth={2.5} />
-            </div>
-            <span className="text-xs font-semibold leading-none">Input</span>
-          </button>
+          {hasInputPermission && (
+            <button 
+              onClick={() => { setActiveTab('input'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
+              className={`flex flex-col items-center justify-center gap-1 w-[58px] transition-colors ${activeTab === 'input' && !mobileSettingsOpen ? 'text-white' : 'text-white/60 hover:text-white/80'}`}
+            >
+              <div className={`flex items-center justify-center w-[48px] h-[48px] rounded-[16px] transition-all ${activeTab === 'input' && !mobileSettingsOpen ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-purple-600' : 'bg-white/15 text-white/80'}`}>
+                <Plus size={24} strokeWidth={2.5} />
+              </div>
+              <span className="text-xs font-semibold leading-none">Input</span>
+            </button>
+          )}
           
           <button 
             onClick={() => { setActiveTab('worker'); setGlobalSearch(''); setMobileSettingsOpen(false); }} 
@@ -432,15 +426,17 @@ export function OfficerDashboard({
             <span className="text-xs font-semibold leading-none">Work</span>
           </button>
 
-          <button 
-            onClick={() => { setActiveTab('history'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
-            className={`flex flex-col items-center justify-center gap-1 w-[58px] transition-colors ${activeTab === 'history' && !mobileSettingsOpen ? 'text-white' : 'text-white/60 hover:text-white/80'}`}
-          >
-            <div className={`flex items-center justify-center w-[48px] h-[48px] rounded-[16px] transition-all ${activeTab === 'history' && !mobileSettingsOpen ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-teal-600' : 'bg-white/15 text-white/80'}`}>
-              <FileText size={24} strokeWidth={2.5} />
-            </div>
-            <span className="text-xs font-semibold leading-none">History</span>
-          </button>
+          {hasReportsPermission && (
+            <button 
+              onClick={() => { setActiveTab('history'); setGlobalSearch(''); loadArchive(); setMobileSettingsOpen(false); }} 
+              className={`flex flex-col items-center justify-center gap-1 w-[58px] transition-colors ${activeTab === 'history' && !mobileSettingsOpen ? 'text-white' : 'text-white/60 hover:text-white/80'}`}
+            >
+              <div className={`flex items-center justify-center w-[48px] h-[48px] rounded-[16px] transition-all ${activeTab === 'history' && !mobileSettingsOpen ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] text-teal-600' : 'bg-white/15 text-white/80'}`}>
+                <FileText size={24} strokeWidth={2.5} />
+              </div>
+              <span className="text-xs font-semibold leading-none">History</span>
+            </button>
+          )}
           
           <button 
             onClick={() => { setMobileSettingsOpen(!mobileSettingsOpen); }} 

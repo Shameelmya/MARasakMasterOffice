@@ -5,7 +5,7 @@ export const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxx-4D
 
 // 2. New Local Server URL (Configured via Vercel Environment Variables)
 // During local testing, this will be undefined, so we can also check for a hardcoded localhost if needed.
-const LOCAL_SERVER_URL = import.meta.env.VITE_UPLOAD_SERVER_URL;
+const LOCAL_SERVER_URL = (import.meta as any).env.VITE_UPLOAD_SERVER_URL;
 
 export const MAX_FILE_SIZE_MB = 10; // Increased to 10MB since we own the storage now
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
