@@ -13,6 +13,7 @@ import { sendWhatsAppUpdate } from '../../utils/whatsapp';
 import { WhatsAppButton } from '../Shared/WhatsAppButton';
 import { AttachmentRenderer } from '../Shared/AttachmentRenderer';
 import { FileUploadButton } from '../Shared/FileUploadButton';
+import { deleteFromGoogleDrive, viewProtectedAttachment } from '../../utils/fileUpload';
 
 interface WorkerTabProps {
   user: User;
@@ -467,9 +468,9 @@ const WorkerTaskCard = React.memo(({
                 <span className="font-bold text-amber-800 mr-1 block mb-0.5">{formatDate(up.time)}</span>
                 {up.text}
                 {up.link && (
-                  <a href={up.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 mt-1 font-bold text-indigo-600 hover:underline">
+                  <button type="button" onClick={(e) => { e.preventDefault(); viewProtectedAttachment(up.link!); }} className="flex items-center gap-1 mt-1 font-bold text-indigo-600 hover:underline cursor-pointer">
                     <ExternalLink size={10}/> View Link
-                  </a>
+                  </button>
                 )}
                 {up.attachment && (
                   <div className="mt-2">

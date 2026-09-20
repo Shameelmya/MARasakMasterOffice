@@ -7,7 +7,7 @@ import { Task, User as UserType, GlobalFilters, Attachment } from '../../types';
 import { SearchableCategorySelect } from '../Forms/SearchableCategorySelect';
 import { SearchableSelect } from '../Forms/SearchableSelect';
 import { FileUploadButton } from '../Shared/FileUploadButton';
-import { deleteFromGoogleDrive } from '../../utils/fileUpload';
+import { deleteFromGoogleDrive, viewProtectedAttachment } from '../../utils/fileUpload';
 import { 
   generateId, generateUid, getNow, getNextDayISO, 
   formatDate, formatTime, formatWhatsAppNumber 
@@ -819,9 +819,9 @@ export function InputFormTab({
                     <div key={idx} className="flex items-center justify-between p-3 bg-[#F4F7FB] border border-slate-200 rounded-2xl">
                       <span className="text-sm font-medium text-slate-700 truncate max-w-[60%]">{name}</span>
                       <div className="flex gap-2">
-                        <a href={url} target="_blank" rel="noreferrer" className="p-2 text-purple-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                        <button type="button" onClick={(e) => { e.preventDefault(); viewProtectedAttachment(url); }} className="p-2 text-purple-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
                           <ExternalLink size={16}/>
-                        </a>
+                        </button>
                         <button 
                           type="button"
                           onClick={async () => {

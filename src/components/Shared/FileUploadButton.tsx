@@ -29,6 +29,7 @@ export function FileUploadButton({ onUploadSuccess, onManualLinkAdd, uploaderId 
       onUploadSuccess({
         fileId: result.fileId,
         originalName: result.originalName,
+        name: result.name,
         mimeType: result.mimeType,
         size: result.size,
         sourceProject: result.sourceProject,

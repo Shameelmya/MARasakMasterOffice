@@ -8,7 +8,7 @@ import { formatDate, formatTime, generateUid, getNow, formatWhatsAppNumber } fro
 import { sendWhatsAppUpdate } from '../../utils/whatsapp';
 import { WhatsAppButton } from '../Shared/WhatsAppButton';
 import { FileUploadButton } from '../Shared/FileUploadButton';
-import { deleteFromGoogleDrive } from '../../utils/fileUpload';
+import { deleteFromGoogleDrive, viewProtectedAttachment } from '../../utils/fileUpload';
 import { AttachmentRenderer } from '../Shared/AttachmentRenderer';
 import { TimelineIcon } from '../Layout/TimelineIcon';
 
@@ -839,14 +839,13 @@ export function TaskDetailsModal({
                          <div key={idx} className="flex items-center justify-between bg-white border border-slate-200 px-3 py-2 rounded-lg">
                            <span className="text-xs font-bold text-slate-700 truncate max-w-[150px]" title={att.name}>{att.name}</span>
                            <div className="flex gap-2">
-                             <a 
-                               href={att.url} 
-                               target="_blank" 
-                               rel="noreferrer" 
+                             <button 
+                               type="button"
+                               onClick={(e) => { e.preventDefault(); if(att.url) viewProtectedAttachment(att.url); }}
                                className="text-white bg-indigo-500 hover:bg-purple-600 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider transition-colors"
                              >
                                View
-                             </a>
+                             </button>
                              <button 
                                type="button"
                                onClick={() => {
@@ -1107,9 +1106,9 @@ export function TaskDetailsModal({
                         <div key={idx} className="flex items-center justify-between p-2 bg-[#F4F7FB] border border-slate-200 rounded-2xl">
                           <span className="text-xs font-medium text-slate-700 truncate max-w-[60%]">{name}</span>
                           <div className="flex gap-2">
-                            <a href={url} target="_blank" rel="noreferrer" className="p-1.5 text-purple-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                            <button type="button" onClick={(e) => { e.preventDefault(); if(url) viewProtectedAttachment(url); }} className="p-1.5 text-purple-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
                               <ExternalLink size={14}/>
-                            </a>
+                            </button>
                             <button 
                               type="button"
                               onClick={async () => {

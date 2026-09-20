@@ -1,7 +1,7 @@
 import React from 'react';
 import { Eye, Trash2, Link as LinkIcon, ExternalLink } from 'lucide-react';
 import { Attachment, User } from '../../types';
-import { deleteFromGoogleDrive } from '../../utils/fileUpload';
+import { deleteFromGoogleDrive, viewProtectedAttachment } from '../../utils/fileUpload';
 import { auth } from '../../services/firebase';
 
 interface AttachmentRendererProps {
@@ -46,38 +46,7 @@ export function AttachmentRenderer({ attachment, currentUser, onDeleteSuccess, i
 
   const handleView = async (e: React.MouseEvent) => {
     e.preventDefault();
-    if (url.includes('drive.google.com') || url.includes('script.google.com') || url.includes('wa.me')) {
-      window.open(url, '_blank');
-      return;
-    }
-    
-    if (!url || (!url.includes('/api/files/') && !url.includes('/uploads/'))) {
-        if (url) window.open(url, '_blank');
-        return;
-    }
-    
-    try {
-      const user = auth.currentUser;
-      if (!user) throw new Error("Not authenticated");
-      const token = await user.getIdToken();
-      
-      const res = await fetch(url, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!res.ok) throw new Error(`Failed to load file. Status: ${res.status}`);
-      
-      const blob = await res.blob();
-      const objectUrl = URL.createObjectURL(blob);
-      window.open(objectUrl, '_blank');
-      
-      setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
-    } catch (err) {
-      console.error("Failed to fetch protected file:", err);
-      alert("Failed to securely open file. You may not be logged in or lack permission.");
-    }
+    await viewProtectedAttachment(url);
   };
 
   return (

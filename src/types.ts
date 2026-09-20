@@ -51,6 +51,7 @@ export interface PersonalDetails {
 export interface Attachment {
   fileId: string;
   originalName: string;
+  name?: string;
   mimeType: string;
   size: number;
   sourceProject: string;

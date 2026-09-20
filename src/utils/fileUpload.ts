@@ -25,7 +25,7 @@ const convertBase64 = (file: File): Promise<string> => {
   });
 };
 
-export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, fileId: string, originalName: string, mimeType: string, size: number, sourceProject: string }> => {
+export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, fileId: string, originalName: string, name?: string, mimeType: string, size: number, sourceProject: string }> => {
   let fileToUpload = file;
 
   // ============================================================================
@@ -80,6 +80,7 @@ export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, fi
         url: data.url,
         fileId: data.id,
         originalName: data.name,
+        name: data.name,
         mimeType: fileToUpload.type,
         size: fileToUpload.size,
         sourceProject: data.sourceProject
@@ -141,5 +142,39 @@ export const deleteFromGoogleDrive = async (fileId: string, fileUrl?: string): P
       console.error("Google Drive delete failed", e);
       return false;
     }
+  }
+};
+export const viewProtectedAttachment = async (url: string) => {
+  if (url.includes('drive.google.com') || url.includes('script.google.com') || url.includes('wa.me')) {
+    window.open(url, '_blank');
+    return;
+  }
+  
+  if (!url || (!url.includes('/api/files/') && !url.includes('/uploads/'))) {
+      if (url) window.open(url, '_blank');
+      return;
+  }
+  
+  try {
+    const user = auth.currentUser;
+    if (!user) throw new Error("Not authenticated");
+    const token = await user.getIdToken();
+    
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (!res.ok) throw new Error(`Failed to load file. Status: ${res.status}`);
+    
+    const blob = await res.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    window.open(objectUrl, '_blank');
+    
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
+  } catch (err) {
+    console.error("Failed to fetch protected file:", err);
+    alert("Failed to securely open file. You may not be logged in or lack permission.");
   }
 };
