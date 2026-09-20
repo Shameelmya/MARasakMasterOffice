@@ -26,7 +26,7 @@ try {
     razakAdmin = admin.initializeApp({ credential: admin.credential.cert(razakServiceAccount) }, RAZAK_PROJECT);
     console.log(`✅ initialized Razak Firebase Admin`);
   } else {
-    console.error(`❌ Missing Razak credentials at ${razakCredPath}`);
+    throw new Error(`Missing Razak credentials at ${razakCredPath}`);
   }
 
   if (fs.existsSync(kgmCredPath)) {
@@ -34,10 +34,12 @@ try {
     kgmAdmin = admin.initializeApp({ credential: admin.credential.cert(kgmServiceAccount) }, KGM_PROJECT);
     console.log(`✅ initialized KGM Firebase Admin`);
   } else {
-    console.error(`❌ Missing KGM credentials at ${kgmCredPath}`);
+    throw new Error(`Missing KGM credentials at ${kgmCredPath}`);
   }
 } catch (error) {
-  console.error("❌ Failed to initialize Firebase Admins:", error);
+  console.error("❌ CRITICAL: Failed to initialize Firebase Admins:", error.message);
+  console.error("The server must fail closed to prevent unauthenticated access.");
+  process.exit(1);
 }
 
 const razakDb = razakAdmin ? razakAdmin.firestore() : null;
