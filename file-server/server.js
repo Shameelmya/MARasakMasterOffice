@@ -340,7 +340,10 @@ function startCloudflareAndSync() {
       
       // Update Razak DB for compatibility. KGM reads this anonymously.
       if (razakDb) {
-        razakDb.collection('globals').doc('settings').set({ localServerUrl: url }, { merge: true })
+        razakDb.collection('artifacts').doc('ma-razak-master-office')
+          .collection('public').doc('data')
+          .collection('globals').doc('settings')
+          .set({ localServerUrl: url }, { merge: true })
           .then(() => console.log("🎉 Synced URL to Razak Firebase"))
           .catch(err => console.error("❌ Failed to sync URL:", err));
       }
