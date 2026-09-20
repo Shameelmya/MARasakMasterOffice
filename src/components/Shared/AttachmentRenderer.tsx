@@ -2,6 +2,7 @@ import React from 'react';
 import { Eye, Trash2, Link as LinkIcon, ExternalLink } from 'lucide-react';
 import { Attachment, User } from '../../types';
 import { deleteFromGoogleDrive } from '../../utils/fileUpload';
+import { auth } from '../../services/firebase';
 
 interface AttachmentRendererProps {
   key?: React.Key;
@@ -14,11 +15,11 @@ interface AttachmentRendererProps {
 export function AttachmentRenderer({ attachment, currentUser, onDeleteSuccess, index }: AttachmentRendererProps) {
   if (!attachment) return null;
   const isString = typeof attachment === 'string';
-  let rawName = isString ? `Doc. ${index + 1}` : String(attachment.name || `Doc. ${index + 1}`);
+  let rawName = isString ? `Doc. ${index + 1}` : String((attachment as any).originalName || (attachment as any).name || `Doc. ${index + 1}`);
   const name = String(rawName).replace('External Document Link', 'Doc.');
-  const url = isString ? attachment : attachment.url;
-  const isImage = !isString && (attachment.type || '').startsWith('image/');
-  const driveId = !isString ? attachment.driveId : undefined;
+  const url = isString ? attachment : (attachment.url || '');
+  const isImage = !isString && (((attachment as any).mimeType || (attachment as any).type || '').startsWith('image/'));
+  const driveId = !isString ? ((attachment as any).fileId || (attachment as any).driveId) : undefined;
   
   let canDelete = false;
   if (!isString && driveId) {
@@ -43,6 +44,42 @@ export function AttachmentRenderer({ attachment, currentUser, onDeleteSuccess, i
     }
   };
 
+  const handleView = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (url.includes('drive.google.com') || url.includes('script.google.com') || url.includes('wa.me')) {
+      window.open(url, '_blank');
+      return;
+    }
+    
+    if (!url || (!url.includes('/api/files/') && !url.includes('/uploads/'))) {
+        if (url) window.open(url, '_blank');
+        return;
+    }
+    
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("Not authenticated");
+      const token = await user.getIdToken();
+      
+      const res = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!res.ok) throw new Error(`Failed to load file. Status: ${res.status}`);
+      
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      window.open(objectUrl, '_blank');
+      
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
+    } catch (err) {
+      console.error("Failed to fetch protected file:", err);
+      alert("Failed to securely open file. You may not be logged in or lack permission.");
+    }
+  };
+
   return (
     <div className="flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-lg shrink-0">
       <ExternalLink size={12} className="text-indigo-400" />
@@ -50,15 +87,14 @@ export function AttachmentRenderer({ attachment, currentUser, onDeleteSuccess, i
         {name}
       </span>
       <div className="flex gap-1 ml-2 pl-2 border-l border-indigo-200">
-        <a 
-          href={url} 
-          target="_blank" 
-          rel="noreferrer" 
+        <button 
+          type="button"
+          onClick={handleView}
           className="text-white bg-purple-600 hover:bg-purple-700 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center gap-1"
           title="View"
         >
           <Eye size={10} /> View
-        </a>
+        </button>
         {canDelete && (
           <button 
             type="button"

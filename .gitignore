@@ -6,3 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+file-server.exe
+file-server/file-server.exe
+uploads/
+secrets/
+*.service-account.json
+serviceAccountKey.json

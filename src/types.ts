@@ -49,12 +49,14 @@ export interface PersonalDetails {
 }
 
 export interface Attachment {
-  name: string;
-  url: string;
-  type: string;
-  driveId?: string;
-  uploaderId?: string;
-  uploadedAt?: string;
+  fileId: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  sourceProject: string;
+  uploadedBy: string;
+  uploadedAt: string;
+  url?: string; // Kept as optional fallback/runtime
 }
 
 export interface Task {

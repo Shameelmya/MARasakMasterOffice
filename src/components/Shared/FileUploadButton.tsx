@@ -27,12 +27,14 @@ export function FileUploadButton({ onUploadSuccess, onManualLinkAdd, uploaderId 
     try {
       const result = await uploadToGoogleDrive(file);
       onUploadSuccess({
-        name: result.name,
-        url: result.url,
-        type: file.type,
-        driveId: result.id,
+        fileId: result.fileId,
+        originalName: result.originalName,
+        mimeType: result.mimeType,
+        size: result.size,
+        sourceProject: result.sourceProject,
         uploaderId: uploaderId,
-        uploadedAt: getNow()
+        uploadedAt: getNow(),
+        url: result.url
       });
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (err: any) {

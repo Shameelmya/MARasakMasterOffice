@@ -1,6 +1,6 @@
 import imageCompression from 'browser-image-compression';
 import { getDoc } from 'firebase/firestore';
-import { getDocRef } from '../services/firebase';
+import { getDocRef, auth } from '../services/firebase';
 
 // 1. Google Drive Fallback URL (Legacy)
 export const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxx-4DqUgj-AfOhN1alKAy3FplLiDbUJnGFR-DXiHjhFRpNk65cKEiyCcSn4O_35W9uKw/exec";
@@ -25,7 +25,7 @@ const convertBase64 = (file: File): Promise<string> => {
   });
 };
 
-export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, id: string, name: string }> => {
+export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, fileId: string, originalName: string, mimeType: string, size: number, sourceProject: string }> => {
   let fileToUpload = file;
 
   // ============================================================================
@@ -59,9 +59,16 @@ export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, id
     formData.append('file', fileToUpload, fileToUpload.name);
 
     try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("You must be logged in to upload files.");
+      const token = await user.getIdToken();
+
       const response = await fetch(`${targetServerUrl}/upload`, {
         method: "POST",
-        body: formData, // FormData automatically sets the correct multipart/form-data boundary
+        body: formData,
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
       });
 
       const data = await response.json();
@@ -71,8 +78,11 @@ export const uploadToGoogleDrive = async (file: File): Promise<{ url: string, id
 
       return {
         url: data.url,
-        id: data.id,
-        name: data.name
+        fileId: data.id,
+        originalName: data.name,
+        mimeType: fileToUpload.type,
+        size: fileToUpload.size,
+        sourceProject: data.sourceProject
       };
     } catch (e) {
       console.error("Local server upload failed, probably offline.", e);
@@ -93,8 +103,15 @@ export const deleteFromGoogleDrive = async (fileId: string, fileUrl?: string): P
 
   if (!isGoogleDriveFile && targetServerUrl) {
     try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("You must be logged in to delete files.");
+      const token = await user.getIdToken();
+
       const response = await fetch(`${targetServerUrl}/delete/${fileId}`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
       });
       const data = await response.json();
       return data.success;
