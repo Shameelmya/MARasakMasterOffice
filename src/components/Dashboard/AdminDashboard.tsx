@@ -234,7 +234,7 @@ export function AdminDashboard({
 
       {activeTab === 'alerts' && (
         <RecentAlertsTab 
-          user={users.find(u => u.role === 'admin')!} 
+          user={users.find(u => u.role === 'admin') || (currentUser.role === 'admin' ? currentUser : { id: 'admin', role: 'admin', name: 'MLA', enabled: true } as any)} 
           tasks={tasks} 
           jumpToTask={jumpToTask} 
           users={users}

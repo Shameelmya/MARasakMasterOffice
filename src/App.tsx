@@ -248,6 +248,7 @@ export default function App() {
         if (rosterDoc && rosterDoc.exists()) {
           const rosterData = rosterDoc.data();
           const rosterUsers = Object.values(rosterData).filter((u: any) => u.id && u.name) as UserType[];
+          rosterUsers.sort((a, b) => a.id === 'admin' ? -1 : b.id === 'admin' ? 1 : 0);
           setUsers(rosterUsers);
         }
       }, (err) => console.error("Roster fetch error:", err)); 
