@@ -37,7 +37,7 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
       
       let emailToTry = selectedUser.id === 'admin' 
         ? 'marazakmasterclt@gmail.com' 
-        : `${selectedUser.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`;
+        : (selectedUser.email || `${selectedUser.id.toLowerCase().replace(/[^a-z0-9]/g, '')}@marazak.local`);
 
       await signInWithEmailAndPassword(auth, emailToTry, password);
       onLogin(selectedUser);

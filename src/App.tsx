@@ -205,9 +205,10 @@ export default function App() {
 
   useEffect(() => {
     if (currentUser && ['admin', 'subadmin'].includes(currentUser.role)) {
-      const unsub = onSnapshot(getColRef('users'), (snapshot) => {
+      const unsub = onSnapshot(getColRef('users'), async (snapshot) => {
         const rawUsers = snapshot.docs.map(doc => ({ ...doc.data() as UserType, _docId: doc.id }));
         const dedupedUsers: UserType[] = [];
+        const rosterRepairs: Record<string, any> = {};
         
         rawUsers.forEach(user => {
           // Ignore corrupted or empty ghost documents
@@ -220,12 +221,25 @@ export default function App() {
           }
           
           if (!dedupedUsers.find(u => u.id === user.id)) {
+            // Automatically repair missing email in login_roster if we have it here
+            if (user.email) {
+              rosterRepairs[user.id] = { id: user.id, name: user.name, enabled: user.enabled, email: user.email };
+            }
             delete (user as any)._docId;
             dedupedUsers.push(user);
           }
         });
         
         setUsers(dedupedUsers);
+        
+        // Push the repaired roster if there are users
+        if (Object.keys(rosterRepairs).length > 0) {
+          try {
+            await setDoc(getDocRef('meta', 'login_roster'), rosterRepairs, { merge: true });
+          } catch (e) {
+            console.error("Failed to auto-repair login_roster", e);
+          }
+        }
       }, (err) => console.error("Users fetch error:", err));
       return unsub;
     } else {
@@ -532,7 +546,7 @@ export default function App() {
     const batch = writeBatch(db);
     batch.set(getDocRef('users', user.authUid), { [field]: value }, { merge: true });
     
-    if (field === 'enabled' || field === 'name') {
+    if (field === 'enabled' || field === 'name' || field === 'email') {
       batch.set(getDocRef('meta', 'login_roster'), {
         [userId]: { [field]: value }
       }, { merge: true });
@@ -586,7 +600,7 @@ export default function App() {
       const batch = writeBatch(db);
       batch.set(getDocRef('users', cred.user.uid), userToSave);
       batch.set(getDocRef('meta', 'login_roster'), {
-        [newUser.id]: { id: newUser.id, name: newUser.name, enabled: newUser.enabled }
+        [newUser.id]: { id: newUser.id, name: newUser.name, enabled: newUser.enabled, email: email }
       }, { merge: true });
       await batch.commit();
 
