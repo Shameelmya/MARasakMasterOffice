@@ -636,7 +636,9 @@ export default function App() {
     ); 
   };
 
-  const liveCurrentUser = currentUser ? users.find(u => u.id === currentUser.id) : null;
+  const liveCurrentUser = currentUser 
+    ? { ...currentUser, ...(users.find(u => u.id === currentUser.id) || {}) } 
+    : null;
   
   useEffect(() => { 
     if (currentUser && liveCurrentUser && !liveCurrentUser.enabled && liveCurrentUser.role !== 'admin') { 
