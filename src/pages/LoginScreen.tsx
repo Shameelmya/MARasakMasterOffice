@@ -20,7 +20,7 @@ export function LoginScreen({ onLogin, users }: LoginScreenProps) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
-  const activeUsers = users.filter(u => u.enabled !== false); // fallback to true if undefined
+  const activeUsers = users.filter(u => u.enabled !== false).sort((a, b) => a.id === 'admin' ? -1 : b.id === 'admin' ? 1 : 0);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
