@@ -51,7 +51,7 @@ export function PrintAcknowledgeSlip({ task }: PrintAcknowledgeSlipProps) {
           <p className="font-medium text-black mb-2" style={{ fontFamily: "'Noto Serif Malayalam', serif" }}>സ്നേഹത്തോടെ,</p>
           <div className="mt-8 text-right">
             <p className="font-bold text-black uppercase text-sm" style={{ fontFamily: "'Noto Serif Malayalam', serif" }}>എം.എൽ.എ ഓഫീസ്, കുന്നമംഗലം</p>
-            <p className="text-sm font-normal text-black">Phone: 9037032002</p>
+            <p className="text-sm font-normal text-black">Phone: 9747022928</p>
           </div>
         </div>
       </div>
@@ -145,7 +145,7 @@ export function PrintCompletionLetter({ task }: PrintCompletionLetterProps) {
           <div className="mt-0 border-t border-slate-100 pt-1 inline-block text-right">
             <p className="font-bold text-black text-sm" style={{ fontFamily: "'Noto Serif Malayalam', serif" }}>എം.എ റസാഖ് മാസ്റ്റർ</p>
             <p className="text-sm font-normal text-black mb-1">Member of Legislative Assembly (MLA)</p>
-            <p className="text-sm font-normal text-black">Phone: 9037032002</p>
+            <p className="text-sm font-normal text-black">Phone: 9747022928</p>
           </div>
         </div>
       </div>

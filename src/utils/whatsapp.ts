@@ -11,6 +11,6 @@ export const sendWhatsAppUpdate = (task: Task, updateText: string, updateLink?: 
   }
   let msg = `ബഹു. ${task.personalDetails.name.toUpperCase()},\n\nRef: ${task.id}\nവിഷയം : "${task.subject}" \nഎന്ന വിഷയവുമായി ബന്ധപ്പെട്ട എം.എ. റസാഖ് മാസ്റ്റർ എം.എൽ.എയുടെ ഓഫീസിൽ നിങ്ങൾ നൽകിയ അപേക്ഷയുടെ എറ്റവും പുതിയ അപ്ഡേറ്റ് ഇതാണ് :\n${updateText}`;
   if (updateLink) msg += `\n\nരേഖ: ${updateLink}`;
-  msg += `\n\nസ്നേഹത്തോടെ,\nഎം.എൽ.എ ഓഫീസ്, കുന്ദമംഗലം.\nഫോൺ: 9037032002`;
+  msg += `\n\nസ്നേഹത്തോടെ,\nഎം.എൽ.എ ഓഫീസ്, കുന്ദമംഗലം.\nഫോൺ: 9747022928`;
   window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`, '_blank');
 };
