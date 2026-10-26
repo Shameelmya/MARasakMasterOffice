@@ -12,6 +12,47 @@ const LOCAL_SERVER_URL = (import.meta as any).env.VITE_UPLOAD_SERVER_URL;
 export const MAX_FILE_SIZE_MB = 10; // Increased to 10MB since we own the storage now
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
+// ============================================================================
+// SHARED HELPER: Resolves the current live file-server URL.
+// Priority: Firestore globals/settings > VITE env var > localhost fallback.
+// This must be used for ALL server operations so that a Cloudflare tunnel
+// URL change doesn't break file access.
+// ============================================================================
+const getCurrentServerUrl = async (): Promise<string | null> => {
+  let serverUrl = LOCAL_SERVER_URL || null;
+
+  try {
+    const settingsDoc = await getDoc(getDocRef('globals', 'settings'));
+    if (settingsDoc.exists()) {
+      const data = settingsDoc.data();
+      if (data.localServerUrl) {
+        serverUrl = data.localServerUrl;
+      }
+    }
+  } catch (err) {
+    console.warn('[FileUpload] Failed to fetch dynamic server URL from Firebase', err);
+  }
+
+  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (!serverUrl && isLocal) {
+    serverUrl = 'http://localhost:4000';
+  }
+
+  // Ensure no trailing slash
+  return serverUrl ? serverUrl.replace(/\/+$/, '') : null;
+};
+
+// Extracts the path portion from a saved file URL (e.g. /api/files/xyz.pdf)
+const extractFilePath = (url: string): string | null => {
+  try {
+    return new URL(url).pathname;
+  } catch {
+    // Fallback: regex extraction for malformed URLs
+    const match = url.match(/(\/api\/files\/[^\s?#]+|\/uploads\/[^\s?#]+)/);
+    return match ? match[1] : null;
+  }
+};
+
 const convertBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -99,8 +140,8 @@ export const deleteFromGoogleDrive = async (fileId: string, fileUrl?: string): P
   // Otherwise, hit our local server delete endpoint.
   const isGoogleDriveFile = fileUrl && fileUrl.includes("drive.google.com");
   
-  const isTestingLocally = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  const targetServerUrl = LOCAL_SERVER_URL || (isTestingLocally ? 'http://localhost:4000' : null);
+  // Always resolve the CURRENT live server URL (handles tunnel URL changes)
+  const targetServerUrl = await getCurrentServerUrl();
 
   if (!isGoogleDriveFile && targetServerUrl) {
     try {
@@ -145,36 +186,55 @@ export const deleteFromGoogleDrive = async (fileId: string, fileUrl?: string): P
   }
 };
 export const viewProtectedAttachment = async (url: string) => {
+  // 1. Legacy external links — open directly, no auth needed
   if (url.includes('drive.google.com') || url.includes('script.google.com') || url.includes('wa.me')) {
     window.open(url, '_blank');
     return;
   }
-  
+
+  // 2. Non-server URLs — open directly
   if (!url || (!url.includes('/api/files/') && !url.includes('/uploads/'))) {
-      if (url) window.open(url, '_blank');
-      return;
+    if (url) window.open(url, '_blank');
+    return;
   }
-  
+
+  // 3. Server-hosted files — resolve the CURRENT live server URL
+  //    The saved URL in Firestore may contain a stale Cloudflare tunnel domain
+  //    (e.g. old-name.trycloudflare.com) that no longer exists.
+  //    We extract just the path and prepend the current live server URL.
   try {
     const user = auth.currentUser;
-    if (!user) throw new Error("Not authenticated");
+    if (!user) throw new Error('Not authenticated');
     const token = await user.getIdToken();
-    
-    const res = await fetch(url, {
+
+    // Resolve the current live server URL from Firestore settings
+    const currentServerUrl = await getCurrentServerUrl();
+    if (!currentServerUrl) {
+      throw new Error('File server is not configured. Please contact the administrator.');
+    }
+
+    // Extract path from the saved (possibly stale) URL and rebuild with the live domain
+    const filePath = extractFilePath(url);
+    const resolvedUrl = filePath ? `${currentServerUrl}${filePath}` : url;
+
+    console.log('[FileView] Resolved URL:', resolvedUrl);
+
+    const res = await fetch(resolvedUrl, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
-    
+
     if (!res.ok) throw new Error(`Failed to load file. Status: ${res.status}`);
-    
+
     const blob = await res.blob();
     const objectUrl = URL.createObjectURL(blob);
     window.open(objectUrl, '_blank');
-    
+
+    // Clean up the blob URL after 1 minute to free memory
     setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
   } catch (err) {
-    console.error("Failed to fetch protected file:", err);
-    alert("Failed to securely open file. You may not be logged in or lack permission.");
+    console.error('Failed to fetch protected file:', err);
+    alert('Failed to securely open file. You may not be logged in or lack permission.');
   }
 };
